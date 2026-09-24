@@ -391,6 +391,36 @@ const KeyboardTranslator *stockTranslator()
     return translator;
 }
 
+// A cell color as Koncrepe stores it: the request the application made,
+// so the color scheme draws it. @p palette is what the engine resolves the
+// 256 palette entries to, when Koncrepe's theme is in it.
+inline CharacterColor convertColor(uint16_t source, uint32_t resolved, const uint32_t *palette)
+{
+    const auto rgb = [resolved] {
+        return CharacterColor(COLOR_SPACE_RGB, int(((resolved & 0xff) << 16) | (resolved & 0xff00) | ((resolved >> 16) & 0xff)));
+    };
+    switch (SHITTY_VT_COLOR_KIND(source)) {
+    case SHITTY_VT_COLOR_DEFAULT_FOREGROUND:
+        return CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR);
+    case SHITTY_VT_COLOR_DEFAULT_BACKGROUND:
+        return CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR);
+    case SHITTY_VT_COLOR_INDEXED: {
+        const int index = SHITTY_VT_COLOR_INDEX(source);
+        // An application may have redefined the entry (OSC 4): then the
+        // color it asked for is no longer the scheme's, draw what it set.
+        if (palette != nullptr && resolved != palette[index]) {
+            return rgb();
+        }
+        if (index < 16) {
+            return CharacterColor(COLOR_SPACE_SYSTEM, index);
+        }
+        return CharacterColor(COLOR_SPACE_256, index);
+    }
+    default:
+        return rgb();
+    }
+}
+
 // Everything a row callback needs; the grapheme pointer the engine hands
 // out is only valid for the duration of the callback, so it is copied.
 struct RowCollector {
@@ -1017,6 +1047,32 @@ void ShittyEmulation::drainHistory()
     }
 }
 
+namespace
+{
+void copyCell(ShittyEmulation::EngineCell &out, const shitty_vt_cell *cell)
+{
+    out.grapheme.clear();
+    for (size_t i = 0; i < cell->grapheme_len; ++i) {
+        out.grapheme.append(char32_t(cell->grapheme[i]));
+    }
+    out.foreground = cell->foreground;
+    out.background = cell->background;
+    out.underlineColor = cell->underline_color;
+    out.attributes = cell->attributes;
+    out.underlineStyle = cell->underline_style;
+    out.width = cell->width;
+    out.foregroundSource = cell->foreground_source;
+    out.backgroundSource = cell->background_source;
+    out.underlineSource = cell->underline_source;
+    out.present = true;
+}
+
+struct GridCollector {
+    QVector<QVector<ShittyEmulation::EngineCell>> *rows;
+    int columns;
+};
+}
+
 QVector<ShittyEmulation::EngineCell> ShittyEmulation::readRow(uint32_t index)
 {
     QVector<EngineCell> cells(_columns);
@@ -1026,60 +1082,36 @@ QVector<ShittyEmulation::EngineCell> ShittyEmulation::readRow(uint32_t index)
         index,
         [](void *user, uint16_t, uint16_t column, const shitty_vt_cell *cell) {
             auto *collector = static_cast<RowCollector *>(user);
-            if (column >= collector->columns) {
-                return;
+            if (column < collector->columns) {
+                copyCell((*collector->cells)[column], cell);
             }
-            EngineCell &out = (*collector->cells)[column];
-            out.grapheme.clear();
-            for (size_t i = 0; i < cell->grapheme_len; ++i) {
-                out.grapheme.append(char32_t(cell->grapheme[i]));
-            }
-            out.foreground = cell->foreground;
-            out.background = cell->background;
-            out.underlineColor = cell->underline_color;
-            out.attributes = cell->attributes;
-            out.underlineStyle = cell->underline_style;
-            out.width = cell->width;
-            out.foregroundSource = cell->foreground_source;
-            out.backgroundSource = cell->background_source;
-            out.underlineSource = cell->underline_source;
-            out.present = true;
         },
         &collector);
     return cells;
 }
 
-CharacterColor ShittyEmulation::convertColor(uint16_t source, uint32_t resolved) const
+QVector<QVector<ShittyEmulation::EngineCell>> ShittyEmulation::readView(int lines)
 {
-    const auto rgb = [resolved] {
-        return CharacterColor(COLOR_SPACE_RGB, int(((resolved & 0xff) << 16) | (resolved & 0xff00) | ((resolved >> 16) & 0xff)));
-    };
-    switch (SHITTY_VT_COLOR_KIND(source)) {
-    case SHITTY_VT_COLOR_DEFAULT_FOREGROUND:
-        return CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR);
-    case SHITTY_VT_COLOR_DEFAULT_BACKGROUND:
-        return CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR);
-    case SHITTY_VT_COLOR_INDEXED: {
-        const int index = SHITTY_VT_COLOR_INDEX(source);
-        // An application may have redefined the entry (OSC 4): then the
-        // color it asked for is no longer the scheme's, draw what it set.
-        if (_haveTheme && resolved != _enginePalette[index]) {
-            return rgb();
-        }
-        if (index < 16) {
-            return CharacterColor(COLOR_SPACE_SYSTEM, index);
-        }
-        return CharacterColor(COLOR_SPACE_256, index);
-    }
-    default:
-        return rgb();
-    }
+    // One frame for the whole grid, where reading row by row takes one each.
+    QVector<QVector<EngineCell>> rows(lines, QVector<EngineCell>(_columns));
+    GridCollector collector{&rows, _columns};
+    shitty_vt_each_cell(
+        _vt,
+        [](void *user, uint16_t row, uint16_t column, const shitty_vt_cell *cell) {
+            auto *collector = static_cast<GridCollector *>(user);
+            if (row < collector->rows->size() && column < collector->columns) {
+                copyCell((*collector->rows)[row][column], cell);
+            }
+        },
+        &collector);
+    return rows;
 }
 
 QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length, qint64 absoluteLine) const
 {
     const int columns = cells.size();
     QVector<Character> line(columns);
+    const uint32_t *palette = _haveTheme ? _enginePalette : nullptr;
 
     // Shell integration: the mode each column was printed in.
     int replMode = REPL_None;
@@ -1108,8 +1140,8 @@ QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<Eng
         }
         Character &ch = line[column];
 
-        CharacterColor foreground = convertColor(cell.foregroundSource, cell.foreground);
-        CharacterColor background = convertColor(cell.backgroundSource, cell.background);
+        CharacterColor foreground = convertColor(cell.foregroundSource, cell.foreground, palette);
+        CharacterColor background = convertColor(cell.backgroundSource, cell.background, palette);
         const bool bold = cell.attributes & SHITTY_VT_ATTR_BOLD;
         const bool faint = cell.attributes & SHITTY_VT_ATTR_FAINT;
         RenditionFlags rendition = DEFAULT_RENDITION;
@@ -1173,7 +1205,7 @@ QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<Eng
         }
 
         if (SHITTY_VT_COLOR_KIND(cell.underlineSource) != SHITTY_VT_COLOR_DEFAULT_FOREGROUND && (rendition & RE_UNDERLINE_MASK) != 0) {
-            const int index = screen->engineUnderlineColor(convertColor(cell.underlineSource, cell.underlineColor));
+            const int index = screen->engineUnderlineColor(convertColor(cell.underlineSource, cell.underlineColor, palette));
             flags = SetULColor(flags, index);
         }
 
@@ -1257,14 +1289,21 @@ void ShittyEmulation::syncScreen()
 
     Screen *screen = _currentScreen;
     const bool alternate = modes & SHITTY_VT_MODE_ALT_SCREEN;
-    const uint32_t historyRows = alternate ? 0 : shitty_vt_history_rows(_vt);
-    const uint32_t offset = alternate ? 0 : shitty_vt_scroll_offset(_vt);
     const int lines = qMin(_lines, screen->getLines());
+
+    // Read the live grid through the view, which is parked in the scrollback
+    // between reads (see drainHistory()): bring it down for the read.
+    if (!alternate && _parkedOffset != 0) {
+        shitty_vt_scroll_to(_vt, 0);
+    }
+    const QVector<QVector<EngineCell>> grid = readView(lines);
+    const uint32_t historyRows = alternate ? 0 : shitty_vt_history_rows(_vt);
+    const uint32_t offset = 0;
 
     for (int y = 0; y < lines; ++y) {
         const uint32_t index = historyRows + uint32_t(y);
         const qint64 absolute = alternate ? -1 : _scrolledLines + y;
-        const QVector<EngineCell> cells = readRow(index);
+        const QVector<EngineCell> &cells = grid[y];
         int length = 0;
         QVector<Character> line = convertRow(screen, cells, &length, absolute);
         LineProperty property = alternate ? LineProperty() : lineSemantics(absolute);
@@ -1313,6 +1352,10 @@ void ShittyEmulation::syncScreen()
         _cursorStyle = style;
     }
 
+    if (!alternate && _parkedOffset != 0) {
+        _knownHistoryRows = historyRows;
+        parkEngineView();
+    }
     _screenDirty = false;
 }
 

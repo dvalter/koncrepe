@@ -142,13 +142,14 @@ private:
 
     /** Reads row @p index (oldest history row first) of the engine's current screen. */
     QVector<EngineCell> readRow(uint32_t index);
+    /** Reads the first @p lines rows of the engine's view. */
+    QVector<QVector<EngineCell>> readView(int lines);
     /**
      * Converts an engine row to a screen line; @p length receives its text
      * length. @p line is the row's absolute line on the primary screen (for
      * shell integration marks), or -1.
      */
     QVector<Character> convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length, qint64 line = -1) const;
-    CharacterColor convertColor(uint16_t source, uint32_t resolved) const;
 
     /**
      * Brings the engine to Koncrepe's defaults: Alt sends ESC like it always
