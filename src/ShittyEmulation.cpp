@@ -22,6 +22,7 @@
 #include <KNotification>
 
 // Koncrepe
+#include "EscapeSequenceUrlExtractor.h"
 #include "KoncrepeSettings.h"
 #include "Screen.h"
 #include "ScreenWindow.h"
@@ -548,15 +549,46 @@ void ShittyEmulation::receiveData(const char *text, int length)
 
 void ShittyEmulation::feed(const char *bytes, int length)
 {
+    QByteArray joined;
+    if (!_heldBack.isEmpty()) {
+        joined = std::exchange(_heldBack, {}) + QByteArray(bytes, length);
+        bytes = joined.constData();
+        length = int(joined.size());
+    }
+
     int start = 0;
     while (start < length) {
         const ShittyStreamScanner::Event event = _scanner.scan(bytes, length, start);
-        const int end = event.type == ShittyStreamScanner::EventType::None ? length : event.end;
-        feedEngine(bytes + start, end - start);
+        const bool none = event.type == ShittyStreamScanner::EventType::None;
+        int end = none ? length : event.end;
+        int engineEnd = end;
+
+        if (none && _scanner.sequenceStart() >= start && ((!_kittyKeyboardEnabled && _scanner.inControlSequence()) || _scanner.inOsc(8))) {
+            // A sequence the engine may not get is arriving in pieces: hold
+            // it back until it is whole.
+            _heldBack = QByteArray(bytes + _scanner.sequenceStart(), length - _scanner.sequenceStart());
+            engineEnd = _scanner.sequenceStart();
+            _scanner.reset();
+        }
+        if (event.type == ShittyStreamScanner::EventType::KittyKeyboard && !_kittyKeyboardEnabled && event.start >= start) {
+            // The profile turned the kitty keyboard protocol off: the engine
+            // never sees the application asking for it, and the application
+            // gets no answer to its query, which is how "unsupported" looks.
+            engineEnd = event.start;
+        }
+        if (event.type == ShittyStreamScanner::EventType::Osc && event.number == 8 && event.start >= start) {
+            // Hyperlinks are Koncrepe's (see handleHyperlink()). The engine
+            // would keep them in cell extras, which its embedding API reports
+            // without the characters they are attached to.
+            engineEnd = event.start;
+        }
+
+        feedEngine(bytes + start, engineEnd - start);
         start = end;
 
         switch (event.type) {
         case ShittyStreamScanner::EventType::None:
+        case ShittyStreamScanner::EventType::KittyKeyboard:
             break;
         case ShittyStreamScanner::EventType::Osc:
             handleOsc(event);
@@ -565,14 +597,13 @@ void ShittyEmulation::feed(const char *bytes, int length)
             // The engine forgot its scrollback; forget ours to match. Lines
             // that scrolled off before the erase go first, like they would.
             drainHistory();
-            if (_currentScreen == _screen[0]) {
-                Emulation::clearHistory();
-            }
+            Emulation::clearHistory();
             resetHistoryTracking();
             break;
         case ShittyStreamScanner::EventType::FullReset:
             // RIS restores the engine's built-in palette and input defaults
             resetHistoryTracking();
+            resetSemantics();
             _setupPending = true;
             Q_EMIT resetCursorStyleRequest();
             _cursorStyle = -1;
@@ -740,8 +771,151 @@ void ShittyEmulation::handleOsc(const ShittyStreamScanner::Event &event)
         break;
     }
 
+    case 8:
+        handleHyperlink(payload);
+        break;
+
+    case 133:
+        handleSemanticPrompt(payload);
+        break;
+
     default:
         break;
+    }
+}
+
+void ShittyEmulation::handleHyperlink(const QByteArray &payload)
+{
+    // Bring the model up to the point the link starts or ends at: the
+    // extractor records positions from the screen's cursor and history.
+    syncCursor();
+    Screen *screen = _currentScreen;
+    EscapeSequenceUrlExtractor *extractor = screen->urlExtractor();
+    if (extractor == nullptr) {
+        return; // the profile does not allow links in escape sequences
+    }
+
+    // '\e]8;<id>;<uri>\e\\' opens a link, '\e]8;;\e\\' closes it
+    const int separator = payload.indexOf(';');
+    const QByteArray uri = separator >= 0 ? payload.mid(separator + 1) : QByteArray();
+    const int column = screen->getCursorX();
+    const int line = screen->getCursorY();
+
+    extractor->toggleUrlInput();
+    if (extractor->reading()) {
+        if (uri.isEmpty()) {
+            extractor->abortUrlInput();
+            return;
+        }
+        extractor->setUrl(QString::fromUtf8(uri));
+        if (extractor->reading()) {
+            // The link starts at the cursor. The extractor takes the start
+            // from the first character printed, one column left of the
+            // cursor then; the engine prints the text, so place it there.
+            screen->setEngineCursor(column + 1, line);
+            extractor->appendUrlText(U' ');
+            screen->setEngineCursor(column, line);
+        }
+    }
+}
+
+void ShittyEmulation::handleSemanticPrompt(const QByteArray &payload)
+{
+    if (payload.isEmpty() || (shitty_vt_modes(_vt) & SHITTY_VT_MODE_ALT_SCREEN)) {
+        return; // shell integration lives on the primary screen
+    }
+    syncCursor();
+    Screen *screen = _screen[0];
+    const int column = screen->getCursorX();
+    const int line = screen->getCursorY();
+
+    int mode = -1;
+    switch (payload.at(0)) {
+    case 'A':
+    case 'N':
+    case 'P':
+        mode = REPL_PROMPT;
+        break;
+    case 'B':
+        mode = REPL_INPUT;
+        break;
+    case 'C':
+        mode = REPL_OUTPUT;
+        break;
+    case 'D':
+        mode = REPL_None;
+        break;
+    case 'L':
+        // fresh line: start the prompt on a line of its own
+        if (column > 0) {
+            static const char newLine[] = "\r\n";
+            feedEngine(newLine, 2);
+            _screenDirty = true;
+        }
+        return;
+    default:
+        return;
+    }
+
+    // Screen implements what the marks mean to the rest of Koncrepe:
+    // prompt notifications, the command counter, exit code error bars
+    // (which reach back into the history).
+    screen->setReplMode(mode);
+    if (payload.at(0) == 'D') {
+        const QList<QByteArray> parameters = payload.split(';');
+        if (parameters.size() > 1) {
+            const int exitCode = parameters.at(1).toInt();
+            if (exitCode != 0) {
+                screen->setExitCode(exitCode);
+            }
+        }
+    }
+
+    // Keep the line flags it set for the lines still on screen, since the
+    // next refresh from the engine rewrites them...
+    const int history = screen->getHistLines();
+    const QVector<LineProperty> properties = screen->getLineProperties(history, history + screen->getLines() - 1);
+    constexpr quint16 semanticFlags = 0x1f0; // prompt/input/output starts, output, error
+    for (int y = 0; y < properties.size(); ++y) {
+        const qint64 absolute = _scrolledLines + y;
+        const quint16 flags = properties[y].flags.all & semanticFlags;
+        if (flags != 0 || properties[y].counter != 0) {
+            _lineSemantics.insert(absolute, LineProperty(flags, 0, properties[y].counter));
+        } else {
+            _lineSemantics.remove(absolute);
+        }
+    }
+
+    // ...and where the mode changed, for the characters printed from here.
+    const SemanticMark mark{_scrolledLines + line, column, mode};
+    while (!_semanticMarks.empty() && std::make_pair(_semanticMarks.back().line, _semanticMarks.back().column) >= std::make_pair(mark.line, mark.column)) {
+        _semanticMarks.pop_back();
+    }
+    _semanticMarks.push_back(mark);
+    _screenDirty = true;
+}
+
+LineProperty ShittyEmulation::lineSemantics(qint64 line) const
+{
+    return _lineSemantics.value(line);
+}
+
+void ShittyEmulation::resetSemantics()
+{
+    // Positions on screen are about to mean something else (a reset, a
+    // reflow): keep the current mode, forget where it began.
+    if (!_semanticMarks.empty()) {
+        _semanticModeBefore = _semanticMarks.back().mode;
+    }
+    _semanticMarks.clear();
+    _lineSemantics.clear();
+}
+
+void ShittyEmulation::setKittyKeyboardEnabled(bool enabled)
+{
+    _kittyKeyboardEnabled = enabled;
+    if (enabled && !_heldBack.isEmpty()) {
+        feed("", 0);
     }
 }
 
@@ -808,14 +982,31 @@ void ShittyEmulation::drainHistory()
 
     if (scrolled > 0) {
         Screen *primary = _screen[0];
-        for (uint32_t index = historyRows - scrolled; index < historyRows; ++index) {
+        for (uint32_t k = 0; k < scrolled; ++k) {
+            // the rows leave in order, each being the screen's top row then
+            const uint32_t index = historyRows - scrolled + k;
+            const qint64 absolute = _scrolledLines + k;
             const QVector<EngineCell> cells = readRow(index);
             int length = 0;
-            QVector<Character> line = convertRow(primary, cells, &length);
-            LineProperty property;
+            QVector<Character> line = convertRow(primary, cells, &length, absolute);
+            LineProperty property = lineSemantics(absolute);
             property.length = qint16(qMin(length, 0x7fff));
             property.flags.f.wrapped = shitty_vt_row_wrap_length(_vt, index) != 0;
             primary->appendEngineHistoryLine(std::move(line), property);
+        }
+        _scrolledLines += scrolled;
+
+        // What left the screen is the history's now, marks included: keep
+        // the mode in effect and forget the rest.
+        _lineSemantics.removeIf([this](const auto &it) {
+            return it.key() < _scrolledLines;
+        });
+        auto firstOnScreen = std::lower_bound(_semanticMarks.begin(), _semanticMarks.end(), _scrolledLines, [](const SemanticMark &mark, qint64 line) {
+            return mark.line < line;
+        });
+        if (firstOnScreen != _semanticMarks.begin()) {
+            _semanticModeBefore = std::prev(firstOnScreen)->mode;
+            _semanticMarks.erase(_semanticMarks.begin(), firstOnScreen);
         }
         _screenDirty = true;
     }
@@ -885,14 +1076,31 @@ CharacterColor ShittyEmulation::convertColor(uint16_t source, uint32_t resolved)
     }
 }
 
-QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length) const
+QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length, qint64 absoluteLine) const
 {
     const int columns = cells.size();
     QVector<Character> line(columns);
+
+    // Shell integration: the mode each column was printed in.
+    int replMode = REPL_None;
+    QVarLengthArray<SemanticMark, 4> replChanges;
+    if (absoluteLine >= 0 && (!_semanticMarks.empty() || _semanticModeBefore != REPL_None)) {
+        auto it = std::lower_bound(_semanticMarks.begin(), _semanticMarks.end(), absoluteLine, [](const SemanticMark &mark, qint64 l) {
+            return mark.line < l;
+        });
+        replMode = it == _semanticMarks.begin() ? _semanticModeBefore : std::prev(it)->mode;
+        for (; it != _semanticMarks.end() && it->line == absoluteLine; ++it) {
+            replChanges.append(*it);
+        }
+    }
+    int nextChange = 0;
     int used = 0; // length of the line once trailing untouched blanks are dropped
     int text = 0; // length of the text on it
 
     for (int column = 0; column < columns; ++column) {
+        while (nextChange < replChanges.size() && replChanges[nextChange].column <= column) {
+            replMode = replChanges[nextChange++].mode;
+        }
         const EngineCell &cell = cells[column];
         if (!cell.present) {
             // the right half of a wide character, filled in by its left half
@@ -969,6 +1177,7 @@ QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<Eng
             flags = SetULColor(flags, index);
         }
 
+        flags = setRepl(flags, replMode);
         ch = Character(character, foreground, background, rendition, flags);
         if (graphemeLength > 0) {
             text = column + cell.width;
@@ -978,7 +1187,7 @@ QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<Eng
             Character &right = line[column + 1];
             right = ch;
             right.setRightHalfOfDoubleWide();
-            right.flags = EF_UNREAL;
+            right.flags = setRepl(EF_UNREAL, replMode);
         }
 
         const bool blank = graphemeLength == 0 && background == CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR)
@@ -1054,10 +1263,11 @@ void ShittyEmulation::syncScreen()
 
     for (int y = 0; y < lines; ++y) {
         const uint32_t index = historyRows + uint32_t(y);
+        const qint64 absolute = alternate ? -1 : _scrolledLines + y;
         const QVector<EngineCell> cells = readRow(index);
         int length = 0;
-        QVector<Character> line = convertRow(screen, cells, &length);
-        LineProperty property;
+        QVector<Character> line = convertRow(screen, cells, &length, absolute);
+        LineProperty property = alternate ? LineProperty() : lineSemantics(absolute);
         property.length = qint16(qMin(length, 0x7fff));
         property.flags.f.wrapped = shitty_vt_row_wrap_length(_vt, index) != 0;
         screen->setEngineLine(y, std::move(line), property);
@@ -1106,6 +1316,22 @@ void ShittyEmulation::syncScreen()
     _screenDirty = false;
 }
 
+void ShittyEmulation::syncCursor()
+{
+    const uint32_t modes = shitty_vt_modes(_vt);
+    if (modes & SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT) {
+        return;
+    }
+    drainHistory();
+    const bool alternate = modes & SHITTY_VT_MODE_ALT_SCREEN;
+    if (alternate != (_currentScreen == _screen[1])) {
+        syncModes();
+    }
+    const uint32_t offset = alternate ? 0 : shitty_vt_scroll_offset(_vt);
+    const shitty_vt_cursor cursor = shitty_vt_cursor_state(_vt);
+    _currentScreen->setEngineCursor(qMin(int(cursor.column), _columns - 1), int(cursor.row) - int(offset));
+}
+
 void ShittyEmulation::aboutToShowOutput()
 {
     if (_screenDirty) {
@@ -1141,6 +1367,7 @@ void ShittyEmulation::setImageSize(int lines, int columns)
         // The engine reflowed its own scrollback too; that reshuffle is not
         // output, so start counting afresh.
         resetHistoryTracking();
+        resetSemantics();
         _screenDirty = true;
         syncScreen();
     }
@@ -1198,10 +1425,12 @@ void ShittyEmulation::reset(bool softReset, bool preservePrompt)
         _setupPending = true;
     }
     _scanner.reset();
+    _heldBack.clear();
     if (_setupPending) {
         pushEngineSetup();
     }
     resetHistoryTracking();
+    resetSemantics();
 
     _screen[0]->reset(softReset, preservePrompt);
     _screen[1]->reset(softReset, preservePrompt);
@@ -1332,6 +1561,129 @@ void ShittyEmulation::sendText(const QString &text)
     }
 }
 
+KeyboardTranslator::States ShittyEmulation::keyboardStates(Qt::KeyboardModifiers modifiers) const
+{
+    const uint32_t modes = shitty_vt_modes(_vt);
+    KeyboardTranslator::States states = KeyboardTranslator::AnsiState;
+    if (modes & SHITTY_VT_MODE_APP_CURSOR_KEYS) {
+        states |= KeyboardTranslator::CursorKeysState;
+    }
+    if (modes & SHITTY_VT_MODE_ALT_SCREEN) {
+        states |= KeyboardTranslator::AlternateScreenState;
+    }
+    if ((modes & SHITTY_VT_MODE_APP_KEYPAD) && (modifiers & Qt::KeypadModifier)) {
+        states |= KeyboardTranslator::ApplicationKeypadState;
+    }
+    return states;
+}
+
+void ShittyEmulation::emulateUpDown(int up, const KeyboardTranslator::Entry &entry, QByteArray &textToSend, int toColumn)
+{
+    // Moves the shell's cursor up or down through a multi-line input with
+    // Left/Right, as far as the lines' lengths say; see Vt102Emulation.
+    if (up == 0) {
+        return;
+    }
+    Screen *screen = _currentScreen;
+    const int cursorX = screen->getCursorX();
+    const int cursorY = screen->getCursorY();
+    const int history = screen->getHistLines();
+    int firstLine;
+    int lastLine;
+    int targetLine;
+    if (up > 0) {
+        firstLine = cursorY - up + history;
+        lastLine = cursorY - 1 + history;
+        targetLine = 0;
+    } else {
+        firstLine = cursorY + history;
+        lastLine = cursorY - up + history;
+        targetLine = lastLine - firstLine;
+    }
+    if (firstLine < 0 || lastLine >= screen->getLines() + history) {
+        return;
+    }
+
+    QVector<LineProperty> lineProperties = screen->getLineProperties(firstLine, lastLine);
+    const int targetColumn = qMin(toColumn == -1 ? cursorX : toColumn, lineProperties[targetLine].length - 1);
+    if (up < 0) {
+        lineProperties.removeLast();
+    }
+    int count = up > 0 ? cursorX - targetColumn : targetColumn - cursorX;
+    for (const LineProperty &property : std::as_const(lineProperties)) {
+        count += property.length + 1 - property.flags.f.wrapped;
+    }
+    for (int i = 0; i < count; i++) {
+        textToSend += entry.text();
+    }
+}
+
+bool ShittyEmulation::handleSemanticUpDown(QKeyEvent *event)
+{
+    if (event->type() != QEvent::KeyPress) {
+        return false;
+    }
+    const bool up = event->key() == Qt::Key_Up;
+    TerminalDisplay *view = _currentScreen->currentTerminalDisplay();
+    if ((!up && event->key() != Qt::Key_Down) || (event->modifiers() & ~Qt::KeypadModifier) != Qt::NoModifier || view == nullptr || _keyTranslator == nullptr) {
+        // any other key ends a run of vertical moves
+        _targetColumn = -1;
+        return false;
+    }
+    syncCursor();
+    Screen *screen = _currentScreen;
+    const int cursorX = screen->getCursorX();
+    const int cursorY = screen->getCursorY();
+    if (screen->replMode() != REPL_INPUT || !view->semanticUpDown()
+        || !((up && screen->replModeStart() <= std::make_pair(cursorY - 1, cursorX))
+             || (!up && std::make_pair(cursorY + 1, cursorX) <= screen->replModeEnd()))) {
+        _targetColumn = -1;
+        return false;
+    }
+    const KeyboardTranslator::Entry entry = _keyTranslator->findEntry(up ? Qt::Key_Left : Qt::Key_Right, Qt::NoModifier, keyboardStates(Qt::NoModifier));
+    if (_targetColumn == -1) {
+        _targetColumn = cursorX;
+    }
+    QByteArray textToSend;
+    emulateUpDown(up ? 1 : -1, entry, textToSend, _targetColumn);
+    Q_EMIT sendData(textToSend);
+    return true;
+}
+
+void ShittyEmulation::moveCursorInInput(int column, int line)
+{
+    // A click in a shell's input line moves its cursor there, by sending the
+    // Left/Right keys it would take; see Vt102Emulation.
+    TerminalDisplay *view = _currentScreen->currentTerminalDisplay();
+    if (_keyTranslator == nullptr || (view != nullptr && view->getReadOnly())) {
+        return;
+    }
+    syncCursor();
+    Screen *screen = _currentScreen;
+    const auto point = std::make_pair(line, column);
+    if (!(screen->replModeStart() <= point && point <= screen->replModeEnd())) {
+        return;
+    }
+    const KeyboardTranslator::States states = keyboardStates(Qt::NoModifier);
+    const KeyboardTranslator::Entry keys[2] = {_keyTranslator->findEntry(Qt::Key_Left, Qt::NoModifier, states),
+                                               _keyTranslator->findEntry(Qt::Key_Right, Qt::NoModifier, states)};
+    const int history = screen->getHistLines();
+    const QVector<LineProperty> lineProperties = screen->getLineProperties(line + history, line + history);
+    column = qMin(column, int(lineProperties[0].length));
+    const int cursorX = screen->getCursorX();
+    const int cursorY = screen->getCursorY();
+    QByteArray textToSend;
+    if (cursorY != line) {
+        emulateUpDown(cursorY - line, keys[line > cursorY], textToSend, column);
+    } else {
+        const KeyboardTranslator::Entry &entry = keys[cursorX < column];
+        for (int i = 0; i < qAbs(column - cursorX); i++) {
+            textToSend += entry.text();
+        }
+    }
+    Q_EMIT sendData(textToSend);
+}
+
 bool ShittyEmulation::handleKeyBinding(QKeyEvent *event)
 {
     if (_keyTranslator == nullptr || event->type() != QEvent::KeyPress) {
@@ -1339,17 +1691,7 @@ bool ShittyEmulation::handleKeyBinding(QKeyEvent *event)
     }
 
     const Qt::KeyboardModifiers modifiers = event->modifiers();
-    KeyboardTranslator::States states = KeyboardTranslator::AnsiState;
-    if (_modes & SHITTY_VT_MODE_APP_CURSOR_KEYS) {
-        states |= KeyboardTranslator::CursorKeysState;
-    }
-    if (_modes & SHITTY_VT_MODE_ALT_SCREEN) {
-        states |= KeyboardTranslator::AlternateScreenState;
-    }
-    if ((_modes & SHITTY_VT_MODE_APP_KEYPAD) && (modifiers & Qt::KeypadModifier)) {
-        states |= KeyboardTranslator::ApplicationKeypadState;
-    }
-
+    const KeyboardTranslator::States states = keyboardStates(modifiers);
     const KeyboardTranslator::Entry entry = _keyTranslator->findEntry(event->key(), modifiers, states);
     if (entry.isNull()) {
         return false;
@@ -1491,7 +1833,7 @@ void ShittyEmulation::sendKeyEvent(QKeyEvent *event)
         return;
     }
 
-    if (handleKeyBinding(event)) {
+    if (handleSemanticUpDown(event) || handleKeyBinding(event)) {
         return;
     }
 
@@ -1520,9 +1862,12 @@ void ShittyEmulation::sendKeyEvent(QKeyEvent *event)
 
 void ShittyEmulation::sendMouseEvent(int cb, int cx, int cy, int eventType)
 {
-    // eventType 3 is a click to move the cursor in a shell's input line,
-    // which needs shell integration the engine does not report.
-    if (eventType == 3 || cx < 1 || cy < 1) {
+    if (cx < 1 || cy < 1) {
+        return;
+    }
+    // a click to move the cursor in a shell's input line (shell integration)
+    if (eventType == 3) {
+        moveCursorInInput(cx - 1, cy - 1);
         return;
     }
     // Only an application that asked for the mouse gets it: the engine

@@ -21,7 +21,10 @@
 #include "Enumeration.h"
 #include "EscapeSequenceUrlExtractor.h"
 #include "Screen.h"
+#include "ShittyEmulation.h"
 #include "ShouldApplyProperty.h"
+#include "ViewManager.h" // for colorSchemeForProfile
+#include "colorscheme/ColorScheme.h"
 #include "koncrepedebug.h"
 
 #include "history/HistoryTypeFile.h"
@@ -281,6 +284,17 @@ void SessionManager::applyProfile(Session *session, const Profile::Ptr &profile,
         case Enum::UnlimitedHistory:
             session->setHistoryType(HistoryTypeFile());
             break;
+        }
+    }
+
+    // Colors, for the terminal engine: its replies to color queries and
+    // its light/dark reports follow the profile's color scheme.
+    if (apply.shouldApply(Profile::ColorScheme) || apply.shouldApply(Profile::UseCustomCursorColor) || apply.shouldApply(Profile::CustomCursorColor)) {
+        if (auto *engine = qobject_cast<ShittyEmulation *>(session->emulation())) {
+            const auto colorScheme = ViewManager::colorSchemeForProfile(profile);
+            QColor table[TABLE_COLORS];
+            colorScheme->getColorTable(table, session->sessionId());
+            engine->setEngineColors(table, profile->useCustomCursorColor() ? profile->customCursorColor() : QColor());
         }
     }
 

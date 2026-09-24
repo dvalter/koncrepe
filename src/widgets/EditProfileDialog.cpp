@@ -1048,6 +1048,9 @@ void EditProfileDialog::setupAppearancePage(const Profile::Ptr &profile)
 
     _appearanceUi->ignoreWcWidth->setChecked(profile->property<bool>(Profile::IgnoreWcWidth));
     connect(_appearanceUi->ignoreWcWidth, &QPushButton::toggled, this, &EditProfileDialog::toggleIgnoreWcWidth);
+    // Character widths are the terminal engine's to decide: it lays out the
+    // grid. The option has nothing left to change, so it is not offered.
+    _appearanceUi->ignoreWcWidth->setVisible(false);
 
     // badge options
     _appearanceUi->badgeEnabled->setChecked(profile->badgeEnabled());

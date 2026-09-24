@@ -39,6 +39,8 @@ public:
         FullReset,
         /** CSI ! p: soft reset. */
         SoftReset,
+        /** A kitty keyboard protocol request: CSI > u, CSI < u, CSI = u, CSI ? u. */
+        KittyKeyboard,
     };
 
     struct Event {
@@ -49,6 +51,11 @@ public:
         QByteArray payload;
         /** Offset just past the sequence's final byte. */
         int end = 0;
+        /**
+         * Offset of the sequence's ESC, or -1 when the sequence started in an
+         * earlier buffer.
+         */
+        int start = -1;
     };
 
     /**
@@ -62,6 +69,24 @@ public:
     bool atGround() const
     {
         return _state == State::Ground;
+    }
+
+    /** True inside an unfinished escape or control sequence (not a string). */
+    bool inControlSequence() const
+    {
+        return _state == State::Escape || _state == State::EscapeIntermediate || _state == State::Csi;
+    }
+
+    /** True inside an unfinished OSC string that is, or may yet be, OSC @p number. */
+    bool inOsc(int number) const;
+
+    /**
+     * Offset of the unfinished sequence's ESC in the buffer last scanned, or
+     * -1 when it started in an earlier buffer.
+     */
+    int sequenceStart() const
+    {
+        return _sequenceStart;
     }
 
     void reset();
@@ -83,6 +108,7 @@ private:
     Event finishOsc(int end);
 
     State _state = State::Ground;
+    int _sequenceStart = -1;
     QByteArray _buffer;
     bool _overflow = false;
 

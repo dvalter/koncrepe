@@ -8,6 +8,7 @@
 #include <QSignalSpy>
 #include <QTest>
 
+#include "../EscapeSequenceUrlExtractor.h"
 #include "../Screen.h"
 #include "../ScreenWindow.h"
 #include "../ShittyEmulation.h"
@@ -49,6 +50,9 @@ private Q_SLOTS:
     void testClearEntireScreen();
     void testResetPreservingPrompt();
     void testScannerBoundaries();
+    void testKittyKeyboardDisabled();
+    void testHyperlinks();
+    void testShellIntegration();
 };
 
 namespace
@@ -570,6 +574,96 @@ void ShittyEmulationTest::testScannerBoundaries()
     const QByteArray sixel("\033Pq#0;2;0;0;0#0~~-~~\033\\x");
     QCOMPARE(dcs.scan(sixel.constData(), sixel.size(), 0).type, ShittyStreamScanner::EventType::None);
     QVERIFY(dcs.atGround());
+}
+
+void ShittyEmulationTest::testKittyKeyboardDisabled()
+{
+    Terminal t;
+    t.emulation.setKittyKeyboardEnabled(false);
+    // the query goes unanswered, the request unheeded, even split in two
+    t.feed("\033[?u\033[c");
+    const QByteArray replies = t.takeSent();
+    QVERIFY(!replies.contains("u"));
+    QVERIFY(replies.startsWith("\033[?"));
+    t.emulation.receiveData("\033[>", 3);
+    t.emulation.receiveData("1u", 2);
+    t.key(Qt::Key_Escape);
+    QCOMPARE(t.takeSent(), QByteArray("\033"));
+    // other sequences split the same way still work
+    t.emulation.receiveData("\033[", 2);
+    t.emulation.receiveData("6n", 2);
+    QCOMPARE(t.takeSent(), QByteArray("\033[1;1R"));
+
+    t.emulation.setKittyKeyboardEnabled(true);
+    t.feed("\033[>1u");
+    t.key(Qt::Key_Escape);
+    QCOMPARE(t.takeSent(), QByteArray("\033[27u"));
+}
+
+void ShittyEmulationTest::testHyperlinks()
+{
+    Terminal t(5, 40);
+    Screen *screen = t.screen();
+    screen->setEnableUrlExtractor(true);
+    screen->urlExtractor()->setAllowedLinkSchema({QStringLiteral("https://")});
+
+    t.feed("see \033]8;;https://example.com/\033\\the link\033]8;;\033\\ and \033]8;;ftp://no\033\\not this\033]8;;\033\\");
+    const QVector<ExtractedUrl> urls = screen->urlExtractor()->history();
+    QCOMPARE(urls.size(), 1);
+    QCOMPARE(urls[0].url, QStringLiteral("https://example.com/"));
+    QCOMPARE(urls[0].begin.row, 0);
+    QCOMPARE(urls[0].begin.col, 4);
+    QCOMPARE(urls[0].end.row, 0);
+    QCOMPARE(urls[0].end.col, 12);
+    QCOMPARE(t.screenLine(0), QStringLiteral("see the link and not this"));
+
+    // a link arriving in pieces
+    t.feed("\r\n");
+    t.emulation.receiveData("\033]8;;https://", 13);
+    t.emulation.receiveData("kde.org\033", 8);
+    t.emulation.receiveData("\\KDE\033]8;;\033\\!", 12);
+    QMetaObject::invokeMethod(&t.emulation, "showBulk");
+    QCOMPARE(screen->urlExtractor()->history().size(), 2);
+    QCOMPARE(screen->urlExtractor()->history().at(1).url, QStringLiteral("https://kde.org"));
+    QCOMPARE(t.screenLine(1), QStringLiteral("KDE!"));
+}
+
+void ShittyEmulationTest::testShellIntegration()
+{
+    Terminal t(4, 30);
+    t.feed("\033]133;A\007$ \033]133;B\007false\r\n\033]133;C\007oops\r\n\033]133;D;1\007\033]133;A\007$ ");
+
+    Screen *screen = t.screen();
+    QVERIFY(screen->hasRepl());
+    QCOMPARE(screen->replMode(), REPL_PROMPT);
+    QVector<LineProperty> properties = screen->getLineProperties(0, 2);
+    QVERIFY(properties[0].flags.f.prompt_start);
+    QVERIFY(properties[0].flags.f.error);
+    QVERIFY(properties[1].flags.f.error);
+    QVERIFY(properties[2].flags.f.prompt_start);
+    QVERIFY(!properties[2].flags.f.error);
+
+    // every character knows what printed it
+    QCOMPARE(t.cell(0, 0).repl(), int(EF_REPL_PROMPT));
+    QCOMPARE(t.cell(2, 0).repl(), int(EF_REPL_INPUT));
+    QCOMPARE(t.cell(0, 1).repl(), int(EF_REPL_OUTPUT));
+    QCOMPARE(t.cell(0, 2).repl(), int(EF_REPL_PROMPT));
+
+    // and all of it survives the trip into the history
+    t.feed("\033]133;B\007yes\r\n\033]133;C\007");
+    for (int i = 0; i < 10; ++i) {
+        t.feed("y\r\n");
+    }
+    QVERIFY(screen->getHistLines() > 4);
+    properties = screen->getLineProperties(0, 3);
+    QVERIFY(properties[0].flags.f.prompt_start);
+    QVERIFY(properties[0].flags.f.error);
+    QVERIFY(properties[2].flags.f.prompt_start);
+    QVector<Character> image(screen->getColumns() * 3);
+    screen->getImage(image.data(), image.size(), 0, 2);
+    QCOMPARE(image[0].repl(), int(EF_REPL_PROMPT));
+    QCOMPARE(image[2].repl(), int(EF_REPL_INPUT));
+    QCOMPARE(image[screen->getColumns()].repl(), int(EF_REPL_OUTPUT));
 }
 
 QTEST_MAIN(ShittyEmulationTest)

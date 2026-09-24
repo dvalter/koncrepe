@@ -19,6 +19,7 @@ constexpr unsigned char SUB = 0x1a;
 void ShittyStreamScanner::reset()
 {
     _state = State::Ground;
+    _sequenceStart = -1;
     _buffer.clear();
     _overflow = false;
 }
@@ -74,6 +75,7 @@ ShittyStreamScanner::Event ShittyStreamScanner::finishOsc(int end)
     }
     event.type = EventType::Osc;
     event.end = end;
+    event.start = _sequenceStart;
     int i = 0;
     int number = 0;
     bool digits = false;
@@ -92,8 +94,15 @@ ShittyStreamScanner::Event ShittyStreamScanner::finishOsc(int end)
 
 ShittyStreamScanner::Event ShittyStreamScanner::scan(const char *data, int length, int offset)
 {
+    if (offset == 0 && !atGround()) {
+        _sequenceStart = -1; // continues from an earlier buffer
+    }
     for (int i = offset; i < length; ++i) {
         const auto c = static_cast<unsigned char>(data[i]);
+        // An ESC starts a sequence, except the one opening a string terminator
+        if (c == ESC && _state != State::Osc && _state != State::OscEscape && _state != State::String && _state != State::StringEscape) {
+            _sequenceStart = i;
+        }
         switch (_state) {
         case State::Ground:
             if (c == ESC) {
@@ -132,12 +141,15 @@ ShittyStreamScanner::Event ShittyStreamScanner::scan(const char *data, int lengt
                     type = EventType::EraseScrollback;
                 } else if (c == 'p' && _buffer == "!") {
                     type = EventType::SoftReset;
+                } else if (c == 'u' && !_buffer.isEmpty() && (_buffer[0] == '>' || _buffer[0] == '<' || _buffer[0] == '=' || _buffer[0] == '?')) {
+                    type = EventType::KittyKeyboard;
                 }
                 _buffer.clear();
                 if (type != EventType::None) {
                     Event event;
                     event.type = type;
                     event.end = i + 1;
+                    event.start = _sequenceStart;
                     return event;
                 }
             } else if (c >= 0x20) {
@@ -177,11 +189,13 @@ ShittyStreamScanner::Event ShittyStreamScanner::scan(const char *data, int lengt
             } else {
                 // ESC anything-but-backslash abandons the string and starts
                 // a new escape sequence with this byte
+                _sequenceStart = i > 0 ? i - 1 : -1;
                 const EventType type = escapeFinal(c);
                 if (type != EventType::None) {
                     Event event;
                     event.type = type;
                     event.end = i + 1;
+                    event.start = _sequenceStart;
                     return event;
                 }
             }
@@ -199,11 +213,13 @@ ShittyStreamScanner::Event ShittyStreamScanner::scan(const char *data, int lengt
             if (c == '\\') {
                 _state = State::Ground;
             } else {
+                _sequenceStart = i > 0 ? i - 1 : -1;
                 const EventType type = escapeFinal(c);
                 if (type != EventType::None) {
                     Event event;
                     event.type = type;
                     event.end = i + 1;
+                    event.start = _sequenceStart;
                     return event;
                 }
             }
@@ -211,4 +227,15 @@ ShittyStreamScanner::Event ShittyStreamScanner::scan(const char *data, int lengt
         }
     }
     return {};
+}
+
+bool ShittyStreamScanner::inOsc(int number) const
+{
+    if (_state != State::Osc && _state != State::OscEscape) {
+        return false;
+    }
+    // what arrived so far could still be this number, or already is
+    QByteArray prefix = QByteArray::number(number);
+    prefix.append(';');
+    return _buffer.size() < prefix.size() ? prefix.startsWith(_buffer) : _buffer.startsWith(prefix);
 }

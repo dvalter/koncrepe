@@ -1794,18 +1794,39 @@ void Screen::appendEngineHistoryLine(QVector<Character> &&cells, LineProperty pr
     std::swap(_screenLines[0], cells);
     std::swap(_lineProperties[0], property);
     addHistLine();
-    std::swap(_screenLines[0], cells);
-    std::swap(_lineProperties[0], property);
+
+    // The line that left was the top of the screen: move the rest up, as
+    // the engine did, so the model stays whole until it is refreshed.
+    std::rotate(_screenLines.begin(), _screenLines.begin() + 1, _screenLines.begin() + _lines);
+    _screenLines[_lines - 1].clear();
+    std::rotate(_lineProperties.begin(), _lineProperties.begin() + 1, _lineProperties.begin() + _lines);
+    _lineProperties[_lines - 1] = LineProperty();
 
     _scrolledLines--;
     _lastScrolledRegion = QRect(0, 0, _columns - 1, _lines - 1);
     _selCuY = qMax(_selCuY - 1, -_history->getLines());
+    // the shell integration ranges are screen coordinates, like in scrollUp()
+    if (_replMode != REPL_None) {
+        if (_replModeStart.first > 0) {
+            _replModeStart = std::make_pair(_replModeStart.first - 1, _replModeStart.second);
+            _replModeEnd = std::make_pair(_replModeEnd.first - 1, _replModeEnd.second);
+        }
+        if (_replLastOutputStart.first > -1) {
+            _replLastOutputStart = std::make_pair(_replLastOutputStart.first - 1, _replLastOutputStart.second);
+            _replLastOutputEnd = std::make_pair(_replLastOutputEnd.first - 1, _replLastOutputEnd.second);
+        }
+    }
 }
 
 void Screen::setEngineCursor(int column, int line)
 {
     _cuX = qBound(0, column, qMax(0, _columns - 1));
     _cuY = qBound(0, line, qMax(0, _lines - 1));
+    // what the application printed extends the current shell integration
+    // range, as it does in displayCharacter()
+    if (_replMode != REPL_None && std::make_pair(_cuY, _cuX) >= _replModeEnd) {
+        _replModeEnd = std::make_pair(_cuY, _cuX);
+    }
 }
 
 char32_t Screen::engineExtendedChar(const char32_t *codepoints, ushort length)
@@ -2600,7 +2621,9 @@ void Screen::setReplMode(int mode)
         }
         if (mode == REPL_PROMPT) {
             if (_replHadOutput) {
-                currentTerminalDisplay()->sessionController()->notifyPrompt();
+                if (currentTerminalDisplay()) {
+                    currentTerminalDisplay()->sessionController()->notifyPrompt();
+                }
                 _replHadOutput = false;
             }
         }
@@ -2614,9 +2637,13 @@ void Screen::setReplMode(int mode)
     if (mode != REPL_None) {
         if (!_hasRepl) {
             _hasRepl = true;
-            currentTerminalDisplay()->sessionController()->setVisible(QStringLiteral("monitor-prompt"), true);
+            if (currentTerminalDisplay()) {
+                currentTerminalDisplay()->sessionController()->setVisible(QStringLiteral("monitor-prompt"), true);
+            }
         }
-        Q_EMIT currentTerminalDisplay()->screenWindow()->selectionChanged(); // Enable copy action
+        if (currentTerminalDisplay()) {
+            Q_EMIT currentTerminalDisplay()->screenWindow()->selectionChanged(); // Enable copy action
+        }
         setLineProperty(LINE_PROMPT_START << (mode - REPL_PROMPT), true);
     }
 }

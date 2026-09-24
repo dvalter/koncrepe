@@ -430,8 +430,9 @@ public:
     /** Replaces screen line @p line with @p cells. */
     void setEngineLine(int line, QVector<Character> &&cells, LineProperty property);
     /**
-     * Appends @p cells as the newest history line, with the same selection,
-     * dropped-line and view bookkeeping a scroll would have done.
+     * Appends @p cells as the newest history line and moves the screen up
+     * by one, with the same selection, dropped-line and view bookkeeping a
+     * scroll would have done.
      */
     void appendEngineHistoryLine(QVector<Character> &&cells, LineProperty property);
     /** Places the cursor at the 0-based @p column and @p line. */

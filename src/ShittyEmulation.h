@@ -16,6 +16,9 @@
 #include "Emulation.h"
 #include "ShittyStreamScanner.h"
 #include "characters/Character.h"
+#include "keyboardtranslator/KeyboardTranslator.h"
+
+#include <vector>
 
 struct shitty_vt;
 struct shitty_vt_callbacks;
@@ -66,6 +69,13 @@ public:
      */
     void setEngineColors(const QColor *table, const QColor &cursor);
 
+    /**
+     * Whether applications may use the kitty keyboard protocol. The engine
+     * always implements it; when disabled, the requests to enable or query
+     * it never reach the engine, so applications see a terminal without it.
+     */
+    void setKittyKeyboardEnabled(bool enabled);
+
     /** One engine cell, copied out of the engine's callback. */
     struct EngineCell;
 
@@ -99,6 +109,13 @@ private:
     void feed(const char *bytes, int length);
     void feedEngine(const char *bytes, int length);
     void handleOsc(const ShittyStreamScanner::Event &event);
+    /** OSC 8: feeds the screen's escape sequence URL extractor. */
+    void handleHyperlink(const QByteArray &payload);
+    /** OSC 133: shell integration marks (prompt, input, output, exit code). */
+    void handleSemanticPrompt(const QByteArray &payload);
+    void resetSemantics();
+    /** The shell integration line flags recorded for engine line @p line. */
+    LineProperty lineSemantics(qint64 line) const;
 
     /** Sends whatever the engine produced toward the child. */
     void flushReplies();
@@ -115,6 +132,8 @@ private:
     void resetHistoryTracking();
     /** Refreshes the current screen model from the engine. */
     void syncScreen();
+    /** Drains the history and places the model's cursor where the engine's is. */
+    void syncCursor();
     void syncModes();
 
     /** Brackets engine input: the engine snaps its view to the bottom on input. */
@@ -123,8 +142,12 @@ private:
 
     /** Reads row @p index (oldest history row first) of the engine's current screen. */
     QVector<EngineCell> readRow(uint32_t index);
-    /** Converts an engine row to a screen line; @p length receives its text length. */
-    QVector<Character> convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length) const;
+    /**
+     * Converts an engine row to a screen line; @p length receives its text
+     * length. @p line is the row's absolute line on the primary screen (for
+     * shell integration marks), or -1.
+     */
+    QVector<Character> convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length, qint64 line = -1) const;
     CharacterColor convertColor(uint16_t source, uint32_t resolved) const;
 
     /**
@@ -135,6 +158,12 @@ private:
     bool engineIsUtf8() const;
     bool sendKeyToEngine(QKeyEvent *event);
     bool handleKeyBinding(QKeyEvent *event);
+    KeyboardTranslator::States keyboardStates(Qt::KeyboardModifiers modifiers) const;
+    /** Semantic Up/Down in a shell's input line; true when handled. */
+    bool handleSemanticUpDown(QKeyEvent *event);
+    /** Click to move the cursor within a shell's input line. */
+    void moveCursorInInput(int column, int line);
+    void emulateUpDown(int up, const KeyboardTranslator::Entry &entry, QByteArray &textToSend, int toColumn = -1);
 
     struct shitty_vt *_vt = nullptr;
     // the engine keeps a pointer to its callbacks, not a copy
@@ -145,6 +174,8 @@ private:
     int _lines = 40;
 
     // history tracking (see drainHistory)
+    // lines that ever left the primary screen: the absolute line of row 0
+    qint64 _scrolledLines = 0;
     uint32_t _parkedOffset = 0;
     uint32_t _knownHistoryRows = 0;
     int _inputDepth = 0;
@@ -168,6 +199,21 @@ private:
     QList<QPair<int, QByteArray>> _pendingClipboard;
     bool _resizeRequested = false;
     bool _inPointerEvent = false;
+
+    // kitty keyboard protocol, and a request held back while incomplete
+    bool _kittyKeyboardEnabled = true;
+    QByteArray _heldBack;
+
+    // shell integration (OSC 133): where each mode began, in absolute lines
+    struct SemanticMark {
+        qint64 line;
+        int column;
+        int mode;
+    };
+    std::vector<SemanticMark> _semanticMarks;
+    int _semanticModeBefore = 0; // the mode before the first mark
+    QHash<qint64, LineProperty> _lineSemantics; // for lines still on screen
+    int _targetColumn = -1; // semantic Up/Down keeps its column
 
     QHash<int, QString> _pendingSessionAttributesUpdates;
     QTimer *_sessionAttributesUpdateTimer = nullptr;

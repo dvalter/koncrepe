@@ -1655,9 +1655,9 @@ void Session::setFlowControlEnabled(bool enabled)
 
 void Session::setKittyKeyboardEnabled(bool enabled)
 {
-    // The shitty engine always offers the kitty keyboard protocol: an
-    // application only gets it by asking for it, like any other mode.
-    Q_UNUSED(enabled)
+    if (auto *engine = qobject_cast<ShittyEmulation *>(_emulation)) {
+        engine->setKittyKeyboardEnabled(enabled);
+    }
 }
 
 bool Session::flowControlEnabled() const
