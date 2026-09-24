@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -9,13 +9,13 @@
 #ifndef PROFILEGROUP_H
 #define PROFILEGROUP_H
 
-// Konsole
+// Koncrepe
 #include "Profile.h"
 
 // Qt
 #include <QVariant>
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A composite profile which allows a group of profiles to be treated as one.
@@ -30,7 +30,7 @@ namespace Konsole
  * The Profile::Name and Profile::Path properties are unique to individual
  * profiles, setting these properties on a ProfileGroup has no effect.
  */
-class KONSOLEPRIVATE_EXPORT ProfileGroup : public Profile
+class KONCREPEPRIVATE_EXPORT ProfileGroup : public Profile
 {
 public:
     using Ptr = QExplicitlySharedDataPointer<ProfileGroup>;

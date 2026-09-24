@@ -6,7 +6,7 @@
 
 #include "DistroboxDetector.h"
 #include "DistroboxListParser.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
 #include <KLocalizedString>
 #include <KSandbox>
@@ -17,7 +17,7 @@
 #include <QTextStream>
 #include <QStandardPaths>
 
-namespace Konsole
+namespace Koncrepe
 {
 static bool hasDistroboxMarkers(const QHash<QByteArray, QByteArray> &env)
 {
@@ -182,16 +182,16 @@ std::optional<ContainerInfo> DistroboxDetector::detectFromCmdline(int pid) const
     }
 
     if (containerName.isEmpty()) {
-        qDebug(KonsoleDebug) << "Distrobox detector: container name not found in arguments. Checking /run/.containerenv...";
+        qDebug(KoncrepeDebug) << "Distrobox detector: container name not found in arguments. Checking /run/.containerenv...";
         containerName = readContainerNameFromContainerEnv(pid);
     }
 
     if (containerName.isEmpty()) {
-        qDebug(KonsoleDebug) << "Distrobox detector: container name still not found. Detection failed.";
+        qDebug(KoncrepeDebug) << "Distrobox detector: container name still not found. Detection failed.";
         return std::nullopt;
     }
 
-    qDebug(KonsoleDebug) << "Distrobox container detected:" << containerName;
+    qDebug(KoncrepeDebug) << "Distrobox container detected:" << containerName;
     return buildContainerInfo(containerName);
 }
 
@@ -290,6 +290,6 @@ void DistroboxDetector::startListContainers()
     KSandbox::startHostProcess(*process, QProcess::ReadOnly);
 }
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #include "moc_DistroboxDetector.cpp"

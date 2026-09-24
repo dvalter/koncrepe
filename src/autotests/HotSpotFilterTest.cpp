@@ -121,7 +121,7 @@ void HotSpotFilterTest::testUrlFilterRegex()
     QFETCH(QString, expectedUrl);
     QFETCH(bool, matchResult);
 
-    const QRegularExpression &regex = Konsole::UrlFilter::FullUrlRegExp;
+    const QRegularExpression &regex = Koncrepe::UrlFilter::FullUrlRegExp;
     const QRegularExpressionMatch match = regex.match(url);
     // qDebug() << match;
 
@@ -186,7 +186,7 @@ void HotSpotFilterTest::testUrlFilter()
     QFETCH(QString, expectedUrl);
     QFETCH(bool, matchResult);
 
-    const QRegularExpression &regex = Konsole::UrlFilter::FullUrlRegExp;
+    const QRegularExpression &regex = Koncrepe::UrlFilter::FullUrlRegExp;
     const QRegularExpressionMatch match = regex.match(url);
     // qDebug() << match;
 
@@ -201,7 +201,7 @@ void HotSpotFilterTest::testUrlFilter()
         int endLine = 0;
         int endColumn = capturedText.length();
 
-        QSharedPointer<Konsole::HotSpot> hotSpot = Konsole::UrlFilter().newHotSpot(startLine, startColumn, endLine, endColumn, match.capturedTexts());
+        QSharedPointer<Koncrepe::HotSpot> hotSpot = Koncrepe::UrlFilter().newHotSpot(startLine, startColumn, endLine, endColumn, match.capturedTexts());
 
         int resultStartColumn = hotSpot->startColumn();
         int resultEndColumn = hotSpot->endColumn();
@@ -211,9 +211,9 @@ void HotSpotFilterTest::testUrlFilter()
     }
 }
 
-static QString urlFromHotspot(const QSharedPointer<Konsole::HotSpot> &spot)
+static QString urlFromHotspot(const QSharedPointer<Koncrepe::HotSpot> &spot)
 {
-    auto *regexpSpot = dynamic_cast<Konsole::RegExpFilterHotSpot *>(spot.get());
+    auto *regexpSpot = dynamic_cast<Koncrepe::RegExpFilterHotSpot *>(spot.get());
     return regexpSpot ? regexpSpot->capturedTexts().first() : QString();
 }
 
@@ -231,7 +231,7 @@ void HotSpotFilterTest::testUrlDetectionAcrossWrappedLines()
     // Line 0 starts at 0 (wrapped), line 1 starts at urlPart1.length()
     QList<int> linePositions = {0, int(urlPart1.length())};
 
-    Konsole::UrlFilter filter;
+    Koncrepe::UrlFilter filter;
     filter.setBuffer(&buffer, &linePositions);
     filter.process();
 
@@ -256,7 +256,7 @@ void HotSpotFilterTest::testUrlCutAtNonWrappedLineBreak()
     QString buffer = urlPart1 + QLatin1Char('\n') + urlPart2 + QLatin1Char('\n');
     QList<int> linePositions = {0, int(urlPart1.length()) + 1};
 
-    Konsole::UrlFilter filter;
+    Koncrepe::UrlFilter filter;
     filter.setBuffer(&buffer, &linePositions);
     filter.process();
 
@@ -272,13 +272,13 @@ void HotSpotFilterTest::testUrlCutAtNonWrappedLineBreak()
 // Build a terminal screen image filled with the given URL (as ASCII), padded to
 // 'columns' wide with non-real space characters. Returns the image and sets
 // lineProperties to non-wrapped for all lines (simulating app word-wrap with \n).
-static std::vector<Konsole::Character> buildImageFromUrl(const QString &url, int columns, int &outLines, QVector<Konsole::LineProperty> &outProps)
+static std::vector<Koncrepe::Character> buildImageFromUrl(const QString &url, int columns, int &outLines, QVector<Koncrepe::LineProperty> &outProps)
 {
     outLines = int((url.length() + columns - 1) / columns);
-    std::vector<Konsole::Character> image(outLines * columns,
-        Konsole::Character(u' ', Konsole::CharacterColor(), Konsole::CharacterColor(), Konsole::DEFAULT_RENDITION, 0));
+    std::vector<Koncrepe::Character> image(outLines * columns,
+        Koncrepe::Character(u' ', Koncrepe::CharacterColor(), Koncrepe::CharacterColor(), Koncrepe::DEFAULT_RENDITION, 0));
     for (int i = 0; i < url.length(); i++) {
-        image[i] = Konsole::Character(url[i].unicode()); // EF_REAL by default
+        image[i] = Koncrepe::Character(url[i].unicode()); // EF_REAL by default
     }
     // All lines are non-wrapped — simulating application word-wrap (explicit \n at each line boundary)
     outProps.resize(outLines);
@@ -292,7 +292,7 @@ void HotSpotFilterTest::testUrlDetectionAcrossAppWordWrappedLines()
 {
     // A long URL (150 chars) displayed in a 50-column terminal.
     // The application outputs it with explicit \n every 50 chars (word-wrap).
-    // Konsole sees 3 non-wrapped lines of 50 chars each.
+    // Koncrepe sees 3 non-wrapped lines of 50 chars each.
     // Currently: setImage inserts \n between all lines → URL is cut at col 50.
     // After fix: lines that fill the terminal are treated as soft-wrap → full URL detected.
     const QString fullUrl = QStringLiteral(
@@ -302,11 +302,11 @@ void HotSpotFilterTest::testUrlDetectionAcrossAppWordWrappedLines()
     QVERIFY(fullUrl.length() > columns); // must actually wrap
 
     int lines = 0;
-    QVector<Konsole::LineProperty> lineProps;
+    QVector<Koncrepe::LineProperty> lineProps;
     auto image = buildImageFromUrl(fullUrl, columns, lines, lineProps);
 
-    Konsole::TerminalImageFilterChain filterChain(nullptr);
-    auto *urlFilter = new Konsole::UrlFilter();
+    Koncrepe::TerminalImageFilterChain filterChain(nullptr);
+    auto *urlFilter = new Koncrepe::UrlFilter();
     filterChain.addFilter(urlFilter);
 
     filterChain.setImage(image.data(), lines, columns, lineProps);

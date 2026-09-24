@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -11,7 +11,7 @@
 
 #include <QStack>
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * PopStackOnExit is a utility to remove all values from a QStack which are added during

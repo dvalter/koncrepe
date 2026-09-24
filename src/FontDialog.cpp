@@ -14,7 +14,7 @@
 // KF
 #include <KLocalizedString>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 FontDialog::FontDialog(QWidget *parent, bool emoji, const QFont font)
     : QDialog(parent)

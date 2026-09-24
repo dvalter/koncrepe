@@ -7,7 +7,7 @@
 // Own
 #include "SSHProcessInfo.h"
 
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Unix
 #ifndef Q_OS_WIN
@@ -27,7 +27,7 @@
 #include <libssh/libssh.h>
 #endif
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 SSHProcessInfo::SSHProcessInfo(const ProcessInfo &process)
     : _process(process)

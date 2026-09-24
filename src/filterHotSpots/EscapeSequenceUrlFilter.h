@@ -12,7 +12,7 @@
 
 #include <QPointer>
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 class TerminalDisplay;
@@ -23,7 +23,7 @@ class TerminalDisplay;
  * for the Vt102Emulation or at least the data structure that holds the information
  * so we can create the hotspots.
  */
-class KONSOLEPRIVATE_EXPORT EscapeSequenceUrlFilter : public Filter
+class KONCREPEPRIVATE_EXPORT EscapeSequenceUrlFilter : public Filter
 {
 public:
     EscapeSequenceUrlFilter(Session *session, TerminalDisplay *display);

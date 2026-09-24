@@ -15,9 +15,9 @@
 class QMimeData;
 class QPixmap;
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT ColorFilterHotSpot : public RegExpFilterHotSpot
+class KONCREPEPRIVATE_EXPORT ColorFilterHotSpot : public RegExpFilterHotSpot
 {
 public:
     ColorFilterHotSpot(int startLine, int startColumn, int endLine, int endColumn, const QStringList &capturedTexts, const QColor &color);

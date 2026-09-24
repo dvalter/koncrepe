@@ -1,7 +1,7 @@
 [README.keyboard]
 
-The *.keytab files (located in /usr/share/applications/konsole and
-~/.local/share/applications/konsole) allow you to configure the keyboard
+The *.keytab files (located in /usr/share/applications/koncrepe and
+~/.local/share/applications/koncrepe) allow you to configure the keyboard
 to suit your specific environment/requirements.
 
 Beside that you can use them to make the keyboard emit virtually any
@@ -38,7 +38,7 @@ Note that your system is not unlikely to have other keyboard databases
 which have to be in sync, too (e.g. /etc/inputrc for readline(3)).
 
 If you want to adjust things to your needs you can copy one of the *.keytab
-files and edit it. The changes will take effect after restarting konsole.
+files and edit it. The changes will take effect after restarting koncrepe.
 
 In case your new keytab is likely to suit common needs, please contribute
-to konsole by sending us the file.
+to koncrepe by sending us the file.

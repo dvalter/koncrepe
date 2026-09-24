@@ -12,7 +12,7 @@
 
 #include <functional>
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A delegate which can display and edit color schemes in a view.

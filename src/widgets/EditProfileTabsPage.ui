@@ -47,7 +47,7 @@
        </property>
        <layout class="QVBoxLayout">
         <item>
-         <widget class="Konsole::RenameTabWidget" name="renameTabWidget" native="true">
+         <widget class="Koncrepe::RenameTabWidget" name="renameTabWidget" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -90,7 +90,7 @@
         <item row="0" column="1">
          <widget class="QSpinBox" name="silenceSecondsSpinner">
           <property name="toolTip">
-           <string>The threshold for continuous silence to be detected by Konsole</string>
+           <string>The threshold for continuous silence to be detected by Koncrepe</string>
           </property>
           <property name="minimum">
            <number>1</number>
@@ -138,7 +138,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Konsole::RenameTabWidget</class>
+   <class>Koncrepe::RenameTabWidget</class>
    <extends>QWidget</extends>
    <header>widgets/RenameTabWidget.h</header>
   </customwidget>

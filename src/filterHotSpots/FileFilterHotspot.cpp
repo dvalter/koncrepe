@@ -33,13 +33,13 @@
 #include <KMessageBox>
 #include <KShell>
 
-#include "KonsoleSettings.h"
-#include "konsoledebug.h"
+#include "KoncrepeSettings.h"
+#include "koncrepedebug.h"
 #include "profile/Profile.h"
 #include "session/SessionManager.h"
 #include "terminalDisplay/TerminalDisplay.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 FileFilterHotSpot::FileFilterHotSpot(int startLine,
                                      int startColumn,
@@ -139,14 +139,14 @@ void FileFilterHotSpot::openWithEditorFromProfile(const QString &fullCmd, const 
     // PDF we should let the system default app open it.
     QMimeDatabase mdb;
     const auto mimeType = mdb.mimeTypeForFile(path);
-    qCDebug(KonsoleDebug) << "FileFilterHotSpot: mime type for" << path << ":" << mimeType;
+    qCDebug(KoncrepeDebug) << "FileFilterHotSpot: mime type for" << path << ":" << mimeType;
 
     if (!mimeType.inherits(QStringLiteral("text/plain"))) {
         openWithSysDefaultApp(path);
         return;
     }
 
-    qCDebug(KonsoleDebug) << "fullCmd:" << fullCmd;
+    qCDebug(KoncrepeDebug) << "fullCmd:" << fullCmd;
 
     KService::Ptr service(new KService(QString(), fullCmd, QString()));
 
@@ -210,7 +210,7 @@ QPointer<KIO::PreviewJob> FileFilterHotSpot::_previewJob;
 
 void FileFilterHotSpot::requestThumbnail(Qt::KeyboardModifiers modifiers, const QPoint &pos)
 {
-    if (!KonsoleSettings::self()->enableThumbnails()) {
+    if (!KoncrepeSettings::self()->enableThumbnails()) {
         return;
     }
 
@@ -255,7 +255,7 @@ void FileFilterHotSpot::thumbnailRequested()
         return;
     }
 
-    auto *settings = KonsoleSettings::self();
+    auto *settings = KoncrepeSettings::self();
 
     Qt::KeyboardModifiers modifiers = settings->thumbnailCtrl() ? Qt::ControlModifier : Qt::NoModifier;
     modifiers |= settings->thumbnailAlt() ? Qt::AltModifier : Qt::NoModifier;
@@ -269,7 +269,7 @@ void FileFilterHotSpot::thumbnailRequested()
 
     _thumbnailPos = QPoint(_eventPos.x() + 100, _eventPos.y() - settings->thumbnailSize() / 2);
 
-    const int size = KonsoleSettings::thumbnailSize();
+    const int size = KoncrepeSettings::thumbnailSize();
     if (_previewJob != nullptr) {
         _previewJob->deleteLater();
     }
@@ -289,7 +289,7 @@ void FileFilterHotSpot::thumbnailRequested()
     _previewJob = new KIO::PreviewJob(KFileItemList({fileItem()}), QSize(size, size));
     connect(_previewJob, &KIO::PreviewJob::gotPreview, this, &FileFilterHotSpot::showThumbnail);
     connect(_previewJob, &KIO::PreviewJob::failed, this, [] {
-        qCDebug(KonsoleDebug) << "Error generating the preview" << _previewJob->errorString();
+        qCDebug(KoncrepeDebug) << "Error generating the preview" << _previewJob->errorString();
         QToolTip::hideText();
     });
 
@@ -314,7 +314,7 @@ void FileFilterHotSpot::mouseLeaveEvent(TerminalDisplay *td, QMouseEvent *ev)
     stopThumbnailGeneration();
 }
 
-void FileFilterHotSpot::keyPressEvent(Konsole::TerminalDisplay *td, QKeyEvent *ev)
+void FileFilterHotSpot::keyPressEvent(Koncrepe::TerminalDisplay *td, QKeyEvent *ev)
 {
     HotSpot::keyPressEvent(td, ev);
     requestThumbnail(ev->modifiers(), QCursor::pos());

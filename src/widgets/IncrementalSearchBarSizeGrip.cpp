@@ -7,7 +7,7 @@
 // Own
 #include "widgets/IncrementalSearchBarSizeGrip.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 IncrementalSearchBarSizeGrip::IncrementalSearchBarSizeGrip(QWidget *parent)
     : QSizeGrip(parent)

@@ -9,7 +9,7 @@
 
 #include "../Pty.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class PtyTest : public QObject
 {

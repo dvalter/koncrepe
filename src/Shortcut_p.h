@@ -9,7 +9,7 @@
 
 #include <qnamespace.h>
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Platform-specific main shortcut "opcode":

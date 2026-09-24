@@ -17,7 +17,7 @@
 #endif
 #endif
 
-namespace Konsole
+namespace Koncrepe
 {
 #ifndef Q_OS_WIN
 /**

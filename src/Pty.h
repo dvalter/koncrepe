@@ -12,8 +12,8 @@
 #include <QProcess>
 #include <QSize>
 
-// Konsole
-#include "konsoleprivate_export.h"
+// Koncrepe
+#include "koncrepeprivate_export.h"
 
 #ifndef Q_OS_WIN
 // KF
@@ -24,7 +24,7 @@
 #include "ptyqt/iptyprocess.h"
 #endif
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * The Pty class is used to start the terminal process,
@@ -45,7 +45,7 @@ namespace Konsole
 #define ParentClass KPtyProcess
 #endif
 
-class KONSOLEPRIVATE_EXPORT Pty : public ParentClass
+class KONCREPEPRIVATE_EXPORT Pty : public ParentClass
 {
     Q_OBJECT
 

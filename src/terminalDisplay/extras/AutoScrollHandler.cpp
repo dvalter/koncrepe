@@ -10,7 +10,7 @@
 #include <QAccessible>
 #include <QApplication>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 AutoScrollHandler::AutoScrollHandler(QWidget *parent)
     : QObject(parent)

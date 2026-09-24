@@ -12,13 +12,13 @@
   </property>
   <layout class="QGridLayout">
    <item row="0" column="0">
-    <widget class="Konsole::RenameTabWidget" name="renameTabWidget" native="true"/>
+    <widget class="Koncrepe::RenameTabWidget" name="renameTabWidget" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Konsole::RenameTabWidget</class>
+   <class>Koncrepe::RenameTabWidget</class>
    <extends>QWidget</extends>
    <header>widgets/RenameTabWidget.h</header>
   </customwidget>

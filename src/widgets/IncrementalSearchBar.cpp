@@ -16,15 +16,15 @@
 #include <QTimer>
 #include <QToolButton>
 
-// Konsole
-#include "KonsoleSettings.h"
+// Koncrepe
+#include "KoncrepeSettings.h"
 
 // KF
 #include <KLocalizedString>
 #include <KStatefulBrush>
 #include <QLineEdit>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 IncrementalSearchBar::IncrementalSearchBar(QWidget *parent)
     : QWidget(parent)
@@ -67,7 +67,7 @@ IncrementalSearchBar::IncrementalSearchBar(QWidget *parent)
     _searchTimer = new QTimer(this);
     _searchTimer->setInterval(250);
     _searchTimer->setSingleShot(true);
-    connect(_searchTimer, &QTimer::timeout, this, &Konsole::IncrementalSearchBar::notifySearchChanged);
+    connect(_searchTimer, &QTimer::timeout, this, &Koncrepe::IncrementalSearchBar::notifySearchChanged);
     connect(_searchEdit, &QLineEdit::textChanged, _searchTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
 
     _findNextButton = new QToolButton(this);
@@ -77,7 +77,7 @@ IncrementalSearchBar::IncrementalSearchBar(QWidget *parent)
     _findNextButton->setAutoRaise(true);
     _findNextButton->setToolTip(i18nc("@info:tooltip", "Find the next match for the current search phrase"));
     _findNextButton->installEventFilter(this);
-    connect(_findNextButton, &QToolButton::clicked, this, &Konsole::IncrementalSearchBar::findNextClicked);
+    connect(_findNextButton, &QToolButton::clicked, this, &Koncrepe::IncrementalSearchBar::findNextClicked);
 
     _findPreviousButton = new QToolButton(this);
     _findPreviousButton->setAutoRaise(true);
@@ -86,13 +86,13 @@ IncrementalSearchBar::IncrementalSearchBar(QWidget *parent)
     _findPreviousButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     _findPreviousButton->setToolTip(i18nc("@info:tooltip", "Find the previous match for the current search phrase"));
     _findPreviousButton->installEventFilter(this);
-    connect(_findPreviousButton, &QToolButton::clicked, this, &Konsole::IncrementalSearchBar::findPreviousClicked);
+    connect(_findPreviousButton, &QToolButton::clicked, this, &Koncrepe::IncrementalSearchBar::findPreviousClicked);
 
     _searchFromButton = new QToolButton(this);
     _searchFromButton->setAutoRaise(true);
     _searchFromButton->setObjectName(QStringLiteral("search-from-button"));
     _searchFromButton->installEventFilter(this);
-    connect(_searchFromButton, &QToolButton::clicked, this, &Konsole::IncrementalSearchBar::searchFromClicked);
+    connect(_searchFromButton, &QToolButton::clicked, this, &Koncrepe::IncrementalSearchBar::searchFromClicked);
 
     _caseSensitiveButton = new QToolButton(this);
     // Gnome does not seem to have all icons we want, so we use fall-back icons for those that are missing.
@@ -105,7 +105,7 @@ IncrementalSearchBar::IncrementalSearchBar(QWidget *parent)
     _caseSensitiveButton->setAutoRaise(true);
     _caseSensitiveButton->setCheckable(true);
     _caseSensitiveButton->installEventFilter(this);
-    connect(_caseSensitiveButton, &QToolButton::clicked, this, &Konsole::IncrementalSearchBar::matchCaseToggled);
+    connect(_caseSensitiveButton, &QToolButton::clicked, this, &Koncrepe::IncrementalSearchBar::matchCaseToggled);
 
     auto optionsButton = new QToolButton(this);
     optionsButton->setObjectName(QStringLiteral("find-options-button"));
@@ -123,7 +123,7 @@ IncrementalSearchBar::IncrementalSearchBar(QWidget *parent)
     closeButton->setAutoRaise(true);
     closeButton->setIcon(QIcon::fromTheme(QStringLiteral("dialog-close")));
     closeButton->installEventFilter(this);
-    connect(closeButton, &QToolButton::clicked, this, &Konsole::IncrementalSearchBar::closeClicked);
+    connect(closeButton, &QToolButton::clicked, this, &Koncrepe::IncrementalSearchBar::closeClicked);
 
     // Fill the options menu
     auto optionsMenu = new QMenu(this);
@@ -131,24 +131,24 @@ IncrementalSearchBar::IncrementalSearchBar(QWidget *parent)
 
     _regExpression = optionsMenu->addAction(i18nc("@item:inmenu", "Match regular expression"));
     _regExpression->setCheckable(true);
-    connect(_regExpression, &QAction::toggled, this, &Konsole::IncrementalSearchBar::matchRegExpToggled);
+    connect(_regExpression, &QAction::toggled, this, &Koncrepe::IncrementalSearchBar::matchRegExpToggled);
 
     _highlightMatches = optionsMenu->addAction(i18nc("@item:inmenu", "Highlight all matches"));
     _highlightMatches->setCheckable(true);
     _highlightMatches->setToolTip(i18nc("@info:tooltip", "Sets whether matching text should be highlighted"));
-    connect(_highlightMatches, &QAction::toggled, this, &Konsole::IncrementalSearchBar::highlightMatchesToggled);
+    connect(_highlightMatches, &QAction::toggled, this, &Koncrepe::IncrementalSearchBar::highlightMatchesToggled);
 
     _reverseSearch = optionsMenu->addAction(i18nc("@item:inmenu", "Search backwards"));
     _reverseSearch->setCheckable(true);
     _reverseSearch->setToolTip(i18nc("@info:tooltip", "Sets whether search should start from the bottom"));
-    connect(_reverseSearch, &QAction::toggled, this, &Konsole::IncrementalSearchBar::updateButtonsAccordingToReverseSearchSetting);
-    connect(_reverseSearch, &QAction::toggled, this, &Konsole::IncrementalSearchBar::reverseSearchToggled);
+    connect(_reverseSearch, &QAction::toggled, this, &Koncrepe::IncrementalSearchBar::updateButtonsAccordingToReverseSearchSetting);
+    connect(_reverseSearch, &QAction::toggled, this, &Koncrepe::IncrementalSearchBar::reverseSearchToggled);
     updateButtonsAccordingToReverseSearchSetting();
 
     _noWrap = optionsMenu->addAction(i18nc("@item:inmenu", "No wrap"));
     _noWrap->setCheckable(true);
     _noWrap->setToolTip(i18nc("@info:tooltip", "Sets whether search should stop instead of wrapping"));
-    connect(_noWrap, &QAction::toggled, this, &Konsole::IncrementalSearchBar::noWrapToggled);
+    connect(_noWrap, &QAction::toggled, this, &Koncrepe::IncrementalSearchBar::noWrapToggled);
 
     setOptions();
 
@@ -302,11 +302,11 @@ const QBitArray IncrementalSearchBar::optionsChecked()
 
 void IncrementalSearchBar::setOptions()
 {
-    _caseSensitiveButton->setChecked(KonsoleSettings::searchCaseSensitive());
-    _regExpression->setChecked(KonsoleSettings::searchRegExpression());
-    _highlightMatches->setChecked(KonsoleSettings::searchHighlightMatches());
-    _reverseSearch->setChecked(KonsoleSettings::searchReverseSearch());
-    _noWrap->setChecked(KonsoleSettings::searchNoWrap());
+    _caseSensitiveButton->setChecked(KoncrepeSettings::searchCaseSensitive());
+    _regExpression->setChecked(KoncrepeSettings::searchRegExpression());
+    _highlightMatches->setChecked(KoncrepeSettings::searchHighlightMatches());
+    _reverseSearch->setChecked(KoncrepeSettings::searchReverseSearch());
+    _noWrap->setChecked(KoncrepeSettings::searchNoWrap());
 }
 
 #include "moc_IncrementalSearchBar.cpp"

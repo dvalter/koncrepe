@@ -9,7 +9,7 @@
 
 #include "IContainerDetector.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 
 /**
@@ -53,6 +53,6 @@ private:
     ContainerInfo buildContainerInfo(const QString &name) const;
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // DISTROBOXDETECTOR_H

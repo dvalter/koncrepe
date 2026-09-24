@@ -9,7 +9,7 @@
 
 #include "CompactHistoryScroll.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // Reasonable line size
 static const int LINE_SIZE = 1024;

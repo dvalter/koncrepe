@@ -6,7 +6,7 @@
 
 // Own
 #include "widgets/ViewContainer.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Qt
 #include <QBoxLayout>
@@ -23,9 +23,9 @@
 #include <KColorUtils>
 #include <KLocalizedString>
 
-// Konsole
+// Koncrepe
 #include "DetachableTabBar.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "ViewProperties.h"
 #include "containers/ContainerList.h"
 #include "containers/ContainerRegistry.h"
@@ -39,9 +39,9 @@
 #include "widgets/IncrementalSearchBar.h"
 #include "widgets/ViewSplitter.h"
 
-// TODO Perhaps move everything which is Konsole-specific into different files
+// TODO Perhaps move everything which is Koncrepe-specific into different files
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 static QString containerBadgeColorStyle(const QColor &color)
 {
@@ -99,8 +99,8 @@ TabbedViewContainer::TabbedViewContainer(ViewManager *connectedViewManager, QWid
         closeCurrentTab();
     });
 
-    connect(tabBar(), &QTabBar::tabBarDoubleClicked, this, &Konsole::TabbedViewContainer::tabDoubleClicked);
-    connect(tabBar(), &QTabBar::customContextMenuRequested, this, &Konsole::TabbedViewContainer::openTabContextMenu);
+    connect(tabBar(), &QTabBar::tabBarDoubleClicked, this, &Koncrepe::TabbedViewContainer::tabDoubleClicked);
+    connect(tabBar(), &QTabBar::customContextMenuRequested, this, &Koncrepe::TabbedViewContainer::openTabContextMenu);
     connect(tabBarWidget, &DetachableTabBar::detachTab, this, [this](int idx) {
         Q_EMIT detachTab(idx);
     });
@@ -148,10 +148,10 @@ TabbedViewContainer::TabbedViewContainer(ViewManager *connectedViewManager, QWid
 
     auto profileMenu = new QMenu(this);
     auto profileList = new ProfileList(false, profileMenu);
-    connect(profileList, &Konsole::ProfileList::profileSelected, this, &TabbedViewContainer::newViewWithProfileRequest);
+    connect(profileList, &Koncrepe::ProfileList::profileSelected, this, &TabbedViewContainer::newViewWithProfileRequest);
 
-    auto containerList = new Konsole::ContainerList(profileMenu);
-    connect(containerList, &Konsole::ContainerList::containerSelected, this, &TabbedViewContainer::newViewInContainerRequest);
+    auto containerList = new Koncrepe::ContainerList(profileMenu);
+    connect(containerList, &Koncrepe::ContainerList::containerSelected, this, &TabbedViewContainer::newViewInContainerRequest);
 
     auto rebuildProfileMenu = [profileMenu, profileList, containerList]() {
         profileMenu->clear();
@@ -170,8 +170,8 @@ TabbedViewContainer::TabbedViewContainer(ViewManager *connectedViewManager, QWid
 
     _newTabButton->setMenu(profileMenu);
 
-    konsoleConfigChanged();
-    connect(KonsoleSettings::self(), &KonsoleSettings::configChanged, this, &TabbedViewContainer::konsoleConfigChanged);
+    koncrepeConfigChanged();
+    connect(KoncrepeSettings::self(), &KoncrepeSettings::configChanged, this, &TabbedViewContainer::koncrepeConfigChanged);
     updateActiveContainerBadge();
 }
 
@@ -190,7 +190,7 @@ TabbedViewContainer::~TabbedViewContainer()
 
     for (int i = 0, end = count(); i < end; i++) {
         auto view = widget(i);
-        disconnect(view, &QWidget::destroyed, this, &Konsole::TabbedViewContainer::viewDestroyed);
+        disconnect(view, &QWidget::destroyed, this, &Koncrepe::TabbedViewContainer::viewDestroyed);
     }
 }
 
@@ -248,31 +248,31 @@ void TabbedViewContainer::moveTabToWindow(int index, QWidget *window)
     forgetView();
 }
 
-void TabbedViewContainer::konsoleConfigChanged()
+void TabbedViewContainer::koncrepeConfigChanged()
 {
     // don't show tabs if we are in KParts mode.
     // This is a hack, and this needs to be rewritten.
     // The container should not be part of the KParts, perhaps just the
     // TerminalDisplay should.
 
-    // ASAN issue if using sessionController->isKonsolePart(), just
+    // ASAN issue if using sessionController->isKoncrepePart(), just
     // duplicate code for now
-    if (qApp->applicationName() != QLatin1String("konsole")) {
+    if (qApp->applicationName() != QLatin1String("koncrepe")) {
         tabBar()->setVisible(false);
     } else {
         // if we start with --show-tabbar or --hide-tabbar we ignore the preferences.
-        setTabBarAutoHide(KonsoleSettings::tabBarVisibility() == KonsoleSettings::EnumTabBarVisibility::ShowTabBarWhenNeeded);
-        if (KonsoleSettings::tabBarVisibility() == KonsoleSettings::EnumTabBarVisibility::AlwaysShowTabBar) {
+        setTabBarAutoHide(KoncrepeSettings::tabBarVisibility() == KoncrepeSettings::EnumTabBarVisibility::ShowTabBarWhenNeeded);
+        if (KoncrepeSettings::tabBarVisibility() == KoncrepeSettings::EnumTabBarVisibility::AlwaysShowTabBar) {
             tabBar()->setVisible(true);
-        } else if (KonsoleSettings::tabBarVisibility() == KonsoleSettings::EnumTabBarVisibility::AlwaysHideTabBar) {
+        } else if (KoncrepeSettings::tabBarVisibility() == KoncrepeSettings::EnumTabBarVisibility::AlwaysHideTabBar) {
             tabBar()->setVisible(false);
         }
     }
 
-    setTabPosition((QTabWidget::TabPosition)KonsoleSettings::tabBarPosition());
+    setTabPosition((QTabWidget::TabPosition)KoncrepeSettings::tabBarPosition());
 
-    setCornerWidget(KonsoleSettings::newTabButton() ? _newTabButton : nullptr, Qt::TopLeftCorner);
-    _newTabButton->setVisible(KonsoleSettings::newTabButton());
+    setCornerWidget(KoncrepeSettings::newTabButton() ? _newTabButton : nullptr, Qt::TopLeftCorner);
+    _newTabButton->setVisible(KoncrepeSettings::newTabButton());
 
     // Add Layout for right corner tool buttons
     auto layout = new QHBoxLayout();
@@ -280,24 +280,24 @@ void TabbedViewContainer::konsoleConfigChanged()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    if (KonsoleSettings::searchTabsButton() == 0) {
+    if (KoncrepeSettings::searchTabsButton() == 0) {
         layout->addWidget(_searchTabsButton);
     }
-    _searchTabsButton->setVisible(KonsoleSettings::searchTabsButton() == 0);
+    _searchTabsButton->setVisible(KoncrepeSettings::searchTabsButton() == 0);
 
-    if (KonsoleSettings::closeTabButton() == 1) {
+    if (KoncrepeSettings::closeTabButton() == 1) {
         layout->addWidget(_closeTabButton);
     }
-    _closeTabButton->setVisible(KonsoleSettings::closeTabButton() == 1);
+    _closeTabButton->setVisible(KoncrepeSettings::closeTabButton() == 1);
 
     QWidget *rightCornerWidget = new QWidget();
     rightCornerWidget->setLayout(layout);
     setCornerWidget(rightCornerWidget, Qt::TopRightCorner);
     rightCornerWidget->setVisible(true);
 
-    tabBar()->setTabsClosable(KonsoleSettings::closeTabButton() == 0);
+    tabBar()->setTabsClosable(KoncrepeSettings::closeTabButton() == 0);
 
-    tabBar()->setExpanding(KonsoleSettings::expandTabWidth());
+    tabBar()->setExpanding(KoncrepeSettings::expandTabWidth());
     tabBar()->update();
 
     for (int i = 0; i < count(); ++i) {
@@ -307,8 +307,8 @@ void TabbedViewContainer::konsoleConfigChanged()
     }
     updateActiveContainerBadge();
 
-    if (KonsoleSettings::tabBarUseUserStyleSheet()) {
-        setCssFromFile(KonsoleSettings::tabBarUserStyleSheetFile());
+    if (KoncrepeSettings::tabBarUseUserStyleSheet()) {
+        setCssFromFile(KoncrepeSettings::tabBarUserStyleSheetFile());
         _stylesheetSet = true;
     } else {
         if (_stylesheetSet) {
@@ -322,12 +322,12 @@ void TabbedViewContainer::setCssFromFile(const QUrl &url)
 {
     // Let's only deal w/ local files for now
     if (!url.isLocalFile()) {
-        setStyleSheet(KonsoleSettings::tabBarStyleSheet());
+        setStyleSheet(KoncrepeSettings::tabBarStyleSheet());
     }
 
     QFile file(url.toLocalFile());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        setStyleSheet(KonsoleSettings::tabBarStyleSheet());
+        setStyleSheet(KoncrepeSettings::tabBarStyleSheet());
     }
 
     QTextStream in(&file);
@@ -440,7 +440,7 @@ void TabbedViewContainer::addView(TerminalDisplay *view)
     connect(viewSplitter, &ViewSplitter::terminalDisplayDropped, this, &TabbedViewContainer::terminalDisplayDropped);
 
     // Put this view on the foreground if it requests so, eg. on bell activity
-    connect(view, &TerminalDisplay::activationRequest, this, &Konsole::TabbedViewContainer::activateView);
+    connect(view, &TerminalDisplay::activationRequest, this, &Koncrepe::TabbedViewContainer::activateView);
 
     setCurrentIndex(index);
     Q_EMIT viewAdded(view);
@@ -453,34 +453,34 @@ void TabbedViewContainer::splitView(TerminalDisplay *view, Qt::Orientation orien
     viewSplitter->addTerminalDisplay(view, orientation);
     connectTerminalDisplay(view);
     // Put this view on the foreground if it requests so, eg. on bell activity
-    connect(view, &TerminalDisplay::activationRequest, this, &Konsole::TabbedViewContainer::activateView);
+    connect(view, &TerminalDisplay::activationRequest, this, &Koncrepe::TabbedViewContainer::activateView);
 }
 
 void TabbedViewContainer::connectTerminalDisplay(TerminalDisplay *display)
 {
     auto item = display->sessionController();
-    connect(item, &Konsole::SessionController::viewFocused, this, &Konsole::TabbedViewContainer::currentSessionControllerChanged);
+    connect(item, &Koncrepe::SessionController::viewFocused, this, &Koncrepe::TabbedViewContainer::currentSessionControllerChanged);
     if (const auto session = item->session(); !session.isNull()) {
-        connect(session, &Konsole::Session::containerContextChanged, this, &Konsole::TabbedViewContainer::updateActiveContainerBadge, Qt::UniqueConnection);
+        connect(session, &Koncrepe::Session::containerContextChanged, this, &Koncrepe::TabbedViewContainer::updateActiveContainerBadge, Qt::UniqueConnection);
     }
 
-    connect(item, &Konsole::ViewProperties::titleChanged, this, &Konsole::TabbedViewContainer::updateTitle);
+    connect(item, &Koncrepe::ViewProperties::titleChanged, this, &Koncrepe::TabbedViewContainer::updateTitle);
 
-    connect(item, &Konsole::ViewProperties::colorChanged, this, &Konsole::TabbedViewContainer::updateColors);
+    connect(item, &Koncrepe::ViewProperties::colorChanged, this, &Koncrepe::TabbedViewContainer::updateColors);
 
-    connect(item, &Konsole::ViewProperties::activityColorChanged, this, &Konsole::TabbedViewContainer::updateColors);
+    connect(item, &Koncrepe::ViewProperties::activityColorChanged, this, &Koncrepe::TabbedViewContainer::updateColors);
 
-    connect(item, &Konsole::ViewProperties::iconChanged, this, &Konsole::TabbedViewContainer::updateIcon);
+    connect(item, &Koncrepe::ViewProperties::iconChanged, this, &Koncrepe::TabbedViewContainer::updateIcon);
 
-    connect(item, &Konsole::ViewProperties::activity, this, &Konsole::TabbedViewContainer::updateActivity);
+    connect(item, &Koncrepe::ViewProperties::activity, this, &Koncrepe::TabbedViewContainer::updateActivity);
 
-    connect(item, &Konsole::ViewProperties::notificationChanged, this, &Konsole::TabbedViewContainer::updateNotification);
+    connect(item, &Koncrepe::ViewProperties::notificationChanged, this, &Koncrepe::TabbedViewContainer::updateNotification);
 
-    connect(item, &Konsole::ViewProperties::readOnlyChanged, this, &Konsole::TabbedViewContainer::updateSpecialState);
+    connect(item, &Koncrepe::ViewProperties::readOnlyChanged, this, &Koncrepe::TabbedViewContainer::updateSpecialState);
 
-    connect(item, &Konsole::ViewProperties::copyInputChanged, this, &Konsole::TabbedViewContainer::updateSpecialState);
+    connect(item, &Koncrepe::ViewProperties::copyInputChanged, this, &Koncrepe::TabbedViewContainer::updateSpecialState);
 
-    connect(item, &Konsole::ViewProperties::progressChanged, this, &Konsole::TabbedViewContainer::updateProgress);
+    connect(item, &Koncrepe::ViewProperties::progressChanged, this, &Koncrepe::TabbedViewContainer::updateProgress);
 }
 
 void TabbedViewContainer::disconnectTerminalDisplay(TerminalDisplay *display)
@@ -488,7 +488,7 @@ void TabbedViewContainer::disconnectTerminalDisplay(TerminalDisplay *display)
     auto item = display->sessionController();
     item->disconnect(this);
     if (const auto session = item->session(); !session.isNull()) {
-        disconnect(session, &Konsole::Session::containerContextChanged, this, &Konsole::TabbedViewContainer::updateActiveContainerBadge);
+        disconnect(session, &Koncrepe::Session::containerContextChanged, this, &Koncrepe::TabbedViewContainer::updateActiveContainerBadge);
     }
     removeContainerBadge(display);
 }
@@ -695,7 +695,7 @@ QColor TabbedViewContainer::effectiveTabColor(ViewSplitter *splitter) const
     bool hasChosen = false;
     bool mixed = false;
 
-    const bool indicatorEnabled = KonsoleSettings::showContainerTabColor();
+    const bool indicatorEnabled = KoncrepeSettings::showContainerTabColor();
     for (TerminalDisplay *display : displays) {
         auto *controller = display != nullptr ? display->sessionController() : nullptr;
         auto session = controller != nullptr ? controller->session() : QPointer<Session>{};
@@ -958,7 +958,7 @@ void TabbedViewContainer::updateContainerBadgeForDisplay(TerminalDisplay *displa
         return;
     }
 
-    if (!KonsoleSettings::showContainerStatusBar()) {
+    if (!KoncrepeSettings::showContainerStatusBar()) {
         if (_containerBadgeWidgets.contains(display)) {
             _containerBadgeWidgets.value(display)->setVisible(false);
         }

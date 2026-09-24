@@ -9,7 +9,7 @@
 
 #include <QtGlobal>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 class Character;

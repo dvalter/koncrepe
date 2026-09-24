@@ -7,11 +7,11 @@
 // Own
 #include "SessionDisplayConnection.h"
 
-// Konsole
+// Koncrepe
 #include "Session.h"
 #include "terminalDisplay/TerminalDisplay.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 SessionDisplayConnection::SessionDisplayConnection(Session *session, TerminalDisplay *view, QObject *parent)
     : QObject(parent)
@@ -35,6 +35,6 @@ bool SessionDisplayConnection::isValid() const
     return !_session.isNull() && !_view.isNull();
 }
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #include "moc_SessionDisplayConnection.cpp"

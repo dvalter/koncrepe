@@ -2,10 +2,10 @@
 
 The schemata offered in the Options/Schema menu are
 taken from from configurations files with a *.schema
-pattern either located in $KDEDIR/share/apps/konsole
-or ~/.kde/share/apps/konsole.
+pattern either located in $KDEDIR/share/apps/koncrepe
+or ~/.kde/share/apps/koncrepe.
 
-Schemata allow to configure the color set that konsole
+Schemata allow to configure the color set that koncrepe
 uses, together with some more information on rendition
 processing.
 
@@ -29,7 +29,7 @@ Meaning
     It should be unique among all other schemata therefore.
 
   - The "image" clause allows to place an image on the
-    konsole's background.
+    koncrepe's background.
 
     - Usage can be either
       - "tile"   - the image is tilewise replicated.
@@ -57,9 +57,9 @@ Meaning
     being more(1) or less(0) intransparent.
 
   - The remaining clauses (color,sysbg,sysfg) are used
-    to setup konsoles rendition system.
+    to setup koncrepes rendition system.
 
-    To this end, konsole offers 20 color slots.
+    To this end, koncrepe offers 20 color slots.
 
      Slot  Meaning
     -----  --------------------------
@@ -87,7 +87,7 @@ Meaning
         7   111  White
 
     One may or may not stick to this tradition.
-    Konsole allows to assign colors freely to slots.
+    Koncrepe allows to assign colors freely to slots.
 
     The slots fall apart into two groups, regular
     and intensive colors. The later are used when
@@ -120,13 +120,13 @@ Meaning
 If you know about the escape codes, you might have
 noticed that intensive and bold rendition are sort
 of confused. This is inherited by the xterm which
-konsole is simulating.
+koncrepe is simulating.
 
 One can use the colortest.sh script supplied
-with the konsole source distribution to test
+with the koncrepe source distribution to test
 a schema.
 
-The schema installed with konsole are more or
+The schema installed with koncrepe are more or
 less demonstrations and not really beauty,
 beside the Linux.schema, perhaps, which is
 made after the VGA colors.

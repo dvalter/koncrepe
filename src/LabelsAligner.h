@@ -14,7 +14,7 @@
 class QWidget;
 class QGridLayout;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * An utility class for aligning 0th column in multiple QGridLayouts.

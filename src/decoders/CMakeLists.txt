@@ -1,15 +1,15 @@
-add_library(konsoledecoders OBJECT)
+add_library(koncrepedecoders OBJECT)
 
-set_target_properties(konsoledecoders PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(koncrepedecoders PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_sources(konsoledecoders PRIVATE
+target_sources(koncrepedecoders PRIVATE
     PlainTextDecoder.cpp
     HTMLDecoder.cpp
 )
 
-target_include_directories(konsoledecoders
+target_include_directories(koncrepedecoders
     PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-# TODO: remove the konsolecolorscheme dependencies
-target_link_libraries(konsoledecoders PUBLIC konsolecharacters)
+# TODO: remove the koncrepecolorscheme dependencies
+target_link_libraries(koncrepedecoders PUBLIC koncrepecharacters)

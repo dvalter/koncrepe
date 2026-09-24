@@ -7,9 +7,9 @@
 
 #include "PluginManager.h"
 
-#include "IKonsolePlugin.h"
+#include "IKoncrepePlugin.h"
 #include "MainWindow.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
 #include <KLocalizedString>
 #include <KPluginFactory>
@@ -17,10 +17,10 @@
 
 #include <QAction>
 
-namespace Konsole
+namespace Koncrepe
 {
 struct PluginManagerPrivate {
-    std::vector<IKonsolePlugin *> plugins;
+    std::vector<IKoncrepePlugin *> plugins;
 };
 
 PluginManager::PluginManager()
@@ -35,20 +35,20 @@ PluginManager::~PluginManager()
 
 void PluginManager::loadAllPlugins()
 {
-    QVector<KPluginMetaData> pluginMetaData = KPluginMetaData::findPlugins(QStringLiteral("konsoleplugins"), [](const KPluginMetaData &data) {
+    QVector<KPluginMetaData> pluginMetaData = KPluginMetaData::findPlugins(QStringLiteral("koncrepeplugins"), [](const KPluginMetaData &data) {
         // Compare RELEASE_SERVICE_VERSION MAJOR and MINOR only: XX.YY
         auto plugin_version = QString(data.version()).left(5);
         auto release_version = QLatin1String(RELEASE_SERVICE_VERSION).left(5);
         if (plugin_version == release_version) {
             return true;
         } else {
-            qCWarning(KonsoleDebug) << "Ignoring" << data.name() << "plugin version (" << plugin_version << ") doesn't match release version ("
+            qCWarning(KoncrepeDebug) << "Ignoring" << data.name() << "plugin version (" << plugin_version << ") doesn't match release version ("
                                     << release_version << ")";
             return false;
         }
     });
     for (const auto &metaData : std::as_const(pluginMetaData)) {
-        const KPluginFactory::Result result = KPluginFactory::instantiatePlugin<IKonsolePlugin>(metaData);
+        const KPluginFactory::Result result = KPluginFactory::instantiatePlugin<IKoncrepePlugin>(metaData);
         if (!result) {
             continue;
         }
@@ -57,7 +57,7 @@ void PluginManager::loadAllPlugins()
     }
 }
 
-void PluginManager::registerMainWindow(Konsole::MainWindow *window)
+void PluginManager::registerMainWindow(Koncrepe::MainWindow *window)
 {
     QList<QAction *> internalPluginSubmenus;
     for (auto *plugin : d->plugins) {
@@ -75,7 +75,7 @@ void PluginManager::registerMainWindow(Konsole::MainWindow *window)
     window->setPluginsActions(internalPluginSubmenus);
 }
 
-std::vector<IKonsolePlugin *> PluginManager::plugins() const
+std::vector<IKoncrepePlugin *> PluginManager::plugins() const
 {
     return d->plugins;
 }

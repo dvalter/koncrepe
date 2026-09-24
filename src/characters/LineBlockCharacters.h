@@ -10,7 +10,7 @@
 // Qt
 #include <QPainter>
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Helper functions for drawing characters from "Box Drawing" and "Block Elements" Unicode blocks.
@@ -53,6 +53,6 @@ inline static bool isLegacyComputingSymbol(uint ucs4cp)
 void draw(QPainter &paint, const QRect &cellRect, const uint &chr, bool bold);
 
 } // namespace LineBlockCharacters
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // LINEBLOCKCHARACTERS_H

@@ -9,8 +9,8 @@
 // Own
 #include "TerminalFonts.h"
 
-// Konsole
-#include "konsoledebug.h"
+// Koncrepe
+#include "koncrepedebug.h"
 #include "session/Session.h"
 #include "session/SessionController.h"
 #include "session/SessionManager.h"
@@ -20,7 +20,7 @@
 #include <QFont>
 #include <QFontMetrics>
 
-namespace Konsole
+namespace Koncrepe
 {
 TerminalFont::TerminalFont(QWidget *parent)
     : m_parent(parent)
@@ -62,19 +62,19 @@ void TerminalFont::setVTFont(const QFont &f)
 
     // Try to check that a good font has been loaded.
     // For some fonts, ForceIntegerMetrics causes height() == 0 which
-    // will cause Konsole to crash later.
+    // will cause Koncrepe to crash later.
     QFontMetrics fontMetrics2(newFont);
     if (fontMetrics2.height() < 1) {
-        qCDebug(KonsoleDebug) << "The font " << newFont.toString() << " has an invalid height()";
+        qCDebug(KoncrepeDebug) << "The font " << newFont.toString() << " has an invalid height()";
         // Ask for a generic font so at least it is usable.
         // Font listed in profile's dialog will not be updated.
         newFont = QFont(QStringLiteral("Monospace"));
 
         newFont.setStyleHint(QFont::TypeWriter, QFont::StyleStrategy(strategy));
-        qCDebug(KonsoleDebug) << "Font changed to " << newFont.toString();
+        qCDebug(KoncrepeDebug) << "Font changed to " << newFont.toString();
     }
 
-    // experimental optimization.  Konsole assumes that the terminal is using a
+    // experimental optimization.  Koncrepe assumes that the terminal is using a
     // mono-spaced font, in which case kerning information should have an effect.
     // Disabling kerning saves some computation when rendering text.
     newFont.setKerning(false);
@@ -121,9 +121,9 @@ void TerminalFont::setVTFont(const QFont &f)
                                                       static_cast<int>(fontInfo.strikeOut()),
                                                       // Intentional newFont use - fixedPitch is bugged, see comment above
                                                       static_cast<int>(newFont.fixedPitch()));
-        qCDebug(KonsoleDebug) << "The font to use in the terminal can not be matched exactly on your system.";
-        qCDebug(KonsoleDebug) << " Selected: " << newFont.toString();
-        qCDebug(KonsoleDebug) << " System  : " << nonMatching;
+        qCDebug(KoncrepeDebug) << "The font to use in the terminal can not be matched exactly on your system.";
+        qCDebug(KoncrepeDebug) << " Selected: " << newFont.toString();
+        qCDebug(KoncrepeDebug) << " System  : " << nonMatching;
     }
 
     qobject_cast<QWidget *>(m_parent)->setFont(newFont);

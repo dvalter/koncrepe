@@ -22,7 +22,7 @@
 #include "Emulation.h"
 #include "session/SessionManager.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 QString SaveHistoryAutoTask::_saveDialogRecentURL;
 
@@ -44,8 +44,8 @@ bool SaveHistoryAutoTask::execute()
     QStringList mimeTypes{QStringLiteral("text/plain")};
     dialog->setMimeTypeFilters(mimeTypes);
 
-    KSharedConfigPtr konsoleConfig = KSharedConfig::openConfig();
-    auto group = konsoleConfig->group(QStringLiteral("SaveHistory Settings"));
+    KSharedConfigPtr koncrepeConfig = KSharedConfig::openConfig();
+    auto group = koncrepeConfig->group(QStringLiteral("SaveHistory Settings"));
 
     if (_saveDialogRecentURL.isEmpty()) {
         const auto list = group.readPathEntry("Recent URLs", QStringList());

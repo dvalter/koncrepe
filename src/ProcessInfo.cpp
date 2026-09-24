@@ -5,13 +5,13 @@
 */
 
 // Config
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Own
 #include "NullProcessInfo.h"
 #include "ProcessInfo.h"
 #include "UnixProcessInfo.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
 // Unix
 #ifndef Q_OS_WIN
@@ -65,7 +65,7 @@
 #endif
 #endif
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ProcessInfo::ProcessInfo(int pid)
     : _fields(ARGUMENTS) // arguments
@@ -347,7 +347,7 @@ void ProcessInfo::setFileError(QFile::FileError error)
 #include <QThread>
 #include <QVariant>
 
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 
 typedef QPair<QString, QDBusVariant> VariantPair;
 typedef QList<VariantPair> VariantList;
@@ -415,8 +415,8 @@ public:
 
         if (_createdAppCGroupPath.isEmpty() && !_cGroupCreationFailed) {
             _cGroupCreationFailed = !initCGroupHierachy(pid);
-            if (KonsoleSettings::enableMemoryMonitoring() && !_cGroupCreationFailed) {
-                setUnitMemLimit(KonsoleSettings::memoryLimitValue());
+            if (KoncrepeSettings::enableMemoryMonitoring() && !_cGroupCreationFailed) {
+                setUnitMemLimit(KoncrepeSettings::memoryLimitValue());
             }
             return;
         }
@@ -647,7 +647,7 @@ private:
         const QString oldAppCGroupPath(getProcCGroup(selfPid));
 
         auto appUnitName = QStringLiteral("app-%1-%2.scope").arg(QGuiApplication::desktopFileName()).arg(selfPid);
-        qCDebug(KonsoleDebug) << "Creating scope" << appUnitName;
+        qCDebug(KoncrepeDebug) << "Creating scope" << appUnitName;
 
         // create application unit
         VariantList properties;

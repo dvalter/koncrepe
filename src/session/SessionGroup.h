@@ -14,7 +14,7 @@
 #include <QList>
 #include <QObject>
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 
@@ -82,6 +82,6 @@ private:
 
     int _masterMode = 0;
 };
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // SESSIONGROUP_H

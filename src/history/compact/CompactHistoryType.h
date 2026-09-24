@@ -8,11 +8,11 @@
 #define COMPACTHISTORYTYPE_H
 
 #include "history/HistoryType.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT CompactHistoryType : public HistoryType
+class KONCREPEPRIVATE_EXPORT CompactHistoryType : public HistoryType
 {
 public:
     explicit CompactHistoryType(unsigned int nbLines);

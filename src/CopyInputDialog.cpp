@@ -10,7 +10,7 @@
 // Qt
 #include <QSortFilterProxyModel>
 
-// Konsole
+// Koncrepe
 #include "CheckableSessionModel.h"
 #include "ui_CopyInputDialog.h"
 
@@ -19,7 +19,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 CopyInputDialog::CopyInputDialog(QWidget *parent)
     : QDialog(parent)
@@ -44,8 +44,8 @@ CopyInputDialog::CopyInputDialog(QWidget *parent)
     _ui = new Ui::CopyInputDialog();
     _ui->setupUi(mainWidget);
 
-    connect(_ui->selectAllButton, &QPushButton::clicked, this, &Konsole::CopyInputDialog::selectAll);
-    connect(_ui->deselectAllButton, &QPushButton::clicked, this, &Konsole::CopyInputDialog::deselectAll);
+    connect(_ui->selectAllButton, &QPushButton::clicked, this, &Koncrepe::CopyInputDialog::selectAll);
+    connect(_ui->deselectAllButton, &QPushButton::clicked, this, &Koncrepe::CopyInputDialog::deselectAll);
 
     _ui->filterEdit->setClearButtonEnabled(true);
     _ui->filterEdit->setFocus();

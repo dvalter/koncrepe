@@ -7,19 +7,19 @@
 #ifndef HISTORYSCROLLFILE_H
 #define HISTORYSCROLLFILE_H
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 // History
 #include "HistoryFile.h"
 #include "HistoryScroll.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 //////////////////////////////////////////////////////////////////////
 // File-based history (e.g. file log, no limitation in length)
 //////////////////////////////////////////////////////////////////////
 
-class KONSOLEPRIVATE_EXPORT HistoryScrollFile : public HistoryScroll
+class KONCREPEPRIVATE_EXPORT HistoryScrollFile : public HistoryScroll
 {
 public:
     explicit HistoryScrollFile();

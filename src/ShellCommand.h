@@ -9,10 +9,10 @@
 
 // Qt
 #include <QStringList>
-// Konsole
-#include "konsoleprivate_export.h"
+// Koncrepe
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A class to parse and extract information about shell commands.
@@ -35,7 +35,7 @@ namespace Konsole
  *      </li>
  * </ul>
  */
-class KONSOLEPRIVATE_EXPORT ShellCommand
+class KONCREPEPRIVATE_EXPORT ShellCommand
 {
 public:
     /**

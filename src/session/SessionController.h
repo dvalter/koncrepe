@@ -19,12 +19,12 @@
 
 #include <memory>
 
-// Konsole
+// Koncrepe
 #include "Enumeration.h"
 #include "Session.h"
 #include "SessionDisplayConnection.h"
 #include "ViewProperties.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class QAction;
 class QTextCodec;
@@ -37,7 +37,7 @@ class QAction;
 class KActionMenu;
 class KSelectAction;
 
-namespace Konsole
+namespace Koncrepe
 {
 class EditProfileDialog;
 class EscapeSequenceUrlFilter;
@@ -68,7 +68,7 @@ class SaveHistoryAutoTask;
  * which contains the view to plug the controller's actions into the menu when
  * the view is focused.
  */
-class KONSOLEPRIVATE_EXPORT SessionController : public ViewProperties, public KXMLGUIClient
+class KONCREPEPRIVATE_EXPORT SessionController : public ViewProperties, public KXMLGUIClient
 {
     Q_OBJECT
 
@@ -141,8 +141,8 @@ public:
         return _allControllers;
     }
 
-    /* Returns true if called within a KPart; false if called within Konsole. */
-    bool isKonsolePart() const;
+    /* Returns true if called within a KPart; false if called within Koncrepe. */
+    bool isKoncrepePart() const;
     bool isReadOnly() const;
     bool isCopyInputActive() const;
 

@@ -9,7 +9,7 @@
 
 #include "RegExpFilterHotspot.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 RegExpFilter::RegExpFilter()
     : _searchText(QRegularExpression())

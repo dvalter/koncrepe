@@ -1,29 +1,29 @@
-# Konsole - KDE's Terminal Emulator
+# Koncrepe - KDE's Terminal Emulator
 
-Konsole is a terminal program for KDE.
+Koncrepe is a terminal program for KDE.
 
 As well as being a standalone program, it is also used by other KDE programs
 such as the Kate editor and KDevelop development environment to provide easy
-access to a terminal window. Konsole's features and usage are explained and
-illustrated in the Konsole handbook, which can be accessed by browsing to
-`help:/konsole` in Konqueror.
+access to a terminal window. Koncrepe's features and usage are explained and
+illustrated in the Koncrepe handbook, which can be accessed by browsing to
+`help:/koncrepe` in Konqueror.
 
 
 ## Directory Structure
 
 | Directory          | Description                                                                                                                                                                        |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/doc/user`        | README files, primarily for advanced users, explaining various aspects of Konsole such as fonts and keyboard handling in-depth.                                                    |
-| `/doc/developer`   | README files and resources for developers of Konsole. This includes information on the design of Konsole's internals and the VT100 terminal on which Konsole's emulation is based. |
-| `/src`             | Source code for Konsole, including the embedded versions of Konsole which are used in Kate, KDevelop and others.                                                                   |
-| `/desktop`         | .desktop files for Konsole, used to launch the program from KDE's various menus and other application launchers.                                                                   |
-| `/data`            | Data files for use with Konsole as well as the keyboard setup and color schemes provided with Konsole.                                                                             |
+| `/doc/user`        | README files, primarily for advanced users, explaining various aspects of Koncrepe such as fonts and keyboard handling in-depth.                                                    |
+| `/doc/developer`   | README files and resources for developers of Koncrepe. This includes information on the design of Koncrepe's internals and the VT100 terminal on which Koncrepe's emulation is based. |
+| `/src`             | Source code for Koncrepe, including the embedded versions of Koncrepe which are used in Kate, KDevelop and others.                                                                   |
+| `/desktop`         | .desktop files for Koncrepe, used to launch the program from KDE's various menus and other application launchers.                                                                   |
+| `/data`            | Data files for use with Koncrepe as well as the keyboard setup and color schemes provided with Koncrepe.                                                                             |
 
 ## Contact
 
-Up-to-date information about the latest releases can be found on Konsole's
-website at https://konsole.kde.org. Discussions about Konsole's development are
-held on the konsole-devel mailing list, which can be accessed at
+Up-to-date information about the latest releases can be found on Koncrepe's
+website at https://konsole.kde.org. Discussions about Koncrepe's development are
+held on the koncrepe-devel mailing list, which can be accessed at
 https://mail.kde.org/mailman/listinfo/konsole-devel.
 
 ## Quick Links
@@ -31,5 +31,5 @@ https://mail.kde.org/mailman/listinfo/konsole-devel.
 - [Official Homepage](https://konsole.kde.org)
 - [Builds](https://invent.kde.org/utilities/konsole/-/pipelines)
 - [Forums](https://discuss.kde.org/tag/konsole)
-- [Konsole Bug Reports ](https://bugs.kde.org/describecomponents.cgi?product=konsole)
+- [Koncrepe Bug Reports ](https://bugs.kde.org/describecomponents.cgi?product=konsole)
 

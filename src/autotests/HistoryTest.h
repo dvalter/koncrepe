@@ -15,7 +15,7 @@
 #include "../history/compact/CompactHistoryScroll.h"
 #include "../history/compact/CompactHistoryType.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class HistoryTest : public QObject
 {

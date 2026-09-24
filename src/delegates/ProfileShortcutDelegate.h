@@ -16,7 +16,7 @@ class QWidget;
 class QKeyEvent;
 class QPainter;
 
-namespace Konsole
+namespace Koncrepe
 {
 class StyledBackgroundPainter
 {

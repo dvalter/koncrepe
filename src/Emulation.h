@@ -14,16 +14,16 @@
 #include <QStringEncoder>
 #include <QTimer>
 
-// Konsole
+// Koncrepe
 #include "Enumeration.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 #include "terminalDisplay/TerminalDisplay.h"
 
 #include <memory>
 
 class QKeyEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 class KeyboardTranslator;
 class HistoryType;
@@ -80,7 +80,7 @@ class TerminalCharacterDecoder;
  * how long the emulation has been active/idle for and also respond to
  * a 'bell' event in different ways.
  */
-class KONSOLEPRIVATE_EXPORT Emulation : public QObject
+class KONCREPEPRIVATE_EXPORT Emulation : public QObject
 {
     Q_OBJECT
 
@@ -347,7 +347,7 @@ Q_SIGNALS:
      * </li>
      * <li> 32 - Sets the icon associated with the session. @p newValue
      *      is the name of the icon to use, which can be the name of any
-     *      icon in the current KDE icon theme (eg: 'konsole', 'kate',
+     *      icon in the current KDE icon theme (eg: 'koncrepe', 'kate',
      *      'folder_home')
      * </li>
      * </ul>

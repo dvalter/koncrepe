@@ -9,7 +9,7 @@
 #include "CompactHistoryScroll.h"
 #include "CompactHistoryType.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 CompactHistoryScroll::CompactHistoryScroll(const unsigned int maxLineCount)
     : HistoryScroll(new CompactHistoryType(maxLineCount))

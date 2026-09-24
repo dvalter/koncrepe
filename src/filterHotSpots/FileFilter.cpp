@@ -15,7 +15,7 @@
 
 #include "FileFilterHotspot.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // static
 QRegularExpression FileFilter::_regex;

@@ -6,7 +6,7 @@
 
 #include "ColorFilter.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 #include "ColorFilterHotSpot.h"
 

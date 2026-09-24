@@ -46,10 +46,10 @@
         </sizepolicy>
        </property>
        <property name="toolTip">
-        <string>When launching Konsole re-use existing process if possible</string>
+        <string>When launching Koncrepe re-use existing process if possible</string>
        </property>
        <property name="text">
-        <string>Run all Konsole windows in a single process</string>
+        <string>Run all Koncrepe windows in a single process</string>
        </property>
       </widget>
      </item>

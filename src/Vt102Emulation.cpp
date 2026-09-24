@@ -6,7 +6,7 @@
 */
 // Own
 #include "Vt102Emulation.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Standard
 #include <cstdio>
@@ -25,7 +25,7 @@
 #include <KLocalizedString>
 #include <KNotification>
 
-// Konsole
+// Koncrepe
 #include "EscapeSequenceUrlExtractor.h"
 #include "session/Session.h"
 #include "session/SessionController.h"
@@ -44,9 +44,9 @@
 #include <xkbcommon/xkbcommon.h>
 #endif
 
-#include <konsoledebug.h>
+#include <koncrepedebug.h>
 
-using Konsole::Vt102Emulation;
+using Koncrepe::Vt102Emulation;
 
 /*
    The VT100 has 32 special graphical characters. The usual vt100 extended
@@ -87,7 +87,7 @@ Vt102Emulation::Vt102Emulation()
     , player(nullptr)
 {
     _sessionAttributesUpdateTimer->setSingleShot(true);
-    QObject::connect(_sessionAttributesUpdateTimer, &QTimer::timeout, this, &Konsole::Vt102Emulation::updateSessionAttributes);
+    QObject::connect(_sessionAttributesUpdateTimer, &QTimer::timeout, this, &Koncrepe::Vt102Emulation::updateSessionAttributes);
 
     initTokenizer();
     imageId = 0;
@@ -102,18 +102,18 @@ Vt102Emulation::Vt102Emulation()
 #ifdef HAVE_XKBCOMMON
     _xkbData.context = xkb_context_new(XKB_CONTEXT_NO_FLAGS);
     if (!_xkbData.context) {
-        qCDebug(KonsoleDebug) << "win32-input-mode: FAILED to create xkb_context.";
+        qCDebug(KoncrepeDebug) << "win32-input-mode: FAILED to create xkb_context.";
         _win32InputModeAvailable = false;
     } else {
         struct xkb_rule_names rules = { nullptr, nullptr, "us", nullptr, nullptr };
         _xkbData.keymap_us = xkb_keymap_new_from_names(_xkbData.context, &rules, XKB_KEYMAP_COMPILE_NO_FLAGS);
         if (!_xkbData.keymap_us) {
-            qCDebug(KonsoleDebug) << "win32-input-mode: FAILED to create US keymap.";
+            qCDebug(KoncrepeDebug) << "win32-input-mode: FAILED to create US keymap.";
             _win32InputModeAvailable = false;
         } else {
             _xkbData.state_us = xkb_state_new(_xkbData.keymap_us);
             if (!_xkbData.state_us) {
-                qCDebug(KonsoleDebug) << "win32-input-mode: FAILED to create xkb_state.";
+                qCDebug(KoncrepeDebug) << "win32-input-mode: FAILED to create xkb_state.";
                 _win32InputModeAvailable = false;
             }
         }
@@ -789,7 +789,7 @@ void Vt102Emulation::receiveChars(const QVector<uint> &chars)
                 apc_start(cc);
                 switchState(SosPmApcString, cc);
             } else if (cc == 0x18 || cc == 0x1A || (cc >= 0x80 && cc <= 0x9A)) { // 0x90, 0x98 taken care of just above.
-                // konsole has always ignored CAN and SUB in OSC, extend the behavior a bit
+                // koncrepe has always ignored CAN and SUB in OSC, extend the behavior a bit
                 // this differs from VT240, where 7-bit ST, 8-bit ST, ESC + chr, ***CAN, SUB, C1*** terminate and show SIXEL
                 if (_state != OscString && _state != SosPmApcString && _state != DcsPassthrough) {
                     processToken(token_ctl(cc + '@'), 0, 0);
@@ -983,7 +983,7 @@ void Vt102Emulation::receiveChars(const QVector<uint> &chars)
                     break;
                 case SosPmApcString:
                     if (cc <= 0x7F || cc >= 0xA0) { // 0x18, 0x1A, 0x1B already taken care of.
-                        apc_put(cc); // while the vt100.net diagram has ignore here, konsole does process some APCs (kitty images).
+                        apc_put(cc); // while the vt100.net diagram has ignore here, koncrepe does process some APCs (kitty images).
                     }
                     // 0x9C already taken care of.
                     break;
@@ -1099,7 +1099,7 @@ void Vt102Emulation::processChecksumRequest([[maybe_unused]] int crargc, int cra
 
     for (int y = top - 1; y <= bottom - 1; y++) {
         for (int x = left - 1; x <= right - 1; x++) {
-            // XXX: Apparently, VT520 uses 0x00 for uninitialized cells, konsole can't tell uninitialized cells from spaces
+            // XXX: Apparently, VT520 uses 0x00 for uninitialized cells, koncrepe can't tell uninitialized cells from spaces
             Character c = image[y * _currentScreen->getColumns() + x];
 
             if (c.rendition.f.conceal) {
@@ -2049,7 +2049,7 @@ void Vt102Emulation::processToken(int token, int p, int q)
     case token_csi_ps('t',   16) : reportCellSize();           break;
     case token_csi_ps('t',   18) : reportSize();               break;
     // change tab text color : \e[28;<color>t  color: 0-16,777,215
-    case token_csi_ps('t',   28) : /* IGNORED: konsole-specific KDE3-era extension, not implemented */ break;
+    case token_csi_ps('t',   28) : /* IGNORED: koncrepe-specific KDE3-era extension, not implemented */ break;
 
     case token_csi_ps('t',  22) : /* IGNORED: Save icon and window title on stack */      break; //XTERM
     case token_csi_ps('t',  23) : /* IGNORED: Restore icon and window title from stack */ break; //XTERM
@@ -2272,7 +2272,7 @@ void Vt102Emulation::processToken(int token, int p, int q)
 
     //Note about mouse modes:
     //There are four mouse modes which xterm-compatible terminals can support - 1000,1001,1002,1003
-    //Konsole currently supports mode 1000 (basic mouse press and release),  mode 1002 (dragging the mouse)
+    //Koncrepe currently supports mode 1000 (basic mouse press and release),  mode 1002 (dragging the mouse)
     //and mode 1003 (moving the mouse).
     //TODO:  Implementation of mouse mode 1001 (something called highlight tracking).
     //
@@ -2493,7 +2493,7 @@ void Vt102Emulation::processGraphicsToken(int tokenSize)
                 int bpp = keys['f'] / 8;
                 qint64 bc = bpp * keys['s'] * keys['v'];
                 if (bc < 0 || bc > 0xFFFFFFFFu) {
-                    qCWarning(KonsoleDebug) << "image byteCount overflow:" << bc;
+                    qCWarning(KoncrepeDebug) << "image byteCount overflow:" << bc;
                     imageData.clear();
                     return;
                 }
@@ -2518,7 +2518,7 @@ void Vt102Emulation::processGraphicsToken(int tokenSize)
 
             if (keys['f'] == 24 || keys['f'] == 32) {
                 if (unsigned(out.size()) < byteCount) {
-                    qCWarning(KonsoleDebug) << "Not enough image data" << out.size() << "require" << byteCount;
+                    qCWarning(KoncrepeDebug) << "Not enough image data" << out.size() << "require" << byteCount;
                     imageData.clear();
                     return;
                 }
@@ -2731,12 +2731,12 @@ void Vt102Emulation::reportSecondaryAttributes()
     } else {
         sendString("\033/Z"); // FIXME I don't think VT52 knows about it but kept for
     }
-    // konsoles backward compatibility.
+    // koncrepes backward compatibility.
 }
 
 void Vt102Emulation::reportVersion()
 {
-    sendString("\033P>|Konsole " KONSOLE_VERSION "\033\\");
+    sendString("\033P>|Koncrepe " KONCREPE_VERSION "\033\\");
 }
 
 /* DECREPTPARM – Report Terminal Parameters
@@ -2969,7 +2969,7 @@ void Vt102Emulation::emulateUpDown(int up, KeyboardTranslator::Entry entry, QByt
 
 /**
  * The focus change event can be used by Vim (or other terminal applications)
- * to recognize that the konsole window has changed focus.
+ * to recognize that the koncrepe window has changed focus.
  * The escape sequence is also used by iTerm2.
  * Vim needs the following plugin to be installed to convert the escape
  * sequence into the FocusLost/FocusGained autocmd:
@@ -3721,7 +3721,7 @@ void Vt102Emulation::reportDecodingError(int token)
         outputError.append(QLatin1Char((token >> 16) & 0xff));
     }
 
-    qCDebug(KonsoleDebug).noquote() << outputError;
+    qCDebug(KoncrepeDebug).noquote() << outputError;
 
     resetTokenizer();
 
@@ -3905,7 +3905,7 @@ void Vt102Emulation::SixelCharacterAdd(uint8_t character, int repeat)
 
     if (repeat == 1) {
         if (m_preserveBackground) {
-            // Konsole is built without _any_ optimizations by default, so a little
+            // Koncrepe is built without _any_ optimizations by default, so a little
             // manual unrolling to avoid calling shift for every loop iteration.
             if (character & (1 << 0)) {
                 data[0 * bpl] = m_currentColor;
@@ -3933,7 +3933,7 @@ void Vt102Emulation::SixelCharacterAdd(uint8_t character, int repeat)
         m_currentX++;
     } else {
         if (m_preserveBackground) {
-            // Konsole is built without _any_ optimizations by default, so a little
+            // Koncrepe is built without _any_ optimizations by default, so a little
             // manual unrolling to avoid calling shift for every loop iteration.
             if (character & (1 << 0)) {
                 memset(&data[0 * bpl], m_currentColor, repeat);

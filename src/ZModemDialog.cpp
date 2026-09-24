@@ -15,7 +15,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-using Konsole::ZModemDialog;
+using Koncrepe::ZModemDialog;
 
 ZModemDialog::ZModemDialog(QWidget *aParent, bool modal, const QString &caption)
     : QDialog(aParent)
@@ -37,8 +37,8 @@ ZModemDialog::ZModemDialog(QWidget *aParent, bool modal, const QString &caption)
     mButtonBox->button(QDialogButtonBox::Cancel)->setEnabled(true);
     mButtonBox->button(QDialogButtonBox::Close)->setEnabled(false);
 
-    connect(mButtonBox, &QDialogButtonBox::rejected, this, &Konsole::ZModemDialog::slotCancel);
-    connect(mButtonBox, &QDialogButtonBox::accepted, this, &Konsole::ZModemDialog::slotClose);
+    connect(mButtonBox, &QDialogButtonBox::rejected, this, &Koncrepe::ZModemDialog::slotCancel);
+    connect(mButtonBox, &QDialogButtonBox::accepted, this, &Koncrepe::ZModemDialog::slotClose);
 
     _textEdit = new KTextEdit(this);
     _textEdit->setMinimumSize(400, 100);

@@ -1,9 +1,9 @@
-add_library(konsolecolorscheme STATIC)
+add_library(koncrepecolorscheme STATIC)
 
 # Needed to link this static lib to shared libs
-set_target_properties(konsolecolorscheme PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(koncrepecolorscheme PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_sources(konsolecolorscheme PRIVATE
+target_sources(koncrepecolorscheme PRIVATE
     hsluv.c
     ColorScheme.cpp
     ColorSchemeManager.cpp
@@ -13,22 +13,22 @@ target_sources(konsolecolorscheme PRIVATE
     RandomizationRange.cpp
 )
 
-ki18n_wrap_ui(konsolecolorscheme
+ki18n_wrap_ui(koncrepecolorscheme
     ColorSchemeEditor.ui
 )
 
-ecm_qt_declare_logging_category(konsolecolorscheme
+ecm_qt_declare_logging_category(koncrepecolorscheme
     HEADER colorschemedebug.h
     IDENTIFIER ColorSchemeDebug
-    CATEGORY_NAME org.kde.konsole.colorScheme
-    DESCRIPTION "Konsole - colorscheme"
-    EXPORT KONSOLE
+    CATEGORY_NAME org.kde.koncrepe.colorScheme
+    DESCRIPTION "Koncrepe - colorscheme"
+    EXPORT KONCREPE
 )
 
-target_link_libraries(konsolecolorscheme
+target_link_libraries(koncrepecolorscheme
     PUBLIC
         Qt::Widgets
-        #TODO: using "CharacterColor.h" frm konsolecharacter in ColorSchemeWallpaper.h
+        #TODO: using "CharacterColor.h" frm koncrepecharacter in ColorSchemeWallpaper.h
     PRIVATE
         KF6::ConfigCore
         KF6::I18n

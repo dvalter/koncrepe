@@ -15,7 +15,7 @@
 #include <QVariantAnimation>
 #include <QVector>
 
-// Konsole
+// Koncrepe
 #include "../characters/Character.h"
 #include "Enumeration.h"
 #include "ScreenWindow.h"
@@ -30,7 +30,7 @@ class QPainter;
 class QString;
 class QTimer;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Character;
 class TerminalDisplay;

@@ -13,17 +13,17 @@
 #include <QColor>
 #include <QWidget>
 
-// Konsole
+// Koncrepe
 #include "characters/CharacterColor.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 #include "profile/Profile.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class Profile;
 class ColorScheme;
 
-class KONSOLEPRIVATE_EXPORT TerminalColor : public QObject
+class KONCREPEPRIVATE_EXPORT TerminalColor : public QObject
 {
     Q_OBJECT
 public:

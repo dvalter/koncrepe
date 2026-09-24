@@ -10,9 +10,9 @@
 
 #include <QObject>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class Screen;
 /* Like QPoint, but with Row / Col
@@ -23,7 +23,7 @@ struct Coordinate {
     int col;
 };
 
-/* Represents a URL on the visual part of konsole, that has been escaped.
+/* Represents a URL on the visual part of koncrepe, that has been escaped.
  * like a html url tag with a text value.
  */
 struct ExtractedUrl {
@@ -36,7 +36,7 @@ struct ExtractedUrl {
 /* Stored in Screen, but used in V10Emulation to
  * store extracted URL's. Perhaps this should be a Model?
  */
-class KONSOLEPRIVATE_EXPORT EscapeSequenceUrlExtractor : public QObject
+class KONCREPEPRIVATE_EXPORT EscapeSequenceUrlExtractor : public QObject
 {
     Q_OBJECT
 

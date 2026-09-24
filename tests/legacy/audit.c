@@ -10,7 +10,7 @@
    Usage:
 
    - In TEShell.C let syslog be stdout.
-   - konsole > ttt
+   - koncrepe > ttt
    - produce the effect in question.
    - run this program.
      pressing any key advances the audit

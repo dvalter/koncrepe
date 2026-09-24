@@ -11,8 +11,8 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 
-// Konsole
-#include "KonsoleSettings.h"
+// Koncrepe
+#include "KoncrepeSettings.h"
 #include "delegates/ProfileShortcutDelegate.h"
 #include "profile/ProfileManager.h"
 #include "profile/ProfileModel.h"
@@ -22,7 +22,7 @@
 #include "terminalDisplay/TerminalDisplay.h"
 #include "widgets/EditProfileDialog.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ProfileSettings::ProfileSettings(QWidget *parent)
     : QWidget(parent)
@@ -37,7 +37,7 @@ ProfileSettings::ProfileSettings(QWidget *parent)
     });
 
     // double clicking the profile name opens the profile edit dialog
-    connect(profileListView, &QAbstractItemView::doubleClicked, this, &Konsole::ProfileSettings::doubleClicked);
+    connect(profileListView, &QAbstractItemView::doubleClicked, this, &Koncrepe::ProfileSettings::doubleClicked);
 
     // populate the table with profiles
     populateTable();
@@ -51,22 +51,22 @@ ProfileSettings::ProfileSettings(QWidget *parent)
     setLightProfileButton->setIcon(QIcon::fromTheme(QStringLiteral("weather-clear")));
     setDarkProfileButton->setIcon(QIcon::fromTheme(QStringLiteral("weather-clear-night")));
 
-    connect(newProfileButton, &QPushButton::clicked, this, &Konsole::ProfileSettings::createProfile);
-    connect(editProfileButton, &QPushButton::clicked, this, &Konsole::ProfileSettings::editSelected);
-    connect(deleteProfileButton, &QPushButton::clicked, this, &Konsole::ProfileSettings::deleteSelected);
-    connect(setAsDefaultButton, &QPushButton::clicked, this, &Konsole::ProfileSettings::setSelectedAsDefault);
-    connect(setLightProfileButton, &QPushButton::clicked, this, &Konsole::ProfileSettings::setSelectedAsLight);
-    connect(setDarkProfileButton, &QPushButton::clicked, this, &Konsole::ProfileSettings::setSelectedAsDark);
+    connect(newProfileButton, &QPushButton::clicked, this, &Koncrepe::ProfileSettings::createProfile);
+    connect(editProfileButton, &QPushButton::clicked, this, &Koncrepe::ProfileSettings::editSelected);
+    connect(deleteProfileButton, &QPushButton::clicked, this, &Koncrepe::ProfileSettings::deleteSelected);
+    connect(setAsDefaultButton, &QPushButton::clicked, this, &Koncrepe::ProfileSettings::setSelectedAsDefault);
+    connect(setLightProfileButton, &QPushButton::clicked, this, &Koncrepe::ProfileSettings::setSelectedAsLight);
+    connect(setDarkProfileButton, &QPushButton::clicked, this, &Koncrepe::ProfileSettings::setSelectedAsDark);
 
     auto updateThemeButtonVisibility = [this] {
-        const bool syncEnabled = KonsoleSettings::syncProfileWithSystemTheme();
+        const bool syncEnabled = KoncrepeSettings::syncProfileWithSystemTheme();
         setAsDefaultButton->setVisible(!syncEnabled);
         setLightProfileButton->setVisible(syncEnabled);
         setDarkProfileButton->setVisible(syncEnabled);
         tableSelectionChanged(profileListView->selectionModel()->selection());
     };
     updateThemeButtonVisibility();
-    connect(KonsoleSettings::self(), &KonsoleSettings::configChanged, this, updateThemeButtonVisibility);
+    connect(KoncrepeSettings::self(), &KoncrepeSettings::configChanged, this, updateThemeButtonVisibility);
 }
 
 ProfileSettings::~ProfileSettings() = default;
@@ -103,7 +103,7 @@ void ProfileSettings::populateTable()
     //
     // it appears that the selection model is changed when the model itself is replaced,
     // so the signals need to be reconnected each time the model is updated.
-    connect(profileListView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Konsole::ProfileSettings::tableSelectionChanged);
+    connect(profileListView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Koncrepe::ProfileSettings::tableSelectionChanged);
 }
 
 void ProfileSettings::tableSelectionChanged(const QItemSelection &selected)
@@ -121,7 +121,7 @@ void ProfileSettings::tableSelectionChanged(const QItemSelection &selected)
 
     const auto profile = currentProfile();
     const bool isNotDefault = profile != ProfileManager::instance()->defaultProfile();
-    const bool syncEnabled = KonsoleSettings::syncProfileWithSystemTheme();
+    const bool syncEnabled = KoncrepeSettings::syncProfileWithSystemTheme();
 
     editProfileButton->setEnabled(profile && profile->isEditable());
 

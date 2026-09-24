@@ -18,17 +18,17 @@
 #include <KMainWindow>
 #include <KPluginFactory>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void PartManualTest::testShortcutOverride()
 {
     // FIXME: This test asks the user to press shortcut key sequences manually because
     // the result is different than when sending the key press via QTest::keyClick()
     //
-    // When the key presses are sent manually, Konsole::TerminalDisplay::event() is called
+    // When the key presses are sent manually, Koncrepe::TerminalDisplay::event() is called
     // and the overrideShortcut() signal is emitted by the part.
     // When the key presses are sent automatically, the shortcut is triggered but
-    // Konsole::TerminalDisplay::event() is not called and the overrideShortcut() signal is
+    // Koncrepe::TerminalDisplay::event() is not called and the overrideShortcut() signal is
     // not emitted by the part.
 
     // Create a main window with a menu and a test
@@ -37,7 +37,7 @@ void PartManualTest::testShortcutOverride()
     QMenu *fileMenu = mainWindow->menuBar()->addMenu(QStringLiteral("File"));
     QAction *testAction = fileMenu->addAction(QStringLiteral("Test"));
     testAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
-    connect(testAction, &QAction::triggered, this, &Konsole::PartManualTest::shortcutTriggered);
+    connect(testAction, &QAction::triggered, this, &Koncrepe::PartManualTest::shortcutTriggered);
 
     // Create terminal part and embed in into the main window
     KParts::Part *terminalPart = createPart();
@@ -94,7 +94,7 @@ void PartManualTest::shortcutTriggered()
 
 KParts::Part *PartManualTest::createPart()
 {
-    const KPluginFactory::Result<KParts::Part> result = KPluginFactory::instantiatePlugin<KParts::Part>(KPluginMetaData(QStringLiteral("konsolepart")), this);
+    const KPluginFactory::Result<KParts::Part> result = KPluginFactory::instantiatePlugin<KParts::Part>(KPluginMetaData(QStringLiteral("koncrepepart")), this);
     Q_ASSERT(result);
 
     return result.plugin;

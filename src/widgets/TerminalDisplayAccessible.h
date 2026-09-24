@@ -16,7 +16,7 @@
 #include "ScreenWindow.h"
 #include "terminalDisplay/TerminalDisplay.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Class implementing the QAccessibleInterface for the terminal display.
@@ -53,7 +53,7 @@ public:
     void *interface_cast(QAccessible::InterfaceType type) override;
 
 private:
-    Konsole::TerminalDisplay *display() const;
+    Koncrepe::TerminalDisplay *display() const;
 
     inline int positionToOffset(int column, int line) const
     {

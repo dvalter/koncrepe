@@ -9,7 +9,7 @@
 
 #include "ui_MemorySettings.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class MemorySettings : public QWidget, private Ui::MemorySettings
 {

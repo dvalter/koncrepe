@@ -16,7 +16,7 @@
 #include <QTextStream>
 #include <qhashfunctions.h>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 KapsuleDetector::KapsuleDetector(QObject *parent)
@@ -106,6 +106,6 @@ QCoro::Task<void> KapsuleDetector::fetchContainerList()
     Q_EMIT listContainersFinished(results);
 }
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #include "moc_KapsuleDetector.cpp"

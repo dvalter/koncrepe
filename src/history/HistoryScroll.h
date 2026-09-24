@@ -10,22 +10,22 @@
 // STD
 #include <memory>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-// Konsole
+// Koncrepe
 #include "../characters/Character.h"
 
 // Qt
 #include <QVector>
 
-namespace Konsole
+namespace Koncrepe
 {
 //////////////////////////////////////////////////////////////////////
 // Abstract base class for file and buffer versions
 //////////////////////////////////////////////////////////////////////
 class HistoryType;
 
-class KONSOLEPRIVATE_EXPORT HistoryScroll
+class KONCREPEPRIVATE_EXPORT HistoryScroll
 {
 public:
     explicit HistoryScroll(HistoryType *);

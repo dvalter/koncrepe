@@ -10,7 +10,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ShortcutItemDelegate::ShortcutItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
@@ -51,7 +51,7 @@ QWidget *ShortcutItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
     editor->setKeySequence(QKeySequence::fromString(shortcutString));
     editor->setFocus(Qt::FocusReason::MouseFocusReason);
 
-    connect(editor, &QKeySequenceEdit::editingFinished, this, &Konsole::ShortcutItemDelegate::editorModified);
+    connect(editor, &QKeySequenceEdit::editingFinished, this, &Koncrepe::ShortcutItemDelegate::editorModified);
 
     return editor;
 }

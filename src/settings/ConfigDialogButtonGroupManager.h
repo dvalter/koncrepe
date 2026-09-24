@@ -26,11 +26,11 @@ class QList;
 template<class Key, class T>
 class QMap;
 
-namespace Konsole
+namespace Koncrepe
 {
 // KConfigDialogManager-like class for managing QButtonGroups,
 // which are not supported by KConfigDialogManager yet. When
-// support will be available in minimum KF5 used by Konsole,
+// support will be available in minimum KF5 used by Koncrepe,
 // just remove this class and all expressions which refer to it.
 class ConfigDialogButtonGroupManager : public QObject
 {

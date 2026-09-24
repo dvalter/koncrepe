@@ -1,4 +1,4 @@
-# [vt100.keytab] Konsole Keyboard Table (VT100 keys)
+# [vt100.keytab] Koncrepe Keyboard Table (VT100 keys)
 #
 # --------------------------------------------------------------
 
@@ -113,7 +113,7 @@ key Enter-NewLine : "\r"
 
 key Space +Control : "\x00"
 
-# some of keys are used by konsole.
+# some of keys are used by koncrepe.
 
 key Up    +Shift   : scrollLineUp
 key PgUp +Shift   : scrollPageUp
@@ -130,4 +130,4 @@ key ScrollLock     : scrollLock
 
 #----------------------------------------------------------
 
-# Following other strings as emitted by konsole.
+# Following other strings as emitted by koncrepe.

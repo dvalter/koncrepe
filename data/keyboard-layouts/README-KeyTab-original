@@ -2,10 +2,10 @@
 
 The keytabs offered in the Options/Keyboard menu
 are taken from configurations files with a *.keytab
-pattern either located in $KDEDIR/share/apps/konsole
-or ~/.kde/share/apps/konsole.
+pattern either located in $KDEDIR/share/apps/koncrepe
+or ~/.kde/share/apps/koncrepe.
 
-Keytabs allow to configure the behavior of konsole
+Keytabs allow to configure the behavior of koncrepe
 on keyboard events, especially for functions keys.
 Please have a look into the README.keyboard file, too.
 
@@ -47,7 +47,7 @@ Mode names are:
 
   will not accept the small letter "a" rule as expected,
   one has to add a "- Shift" to the last clause. Use
-  the stdout/stderr dianostics of konsole when modifying
+  the stdout/stderr dianostics of koncrepe when modifying
   keytabs to find problems like this.
 
 Operations are

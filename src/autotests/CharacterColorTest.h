@@ -11,7 +11,7 @@
 
 #include "../characters/CharacterColor.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class CharacterColorTest : public QObject
 {

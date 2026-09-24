@@ -12,9 +12,9 @@
 
 class QMimeData;
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT EscapeSequenceUrlHotSpot : public HotSpot
+class KONCREPEPRIVATE_EXPORT EscapeSequenceUrlHotSpot : public HotSpot
 {
 public:
     EscapeSequenceUrlHotSpot(int startLine, int startColumn, int endLine, int endColumn, const QString &text, const QString &url);

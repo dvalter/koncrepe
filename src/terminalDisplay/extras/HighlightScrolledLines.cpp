@@ -9,10 +9,10 @@
 // Own
 #include "HighlightScrolledLines.h"
 
-// Konsole
+// Koncrepe
 #include "../TerminalScrollBar.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 HighlightScrolledLines::HighlightScrolledLines() = default;
 
@@ -62,4 +62,4 @@ QRect &HighlightScrolledLines::rect()
 {
     return _rect;
 }
-} // namespace Konsole
+} // namespace Koncrepe

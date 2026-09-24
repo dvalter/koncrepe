@@ -8,7 +8,7 @@
 
 #include <QHash>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 /* clang-format off */
 
@@ -112,7 +112,7 @@ static const QHash<int, KittyKeyInfo> &keyMap()
 
 /* clang-format on */
 
-KittyKeyInfo Konsole::qtKeyToKittyKey(int qtKey)
+KittyKeyInfo Koncrepe::qtKeyToKittyKey(int qtKey)
 {
     const auto &map = keyMap();
     auto it = map.find(qtKey);
@@ -123,7 +123,7 @@ KittyKeyInfo Konsole::qtKeyToKittyKey(int qtKey)
     return {0, KittyKeyType::Unknown, 0, 0, false};
 }
 
-int Konsole::kittyModifierBits(Qt::KeyboardModifiers mods, bool capsLock, bool numLock)
+int Koncrepe::kittyModifierBits(Qt::KeyboardModifiers mods, bool capsLock, bool numLock)
 {
     int bits = 0;
 

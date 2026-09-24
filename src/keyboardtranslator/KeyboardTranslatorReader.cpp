@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -16,7 +16,7 @@
 // KF
 #include <KLocalizedString>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // each line of the keyboard translation file is one of:
 //
@@ -80,7 +80,7 @@ void KeyboardTranslatorReader::readNext()
             } else if (tokens[2].type == Token::Command) {
                 // identify command
                 if (!parseAsCommand(tokens[2].text, command)) {
-                    qCDebug(KonsoleKeyTrDebug) << "Key" << tokens[1].text << ", Command" << tokens[2].text << "not understood. ";
+                    qCDebug(KoncrepeKeyTrDebug) << "Key" << tokens[1].text << ", Command" << tokens[2].text << "not understood. ";
                 }
             }
 
@@ -178,7 +178,7 @@ bool KeyboardTranslatorReader::decodeSequence(const QString &text,
             } else if (parseAsKeyCode(buffer, itemKeyCode)) {
                 keyCode = itemKeyCode;
             } else {
-                qCDebug(KonsoleKeyTrDebug) << "Unable to parse key binding item:" << buffer;
+                qCDebug(KoncrepeKeyTrDebug) << "Unable to parse key binding item:" << buffer;
             }
 
             buffer.clear();
@@ -247,7 +247,7 @@ bool KeyboardTranslatorReader::parseAsKeyCode(const QString &item, int &keyCode)
     if (!sequence.isEmpty()) {
         keyCode = sequence[0].toCombined();
         if (sequence.count() > 1) {
-            qCDebug(KonsoleKeyTrDebug) << "Unhandled key codes in sequence: " << item;
+            qCDebug(KoncrepeKeyTrDebug) << "Unhandled key codes in sequence: " << item;
         }
     } else {
         return false;
@@ -357,7 +357,7 @@ QList<KeyboardTranslatorReader::Token> KeyboardTranslatorReader::tokenize(const 
 
     QRegularExpressionMatch keyMatch(key.match(text));
     if (!keyMatch.hasMatch()) {
-        qCDebug(KonsoleKeyTrDebug) << "Line in keyboard translator file could not be parsed:" << text;
+        qCDebug(KoncrepeKeyTrDebug) << "Line in keyboard translator file could not be parsed:" << text;
         return list;
     }
 

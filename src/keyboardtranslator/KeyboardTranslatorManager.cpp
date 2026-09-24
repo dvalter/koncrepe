@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -18,7 +18,7 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 KeyboardTranslatorManager::KeyboardTranslatorManager()
     : _haveLoadedAll(false)
@@ -42,7 +42,7 @@ void KeyboardTranslatorManager::addTranslator(KeyboardTranslator *translator)
     _translators.insert(translator->name(), translator);
 
     if (!saveTranslator(translator)) {
-        qCDebug(KonsoleKeyTrDebug) << "Unable to save translator" << translator->name() << "to disk.";
+        qCDebug(KoncrepeKeyTrDebug) << "Unable to save translator" << translator->name() << "to disk.";
     }
 }
 
@@ -56,7 +56,7 @@ bool KeyboardTranslatorManager::deleteTranslator(const QString &name)
         _translators.remove(name);
         return true;
     }
-    qCDebug(KonsoleKeyTrDebug) << "Failed to remove translator - " << path;
+    qCDebug(KoncrepeKeyTrDebug) << "Failed to remove translator - " << path;
     return false;
 }
 
@@ -68,8 +68,8 @@ bool KeyboardTranslatorManager::isTranslatorDeletable(const QString &name) const
 
 bool KeyboardTranslatorManager::isTranslatorResettable(const QString &name) const
 {
-    auto foundFiles = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("konsole/") + name + QStringLiteral(".keytab")).count();
-    if (QFile::exists(QStringLiteral(":/konsole/keyboard-layouts/") + name + QStringLiteral(".keytab"))) {
+    auto foundFiles = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("koncrepe/") + name + QStringLiteral(".keytab")).count();
+    if (QFile::exists(QStringLiteral(":/koncrepe/keyboard-layouts/") + name + QStringLiteral(".keytab"))) {
         ++foundFiles;
     }
     return (foundFiles > 1);
@@ -77,11 +77,11 @@ bool KeyboardTranslatorManager::isTranslatorResettable(const QString &name) cons
 
 const QString KeyboardTranslatorManager::findTranslatorPath(const QString &name) const
 {
-    auto file = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("konsole/") + name + QStringLiteral(".keytab"));
+    auto file = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("koncrepe/") + name + QStringLiteral(".keytab"));
 
     // fallback to bundled ones
-    if (file.isEmpty() && QFile::exists(QStringLiteral(":/konsole/keyboard-layouts/") + name + QStringLiteral(".keytab"))) {
-        file = QStringLiteral(":/konsole/keyboard-layouts/") + name + QStringLiteral(".keytab");
+    if (file.isEmpty() && QFile::exists(QStringLiteral(":/koncrepe/keyboard-layouts/") + name + QStringLiteral(".keytab"))) {
+        file = QStringLiteral(":/koncrepe/keyboard-layouts/") + name + QStringLiteral(".keytab");
     }
 
     return file;
@@ -89,8 +89,8 @@ const QString KeyboardTranslatorManager::findTranslatorPath(const QString &name)
 
 void KeyboardTranslatorManager::findTranslators()
 {
-    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("konsole"), QStandardPaths::LocateDirectory);
-    dirs.append(QStringLiteral(":/konsole/keyboard-layouts")); // fallback to bundled ones
+    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("koncrepe"), QStandardPaths::LocateDirectory);
+    dirs.append(QStringLiteral(":/koncrepe/keyboard-layouts")); // fallback to bundled ones
 
     QStringList list;
     for (const QString &dir : std::as_const(dirs)) {
@@ -129,7 +129,7 @@ const KeyboardTranslator *KeyboardTranslatorManager::findTranslator(const QStrin
     if (translator != nullptr) {
         _translators[name] = translator;
     } else if (!name.isEmpty()) {
-        qCDebug(KonsoleKeyTrDebug) << "Unable to load translator" << name;
+        qCDebug(KoncrepeKeyTrDebug) << "Unable to load translator" << name;
     }
 
     return translator;
@@ -137,7 +137,7 @@ const KeyboardTranslator *KeyboardTranslatorManager::findTranslator(const QStrin
 
 bool KeyboardTranslatorManager::saveTranslator(const KeyboardTranslator *translator)
 {
-    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/konsole/");
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/koncrepe/");
     QDir().mkpath(dir);
     const QString path = dir + translator->name() + QStringLiteral(".keytab");
 
@@ -145,7 +145,7 @@ bool KeyboardTranslatorManager::saveTranslator(const KeyboardTranslator *transla
 
     QFile destination(path);
     if (!destination.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qCDebug(KonsoleKeyTrDebug) << "Unable to save keyboard translation:" << destination.errorString();
+        qCDebug(KoncrepeKeyTrDebug) << "Unable to save keyboard translation:" << destination.errorString();
         return false;
     }
 

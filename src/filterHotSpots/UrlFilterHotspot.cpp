@@ -22,7 +22,7 @@
 // regexp matches:
 // full url:
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 UrlFilterHotSpot::~UrlFilterHotSpot() = default;
 

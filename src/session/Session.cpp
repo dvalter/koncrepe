@@ -51,12 +51,12 @@
 #include <KWaylandExtras>
 #endif
 
-// Konsole
+// Koncrepe
 #if HAVE_DBUS
 #include <sessionadaptor.h>
 #endif
 
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "Pty.h"
 #include "SSHProcessInfo.h"
 #include "SessionController.h"
@@ -70,7 +70,7 @@
 #include "history/HistoryTypeFile.h"
 #include "history/HistoryTypeNone.h"
 #include "history/compact/CompactHistoryType.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 #include "profile/Profile.h"
 #include "profile/ProfileManager.h"
 
@@ -87,7 +87,7 @@
 #include <KSandbox>
 #endif // Q_OS_WIN
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 static const int ZMODEM_BUFFER_SIZE = 1048576; // 1 Mb
 
@@ -98,7 +98,7 @@ static QString computeRandomCookie()
     quint32 array[8];
     QRandomGenerator::global()->fillRange(array);
 
-    // convert to string usable for env var KONSOLE_DBUS_ACTIVATION_COOKIE
+    // convert to string usable for env var KONCREPE_DBUS_ACTIVATION_COOKIE
     return QString::fromUtf8(QByteArray(reinterpret_cast<const char *>(array), sizeof(array)).toBase64());
 }
 
@@ -127,20 +127,20 @@ Session::Session(QObject *parent)
     _emulation = new Vt102Emulation();
     _emulation->reset();
 
-    connect(_emulation, &Konsole::Emulation::sessionAttributeChanged, this, &Konsole::Session::setSessionAttribute);
-    connect(_emulation, &Konsole::Emulation::osc777Received, this, &Konsole::Session::handleOsc777);
-    connect(_emulation, &Konsole::Emulation::bell, this, [this]() {
+    connect(_emulation, &Koncrepe::Emulation::sessionAttributeChanged, this, &Koncrepe::Session::setSessionAttribute);
+    connect(_emulation, &Koncrepe::Emulation::osc777Received, this, &Koncrepe::Session::handleOsc777);
+    connect(_emulation, &Koncrepe::Emulation::bell, this, [this]() {
         Q_EMIT bellRequest(i18n("Bell in '%1' (Session '%2')", _displayTitle, _nameTitle));
         this->setPendingNotification(Notification::Bell);
     });
-    connect(_emulation, &Konsole::Emulation::zmodemDownloadDetected, this, &Konsole::Session::fireZModemDownloadDetected);
-    connect(_emulation, &Konsole::Emulation::zmodemUploadDetected, this, &Konsole::Session::fireZModemUploadDetected);
-    connect(_emulation, &Konsole::Emulation::profileChangeCommandReceived, this, &Konsole::Session::profileChangeCommandReceived);
-    connect(_emulation, &Konsole::Emulation::flowControlKeyPressed, this, &Konsole::Session::updateFlowControlState);
-    connect(_emulation, &Konsole::Emulation::primaryScreenInUse, this, &Konsole::Session::onPrimaryScreenInUse);
-    connect(_emulation, &Konsole::Emulation::selectionChanged, this, &Konsole::Session::selectionChanged);
-    connect(_emulation, &Konsole::Emulation::imageResizeRequest, this, &Konsole::Session::resizeRequest);
-    connect(_emulation, &Konsole::Emulation::sessionAttributeRequest, this, &Konsole::Session::sessionAttributeRequest);
+    connect(_emulation, &Koncrepe::Emulation::zmodemDownloadDetected, this, &Koncrepe::Session::fireZModemDownloadDetected);
+    connect(_emulation, &Koncrepe::Emulation::zmodemUploadDetected, this, &Koncrepe::Session::fireZModemUploadDetected);
+    connect(_emulation, &Koncrepe::Emulation::profileChangeCommandReceived, this, &Koncrepe::Session::profileChangeCommandReceived);
+    connect(_emulation, &Koncrepe::Emulation::flowControlKeyPressed, this, &Koncrepe::Session::updateFlowControlState);
+    connect(_emulation, &Koncrepe::Emulation::primaryScreenInUse, this, &Koncrepe::Session::onPrimaryScreenInUse);
+    connect(_emulation, &Koncrepe::Emulation::selectionChanged, this, &Koncrepe::Session::selectionChanged);
+    connect(_emulation, &Koncrepe::Emulation::imageResizeRequest, this, &Koncrepe::Session::resizeRequest);
+    connect(_emulation, &Koncrepe::Emulation::sessionAttributeRequest, this, &Koncrepe::Session::sessionAttributeRequest);
 
     // create new teletype for I/O with shell process
     openTeletype(-1, true);
@@ -148,11 +148,11 @@ Session::Session(QObject *parent)
     // setup timer for monitoring session activity & silence
     _silenceTimer = new QTimer(this);
     _silenceTimer->setSingleShot(true);
-    connect(_silenceTimer, &QTimer::timeout, this, &Konsole::Session::silenceTimerDone);
+    connect(_silenceTimer, &QTimer::timeout, this, &Koncrepe::Session::silenceTimerDone);
 
     _activityTimer = new QTimer(this);
     _activityTimer->setSingleShot(true);
-    connect(_activityTimer, &QTimer::timeout, this, &Konsole::Session::activityTimerDone);
+    connect(_activityTimer, &QTimer::timeout, this, &Koncrepe::Session::activityTimerDone);
 }
 
 Session::~Session()
@@ -183,29 +183,29 @@ void Session::openTeletype(int fd, bool runShell)
     _shellProcess->setUtf8Mode(_emulation->utf8());
 
     // connect the I/O between emulator and pty process
-    connect(_shellProcess, &Konsole::Pty::receivedData, this, &Konsole::Session::onReceiveBlock);
-    connect(_emulation, &Konsole::Emulation::sendData, _shellProcess, &Konsole::Pty::sendData);
+    connect(_shellProcess, &Koncrepe::Pty::receivedData, this, &Koncrepe::Session::onReceiveBlock);
+    connect(_emulation, &Koncrepe::Emulation::sendData, _shellProcess, &Koncrepe::Pty::sendData);
 
     // UTF8 mode
-    connect(_emulation, &Konsole::Emulation::useUtf8Request, _shellProcess, &Konsole::Pty::setUtf8Mode);
+    connect(_emulation, &Koncrepe::Emulation::useUtf8Request, _shellProcess, &Koncrepe::Pty::setUtf8Mode);
 
     // get notified when the pty process is finished
 #ifndef Q_OS_WIN
-    connect(_shellProcess, &Konsole::Pty::finished, this, &Konsole::Session::done);
+    connect(_shellProcess, &Koncrepe::Pty::finished, this, &Koncrepe::Session::done);
 #else
-    connect(_shellProcess, &Konsole::Pty::finished, this, &Konsole::Session::done);
+    connect(_shellProcess, &Koncrepe::Pty::finished, this, &Koncrepe::Session::done);
 #endif
 
     // emulator size
-    connect(_emulation, &Konsole::Emulation::imageSizeChanged, this, &Konsole::Session::updateWindowSize);
+    connect(_emulation, &Koncrepe::Emulation::imageSizeChanged, this, &Koncrepe::Session::updateWindowSize);
     if (fd < 0 || runShell) {
         // Using a queued connection guarantees that starting the session
         // is delayed until all (both) image size updates at startup have
         // been processed. See #203185 and #412598.
-        connect(_emulation, &Konsole::Emulation::imageSizeInitialized, this, &Konsole::Session::run, Qt::QueuedConnection);
+        connect(_emulation, &Koncrepe::Emulation::imageSizeInitialized, this, &Koncrepe::Session::run, Qt::QueuedConnection);
     } else {
         // run needs to be disconnected, as it may be already connected by the constructor
-        disconnect(_emulation, &Konsole::Emulation::imageSizeInitialized, this, &Konsole::Session::run);
+        disconnect(_emulation, &Koncrepe::Emulation::imageSizeInitialized, this, &Koncrepe::Session::run);
     }
 }
 
@@ -333,21 +333,21 @@ void Session::addView(TerminalDisplay *widget)
     _views.append(widget);
 
     // connect emulation - view signals and slots
-    connect(widget, &Konsole::TerminalDisplay::keyPressedSignal, _emulation, &Konsole::Emulation::sendKeyEvent);
-    connect(widget, &Konsole::TerminalDisplay::mouseSignal, _emulation, &Konsole::Emulation::sendMouseEvent);
-    connect(widget, &Konsole::TerminalDisplay::exactMouseSignal, _emulation, &Konsole::Emulation::sendExactMouseEvent);
-    connect(widget, &Konsole::TerminalDisplay::sendStringToEmu, _emulation, &Konsole::Emulation::sendString);
-    connect(widget, &Konsole::TerminalDisplay::peekPrimaryRequested, _emulation, &Konsole::Emulation::setPeekPrimary);
+    connect(widget, &Koncrepe::TerminalDisplay::keyPressedSignal, _emulation, &Koncrepe::Emulation::sendKeyEvent);
+    connect(widget, &Koncrepe::TerminalDisplay::mouseSignal, _emulation, &Koncrepe::Emulation::sendMouseEvent);
+    connect(widget, &Koncrepe::TerminalDisplay::exactMouseSignal, _emulation, &Koncrepe::Emulation::sendExactMouseEvent);
+    connect(widget, &Koncrepe::TerminalDisplay::sendStringToEmu, _emulation, &Koncrepe::Emulation::sendString);
+    connect(widget, &Koncrepe::TerminalDisplay::peekPrimaryRequested, _emulation, &Koncrepe::Emulation::setPeekPrimary);
 
     // allow emulation to notify the view when the foreground process
     // indicates whether or not it is interested in Mouse Tracking events
-    connect(_emulation, &Konsole::Emulation::programRequestsMouseTracking, widget, &Konsole::TerminalDisplay::setUsesMouseTracking);
+    connect(_emulation, &Koncrepe::Emulation::programRequestsMouseTracking, widget, &Koncrepe::TerminalDisplay::setUsesMouseTracking);
 
     widget->setUsesMouseTracking(_emulation->programUsesMouseTracking());
 
-    connect(_emulation, &Konsole::Emulation::enableAlternateScrolling, widget->scrollBar(), &Konsole::TerminalScrollBar::setAlternateScrolling);
+    connect(_emulation, &Koncrepe::Emulation::enableAlternateScrolling, widget->scrollBar(), &Koncrepe::TerminalScrollBar::setAlternateScrolling);
 
-    connect(_emulation, &Konsole::Emulation::programBracketedPasteModeChanged, widget, &Konsole::TerminalDisplay::setBracketedPasteMode);
+    connect(_emulation, &Koncrepe::Emulation::programBracketedPasteModeChanged, widget, &Koncrepe::TerminalDisplay::setBracketedPasteMode);
 
     widget->setBracketedPasteMode(_emulation->programBracketedPasteMode());
 
@@ -356,16 +356,16 @@ void Session::addView(TerminalDisplay *widget)
     _emulation->setCurrentTerminalDisplay(widget);
 
     // connect view signals and slots
-    connect(widget, &Konsole::TerminalDisplay::changedContentSizeSignal, this, &Konsole::Session::onViewSizeChange);
+    connect(widget, &Koncrepe::TerminalDisplay::changedContentSizeSignal, this, &Koncrepe::Session::onViewSizeChange);
 
-    connect(widget, &Konsole::TerminalDisplay::destroyed, this, &Konsole::Session::viewDestroyed);
+    connect(widget, &Koncrepe::TerminalDisplay::destroyed, this, &Koncrepe::Session::viewDestroyed);
 
-    connect(widget, &Konsole::TerminalDisplay::compositeFocusChanged, _emulation, &Konsole::Emulation::focusChanged);
+    connect(widget, &Koncrepe::TerminalDisplay::compositeFocusChanged, _emulation, &Koncrepe::Emulation::focusChanged);
 
-    connect(_emulation, &Konsole::Emulation::setCursorStyleRequest, widget, &Konsole::TerminalDisplay::setCursorStyle);
-    connect(_emulation, &Konsole::Emulation::resetCursorStyleRequest, widget, &Konsole::TerminalDisplay::resetCursorStyle);
+    connect(_emulation, &Koncrepe::Emulation::setCursorStyleRequest, widget, &Koncrepe::TerminalDisplay::setCursorStyle);
+    connect(_emulation, &Koncrepe::Emulation::resetCursorStyleRequest, widget, &Koncrepe::TerminalDisplay::resetCursorStyle);
 
-    connect(widget, &Konsole::TerminalDisplay::keyPressedSignal, this, &Konsole::Session::resetNotifications);
+    connect(widget, &Koncrepe::TerminalDisplay::keyPressedSignal, this, &Koncrepe::Session::resetNotifications);
 }
 
 void Session::viewDestroyed(QObject *view)
@@ -492,7 +492,7 @@ void Session::run()
 {
     // FIXME: run() is called twice in some instances
     if (isRunning()) {
-        qCDebug(KonsoleDebug) << "Attempted to re-run an already running session (" << processId() << ")";
+        qCDebug(KoncrepeDebug) << "Attempted to re-run an already running session (" << processId() << ")";
         return;
     }
 
@@ -560,9 +560,9 @@ void Session::run()
 
     // If we have a container context to enter, wrap the command
     if (_containerContext.isValid() && ContainerRegistry::instance()->isEnabled()) {
-        qDebug(KonsoleDebug) << "Entering container context:" << _containerContext.name;
+        qDebug(KoncrepeDebug) << "Entering container context:" << _containerContext.name;
         QStringList entryCmd = ContainerRegistry::instance()->entryCommand(_containerContext);
-        qDebug(KonsoleDebug) << "Container entry command:" << entryCmd;
+        qDebug(KoncrepeDebug) << "Container entry command:" << entryCmd;
         if (!entryCmd.isEmpty()) {
             // Replace exec and arguments with container entry command
             // The container entry command will spawn the shell inside the container
@@ -571,7 +571,7 @@ void Session::run()
             _enteredViaContainerCommand = true;
         }
     } else {
-        qDebug(KonsoleDebug) << "Container context is " << (_containerContext.isValid() ? "valid" : "invalid") << "but container support is"
+        qDebug(KoncrepeDebug) << "Container context is " << (_containerContext.isValid() ? "valid" : "invalid") << "but container support is"
                              << (ContainerRegistry::instance()->isEnabled() ? "enabled" : "disabled");
     }
 
@@ -609,13 +609,13 @@ void Session::run()
 
 #if HAVE_DBUS
     const QString dbusService = QDBusConnection::sessionBus().baseService();
-    addEnvironmentEntry(QStringLiteral("KONSOLE_DBUS_SERVICE=%1").arg(dbusService));
+    addEnvironmentEntry(QStringLiteral("KONCREPE_DBUS_SERVICE=%1").arg(dbusService));
 
     const QString dbusObject = QStringLiteral("/Sessions/%1").arg(QString::number(_sessionId));
-    addEnvironmentEntry(QStringLiteral("KONSOLE_DBUS_SESSION=%1").arg(dbusObject));
+    addEnvironmentEntry(QStringLiteral("KONCREPE_DBUS_SESSION=%1").arg(dbusObject));
 
     // secret cookie to trigger activationToken via dbus
-    secretEnv << QStringLiteral("KONSOLE_DBUS_ACTIVATION_COOKIE=%1").arg(m_activationCookie);
+    secretEnv << QStringLiteral("KONCREPE_DBUS_ACTIVATION_COOKIE=%1").arg(m_activationCookie);
 #endif
 
     addEnvironmentEntry(QStringLiteral("FLATPAK_TTY_PROGRESS=1"));
@@ -940,7 +940,7 @@ void Session::refresh()
     // new and old sizes are the same)
     //
     // if there is a more 'correct' way to do this, please
-    // send an email with method or patches to konsole-devel@kde.org
+    // send an email with method or patches to koncrepe-devel@kde.org
 
     const QSize existingSize = _shellProcess->windowSize();
     const QSize existingPxSize = _shellProcess->pixelSize();
@@ -1126,9 +1126,9 @@ void Session::done(int exitCode, QProcess::ExitStatus exitStatus)
 {
 #ifndef Q_OS_WIN
     // This slot should be triggered only one time
-    disconnect(_shellProcess, &Konsole::Pty::finished, this, &Konsole::Session::done);
+    disconnect(_shellProcess, &Koncrepe::Pty::finished, this, &Koncrepe::Session::done);
 #else
-    disconnect(_shellProcess, &Konsole::Pty::finished, this, &Konsole::Session::done);
+    disconnect(_shellProcess, &Koncrepe::Pty::finished, this, &Koncrepe::Session::done);
 #endif
 
     if (!_autoClose) {
@@ -1404,7 +1404,7 @@ QString Session::getDynamicTitle()
             pos += replacement.size();
         } break;
         case 'h': {
-            QString replacement = Konsole::ProcessInfo::localHost();
+            QString replacement = Koncrepe::ProcessInfo::localHost();
             title.replace(pos, 2, replacement);
             pos += replacement.size();
         } break;
@@ -1672,7 +1672,7 @@ bool Session::flowControlEnabled() const
 void Session::fireZModemDownloadDetected()
 {
     if (!_zmodemBusy) {
-        QTimer::singleShot(10, this, &Konsole::Session::zmodemDownloadDetected);
+        QTimer::singleShot(10, this, &Koncrepe::Session::zmodemDownloadDetected);
         _zmodemBusy = true;
     }
 }
@@ -1680,7 +1680,7 @@ void Session::fireZModemDownloadDetected()
 void Session::fireZModemUploadDetected()
 {
     if (!_zmodemBusy) {
-        QTimer::singleShot(10, this, &Konsole::Session::zmodemUploadDetected);
+        QTimer::singleShot(10, this, &Koncrepe::Session::zmodemUploadDetected);
     }
 }
 
@@ -1702,18 +1702,18 @@ void Session::startZModem(const QString &zmodem, const QString &dir, const QStri
         _zmodemProc->setWorkingDirectory(dir);
     }
 
-    connect(_zmodemProc, &KProcess::readyReadStandardOutput, this, &Konsole::Session::zmodemReadAndSendBlock);
-    connect(_zmodemProc, &KProcess::readyReadStandardError, this, &Konsole::Session::zmodemReadStatus);
-    connect(_zmodemProc, &KProcess::finished, this, &Konsole::Session::zmodemFinished);
+    connect(_zmodemProc, &KProcess::readyReadStandardOutput, this, &Koncrepe::Session::zmodemReadAndSendBlock);
+    connect(_zmodemProc, &KProcess::readyReadStandardError, this, &Koncrepe::Session::zmodemReadStatus);
+    connect(_zmodemProc, &KProcess::finished, this, &Koncrepe::Session::zmodemFinished);
 
     _zmodemProc->start();
 
-    disconnect(_shellProcess, &Konsole::Pty::receivedData, this, &Konsole::Session::onReceiveBlock);
-    connect(_shellProcess, &Konsole::Pty::receivedData, this, &Konsole::Session::zmodemReceiveBlock);
+    disconnect(_shellProcess, &Koncrepe::Pty::receivedData, this, &Koncrepe::Session::onReceiveBlock);
+    connect(_shellProcess, &Koncrepe::Pty::receivedData, this, &Koncrepe::Session::zmodemReceiveBlock);
 
     _zmodemProgress = new ZModemDialog(QApplication::activeWindow(), false, i18n("ZModem Progress"));
 
-    connect(_zmodemProgress, &Konsole::ZModemDialog::zmodemCancel, this, &Konsole::Session::zmodemFinished);
+    connect(_zmodemProgress, &Koncrepe::ZModemDialog::zmodemCancel, this, &Koncrepe::Session::zmodemFinished);
 
     _zmodemProgress->show();
 }
@@ -1779,8 +1779,8 @@ void Session::zmodemFinished()
         _zmodemBusy = false;
         delete process; // Now, the KProcess may be disposed safely.
 
-        disconnect(_shellProcess, &Konsole::Pty::receivedData, this, &Konsole::Session::zmodemReceiveBlock);
-        connect(_shellProcess, &Konsole::Pty::receivedData, this, &Konsole::Session::onReceiveBlock);
+        disconnect(_shellProcess, &Koncrepe::Pty::receivedData, this, &Koncrepe::Session::zmodemReceiveBlock);
+        connect(_shellProcess, &Koncrepe::Pty::receivedData, this, &Koncrepe::Session::onReceiveBlock);
 
         _shellProcess->sendData(QByteArrayLiteral("\030\030\030\030")); // Abort
         _shellProcess->sendData(QByteArrayLiteral("\001\013\n")); // Try to get prompt back
@@ -1831,7 +1831,7 @@ ContainerInfo Session::containerContext() const
 void Session::setContainerContext(const ContainerInfo &newContext)
 {
     if (newContext != _containerContext) {
-        qDebug(KonsoleDebug) << "Container context changed to:" << newContext.name << "("
+        qDebug(KoncrepeDebug) << "Container context changed to:" << newContext.name << "("
                              << (newContext.detector ? newContext.detector->typeId() : QStringLiteral("none")) << ")";
         ContainerInfo oldContext = _containerContext;
         _containerContext = newContext;
@@ -1885,7 +1885,7 @@ void Session::updateContainerContext()
     if (_containerContext.hostPid.has_value()) {
         if (_foregroundPid == _containerContext.hostPid.value()) {
             // Foreground PID returned to host shell - container exited (pop or crash)
-            qCDebug(KonsoleDebug) << "Foreground returned to host PID" << _foregroundPid << "- clearing OSC 777 container context";
+            qCDebug(KoncrepeDebug) << "Foreground returned to host PID" << _foregroundPid << "- clearing OSC 777 container context";
             setContainerContext(ContainerInfo{});
         }
         // Don't do polling-based detection while in an OSC 777-detected container
@@ -2170,7 +2170,7 @@ bool Session::isForegroundProcessActive()
         return false;
     }
 
-    // This check is wrong when Konsole is started with '-e cmd'
+    // This check is wrong when Koncrepe is started with '-e cmd'
     // as there will only be one process.
     // See BKO 134581 for no popup when closing session
     return (pid != fgid);
@@ -2631,7 +2631,7 @@ bool Session::isCalledViaDbusAndForbidden() const
 {
 #if HAVE_DBUS
     // we can check if this is called via dbus and then consult the config
-    if (calledFromDBus() && !Konsole::KonsoleSettings::enableSecuritySensitiveDBusAPI()) {
+    if (calledFromDBus() && !Koncrepe::KoncrepeSettings::enableSecuritySensitiveDBusAPI()) {
         // trigger error reply
         setDelayedReply(true);
         auto reply = message().createErrorReply(QDBusError::AccessDenied, i18n("Security sensitive DBus API is disabled in the settings."));

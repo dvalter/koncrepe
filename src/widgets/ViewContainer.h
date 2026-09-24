@@ -11,7 +11,7 @@
 #include <QObject>
 #include <QTabWidget>
 
-// Konsole
+// Koncrepe
 #include "ViewManager.h"
 #include "containers/ContainerInfo.h"
 #include "session/Session.h"
@@ -22,7 +22,7 @@ class QToolButton;
 class QMenu;
 class QLabel;
 
-namespace Konsole
+namespace Koncrepe
 {
 class ViewProperties;
 class ViewManager;
@@ -38,7 +38,7 @@ class TabbedViewContainer;
  * to actually add or remove view widgets from the container widget, as well
  * as updating any navigation aids.
  */
-class KONSOLEPRIVATE_EXPORT TabbedViewContainer : public QTabWidget
+class KONCREPEPRIVATE_EXPORT TabbedViewContainer : public QTabWidget
 {
     Q_OBJECT
 
@@ -76,7 +76,7 @@ public:
     /** Sets tab activity status if the tab is not active */
     void updateActivity(ViewProperties *item);
     /** Sets tab notification */
-    void updateNotification(ViewProperties *item, Konsole::Session::Notification notification, bool enabled);
+    void updateNotification(ViewProperties *item, Koncrepe::Session::Notification notification, bool enabled);
     /** Sets tab special state (copy input or read-only) */
     void updateSpecialState(ViewProperties *item);
     /** Sets tab progress */
@@ -229,7 +229,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 private Q_SLOTS:
     void viewDestroyed(QObject *view);
-    void konsoleConfigChanged();
+    void koncrepeConfigChanged();
     void activateView(const QString &xdgActivationToken);
     void updateActiveContainerBadge();
 

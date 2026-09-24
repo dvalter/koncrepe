@@ -1,4 +1,4 @@
-# Konsole project
+# Koncrepe project
 
 # KDE Application Version, managed by release script
 set(RELEASE_SERVICE_VERSION_MAJOR "26")
@@ -17,7 +17,7 @@ set(QT_MIN_VERSION "6.5.0")
 set(KF6_DEP_VERSION "6.6.0")
 
 # Release script will create bugzilla versions
-project(konsole VERSION ${RELEASE_SERVICE_VERSION})
+project(koncrepe VERSION ${RELEASE_SERVICE_VERSION})
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -146,8 +146,8 @@ if(INSTALL_ICONS)
 endif()
 
 ecm_qt_install_logging_categories(
-    EXPORT KONSOLE
-    FILE konsole.categories
+    EXPORT KONCREPE
+    FILE koncrepe.categories
     DESTINATION "${KDE_INSTALL_LOGGINGCATEGORIESDIR}"
 )
 
@@ -156,7 +156,7 @@ if(KF6DocTools_FOUND)
     kdoctools_install( po )
 endif()
 
-install(FILES completions/konsole.zsh RENAME _konsole DESTINATION ${KDE_INSTALL_ZSHAUTOCOMPLETEDIR})
+install(FILES completions/koncrepe.zsh RENAME _koncrepe DESTINATION ${KDE_INSTALL_ZSHAUTOCOMPLETEDIR})
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

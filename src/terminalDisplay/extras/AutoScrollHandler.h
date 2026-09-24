@@ -10,7 +10,7 @@
 
 #include <QWidget>
 
-namespace Konsole
+namespace Koncrepe
 {
 class AutoScrollHandler : public QObject
 {

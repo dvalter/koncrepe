@@ -7,7 +7,7 @@
 
 #include "UrlFilter.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 #include "UrlFilterHotspot.h"
 

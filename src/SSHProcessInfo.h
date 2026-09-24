@@ -9,12 +9,12 @@
 
 #include "ProcessInfo.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Lightweight class which provides additional information about SSH processes.
  */
-class KONSOLEPRIVATE_EXPORT SSHProcessInfo
+class KONCREPEPRIVATE_EXPORT SSHProcessInfo
 {
 public:
     /**

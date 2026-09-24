@@ -9,7 +9,7 @@
 
 #include <QTest>
 
-namespace Konsole
+namespace Koncrepe
 {
 class ContainerDetectorParsingTest : public QObject
 {
@@ -110,8 +110,8 @@ void ContainerDetectorParsingTest::parseToolbox()
     QCOMPARE(parseToolboxContainerNames(output), expected);
 }
 
-} // namespace Konsole
+} // namespace Koncrepe
 
-QTEST_MAIN(Konsole::ContainerDetectorParsingTest)
+QTEST_MAIN(Koncrepe::ContainerDetectorParsingTest)
 
 #include "ContainerDetectorParsingTest.moc"

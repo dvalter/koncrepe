@@ -17,7 +17,7 @@
 
 class QProcess;
 
-namespace Konsole
+namespace Koncrepe
 {
 class DBusTest : public QObject
 {

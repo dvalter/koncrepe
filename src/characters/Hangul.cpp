@@ -9,10 +9,10 @@
 
 // Qt
 
-// Konsole
+// Koncrepe
 #include "Character.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 
 int Hangul::width(uint c, int widthFromTable, enum Hangul::SyllablePos &syllablePos)

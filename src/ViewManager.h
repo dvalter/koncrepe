@@ -15,13 +15,13 @@
 #include <QPointer>
 
 #include "containers/ContainerInfo.h"
-#include "konsoleprivate_export.h"
-// Konsole
+#include "koncrepeprivate_export.h"
+// Koncrepe
 
 class KActionCollection;
 class KConfigGroup;
 
-namespace Konsole
+namespace Koncrepe
 {
 class ColorScheme;
 class Profile;
@@ -34,13 +34,13 @@ class ViewProperties;
 class ViewSplitter;
 
 /**
- * Manages the terminal display widgets in a Konsole window or part.
+ * Manages the terminal display widgets in a Koncrepe window or part.
  *
  * When a view manager is created, it constructs a tab widget ( accessed via
  * widget() ) to hold one or more view splitters.  Each view splitter holds
  * one or more terminal displays  and splitters.
  *
- * The view manager provides menu actions ( defined in the 'konsoleui.rc' XML file )
+ * The view manager provides menu actions ( defined in the 'koncrepeui.rc' XML file )
  * to manipulate the views and view containers - for example, actions to split the view
  * left/right or top/bottom, detach a view from the current window and navigate between
  * views and containers.  These actions are added to the collection specified in the
@@ -51,15 +51,15 @@ class ViewSplitter;
  * user interface elements specific to each display/session pair.
  *
  */
-class KONSOLEPRIVATE_EXPORT ViewManager : public QObject
+class KONCREPEPRIVATE_EXPORT ViewManager : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.konsole.Window")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.koncrepe.Window")
 
 public:
     /**
      * Constructs a new view manager with the specified @p parent.
-     * View-related actions defined in 'konsoleui.rc' are created
+     * View-related actions defined in 'koncrepeui.rc' are created
      * and added to the specified @p collection.
      */
     ViewManager(QObject *parent, KActionCollection *collection);
@@ -372,8 +372,8 @@ public Q_SLOTS:
         Does not work AFAIK: qdbus6, qdbusviewer6, busctl
         Works: dbus-send, gdbus
          Example:
-            dbus-send --session --print-reply=literal --type=method_call --dest=org.kde.konsole-16710 /Windows/1   org.kde.konsole.Window.resizeSplits int32:0 array:double:40.0,60.0
-            gdbus call --session --dest org.kde.konsole-16710  --object-path /Windows/1 --method org.kde.konsole.Window.resizeSplits 0 "[10.5, 89.5]"
+            dbus-send --session --print-reply=literal --type=method_call --dest=org.kde.koncrepe-16710 /Windows/1   org.kde.koncrepe.Window.resizeSplits int32:0 array:double:40.0,60.0
+            gdbus call --session --dest org.kde.koncrepe-16710  --object-path /Windows/1 --method org.kde.koncrepe.Window.resizeSplits 0 "[10.5, 89.5]"
     */
     Q_SCRIPTABLE bool resizeSplits(int splitterId, QList<double> percentages);
 

@@ -19,7 +19,7 @@
 
 using namespace std::literals::chrono_literals;
 
-namespace Konsole
+namespace Koncrepe
 {
 constexpr auto MASK_TIMEOUT = 500ms;
 

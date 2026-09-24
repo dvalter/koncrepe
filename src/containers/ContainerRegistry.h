@@ -9,7 +9,7 @@
 
 #include "ContainerInfo.h"
 #include "IContainerDetector.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 #include <QList>
 #include <QObject>
@@ -19,7 +19,7 @@
 #include <memory>
 #include <vector>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 class ContainerRegistryTest;
@@ -139,7 +139,7 @@ public:
      * @param container The container to build a key for
      * @return Key string in "type:name" format, or empty if container is invalid
      */
-    KONSOLEPRIVATE_EXPORT
+    KONCREPEPRIVATE_EXPORT
     static QString keyFromContainerInfo(const ContainerInfo &container);
 
     /**
@@ -181,6 +181,6 @@ private:
     friend class ContainerRegistryTest;
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // CONTAINERREGISTRY_H

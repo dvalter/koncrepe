@@ -19,7 +19,7 @@
    at 0 in cells.
 */
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 HistoryScrollFile::HistoryScrollFile()
     : HistoryScroll(new HistoryTypeFile())
@@ -111,7 +111,7 @@ void HistoryScrollFile::removeCells()
     _lineflags.removeLast(res * sizeof(LineProperty));
 }
 
-int Konsole::HistoryScrollFile::reflowLines(const int columns, std::map<int, int> *)
+int Koncrepe::HistoryScrollFile::reflowLines(const int columns, std::map<int, int> *)
 {
     auto reflowFile = std::make_unique<HistoryFile>();
     reflowData newLine;

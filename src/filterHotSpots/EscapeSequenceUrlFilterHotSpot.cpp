@@ -20,7 +20,7 @@
 
 #include "terminalDisplay/TerminalDisplay.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 EscapeSequenceUrlHotSpot::EscapeSequenceUrlHotSpot(int startLine, int startColumn, int endLine, int endColumn, const QString &text, const QString &url)
     : HotSpot(startLine, startColumn, endLine, endColumn)

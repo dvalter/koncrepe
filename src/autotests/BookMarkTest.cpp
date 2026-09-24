@@ -13,9 +13,9 @@
 // KF
 #include <KBookmarkManager>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
-/* This does not use Konsole's BookmarkHandler directly; it is used to
+/* This does not use Koncrepe's BookmarkHandler directly; it is used to
  *  test the code copied from there and to test any changes.
  */
 

@@ -15,7 +15,7 @@
 class QColor;
 class QPaintEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 class TabbedViewContainer;
 
@@ -68,6 +68,6 @@ private:
 };
 }
 
-Q_DECLARE_METATYPE(Konsole::DetachableTabData)
+Q_DECLARE_METATYPE(Koncrepe::DetachableTabData)
 
 #endif

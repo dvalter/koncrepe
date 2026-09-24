@@ -6,7 +6,7 @@
 
 #include "ThumbnailsSettings.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ThumbnailsSettings::ThumbnailsSettings(QWidget *aParent)
     : QWidget(aParent)

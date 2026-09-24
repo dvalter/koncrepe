@@ -9,7 +9,7 @@
 
 #include "ui_PrintOptions.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class PrintOptions : public QWidget, private Ui::PrintOptions
 {

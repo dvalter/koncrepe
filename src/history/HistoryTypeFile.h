@@ -8,11 +8,11 @@
 #define HISTORYTYPEFILE_H
 
 #include "HistoryType.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT HistoryTypeFile : public HistoryType
+class KONCREPEPRIVATE_EXPORT HistoryTypeFile : public HistoryType
 {
 public:
     explicit HistoryTypeFile();

@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="note">
      <property name="text">
-      <string comment="@info">Key bindings control how combinations of keystrokes in the terminal window are converted into the stream of characters that is then sent to the current terminal program. For more information on how to customize the key bindings check the Konsole Handbook.</string>
+      <string comment="@info">Key bindings control how combinations of keystrokes in the terminal window are converted into the stream of characters that is then sent to the current terminal program. For more information on how to customize the key bindings check the Koncrepe Handbook.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

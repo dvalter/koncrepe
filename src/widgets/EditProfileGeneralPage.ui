@@ -392,7 +392,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string comment="@info">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Settings → Configure Konsole → General → Remember window size&lt;/span&gt; must be disabled for these entries to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string comment="@info">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Settings → Configure Koncrepe → General → Remember window size&lt;/span&gt; must be disabled for these entries to work.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="textFormat">
           <enum>Qt::TextFormat::RichText</enum>

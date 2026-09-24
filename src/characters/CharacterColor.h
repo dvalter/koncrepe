@@ -11,7 +11,7 @@
 // Qt
 #include <QColor>
 
-namespace Konsole
+namespace Koncrepe
 {
 // Attributed Character Representations ///////////////////////////////
 

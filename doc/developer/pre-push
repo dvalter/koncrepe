@@ -1,6 +1,6 @@
 #!/bin/bash
-# Add this to your konsole/.git/hooks/ folder to prevent push if message is not following commit-template
-# In your konsole folder type:
+# Add this to your koncrepe/.git/hooks/ folder to prevent push if message is not following commit-template
+# In your koncrepe folder type:
 # cp ./doc/developer/pre-push ./.git/hooks/pre-push && chmod +x ./.git/hooks/pre-push
 
 # Get the current branch and apply it to a variable

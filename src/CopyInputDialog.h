@@ -12,8 +12,8 @@
 #include <QPointer>
 #include <QSet>
 
-// Konsole
-#include "konsoleprivate_export.h"
+// Koncrepe
+#include "koncrepeprivate_export.h"
 #include "session/Session.h"
 #include "session/SessionListModel.h"
 #include "session/SessionManager.h"
@@ -23,7 +23,7 @@ namespace Ui
 class CopyInputDialog;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 class CheckableSessionModel;
 
@@ -33,7 +33,7 @@ class CheckableSessionModel;
  * set using setMasterSession().  After the dialog has been executed,
  * the set of chosen sessions can be retrieved using chosenSessions()
  */
-class KONSOLEPRIVATE_EXPORT CopyInputDialog : public QDialog
+class KONCREPEPRIVATE_EXPORT CopyInputDialog : public QDialog
 {
     Q_OBJECT
 

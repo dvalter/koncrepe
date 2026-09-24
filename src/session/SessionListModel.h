@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -13,7 +13,7 @@
 #include <QAbstractListModel>
 #include <QVariant>
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 

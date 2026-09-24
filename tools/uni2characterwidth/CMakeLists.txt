@@ -5,7 +5,7 @@
 ###   together with a function for finding the width for specified character.
 ###
 ###   See `uni2characterwidth --help` for usage information
-if(KONSOLE_BUILD_UNI2CHARACTERWIDTH)
+if(KONCREPE_BUILD_UNI2CHARACTERWIDTH)
 
 # NOTE: this doesn't build with Qt6 even using compat and there are
 #       some other errors that will need fixed.  For now if this

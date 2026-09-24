@@ -1,5 +1,5 @@
 /*
-    This file is part of Konsole, a terminal emulator for KDE.
+    This file is part of Koncrepe, a terminal emulator for KDE.
 
     SPDX-FileCopyrightText: 2018 Mariusz Glebocki <mglb@arccos-1.net>
 

@@ -54,7 +54,7 @@ public:
     Q_SLOT void runShellCheck();
 
     void setModel(QuickCommandsModel *model);
-    void setCurrentController(Konsole::SessionController *controller);
+    void setCurrentController(Koncrepe::SessionController *controller);
 
     Q_SIGNAL void quickAccessShortcutChanged(QKeySequence shortcut);
 

@@ -10,6 +10,6 @@
 #include <QTest>
 #include <cstdint>
 
-QTEST_GUILESS_MAIN(Konsole::CharacterTest)
+QTEST_GUILESS_MAIN(Koncrepe::CharacterTest)
 
 #include "moc_CharacterTest.cpp"

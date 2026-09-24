@@ -26,7 +26,7 @@
 #include <sys/sysctl.h>
 #endif
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 UnixProcessInfo::UnixProcessInfo(int pid)
     : ProcessInfo(pid)

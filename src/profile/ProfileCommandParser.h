@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -9,14 +9,14 @@
 #ifndef PROFILECOMMANDPARSER_H
 #define PROFILECOMMANDPARSER_H
 
-// Konsole
+// Koncrepe
 #include "Profile.h"
 
 class QVariant;
 template<typename, typename>
 class QHash;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Parses an input string consisting of property names
@@ -32,10 +32,10 @@ namespace Konsole
  * For example:
  *
  * @code
- *   Icon=konsole;Directory=/home/bob
+ *   Icon=koncrepe;Directory=/home/bob
  * @endcode
  */
-class KONSOLEPRIVATE_EXPORT ProfileCommandParser
+class KONCREPEPRIVATE_EXPORT ProfileCommandParser
 {
 public:
     /**

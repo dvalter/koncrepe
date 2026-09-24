@@ -1,10 +1,10 @@
 {
-    "id": "org.kde.konsole",
+    "id": "org.kde.koncrepe",
     "branch": "master",
     "runtime": "org.kde.Platform",
     "runtime-version": "6.11",
     "sdk": "org.kde.Sdk",
-    "command": "konsole",
+    "command": "koncrepe",
     "tags": [
         "nightly"
     ],
@@ -20,7 +20,7 @@
     "rename-icon": "utilities-terminal",
     "modules": [
         {
-            "name": "konsole",
+            "name": "koncrepe",
             "buildsystem": "cmake-ninja",
             "config-opts": [
                 "-DINSTALL_ICONS=ON",

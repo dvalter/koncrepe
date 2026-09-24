@@ -18,13 +18,13 @@
 #include <KCoreConfigSkeleton>
 #include <KPageDialog>
 
-// Konsole
-#include "konsoleapp_export.h"
+// Koncrepe
+#include "koncrepeapp_export.h"
 
 class QWidget;
 class KConfigDialogManager;
 
-namespace Konsole
+namespace Koncrepe
 {
 class ConfigDialogButtonGroupManager;
 
@@ -32,7 +32,7 @@ class ConfigDialogButtonGroupManager;
 // all pages in QScrollArea. KConfigDialog, when fixed, should
 // be source compatible with this class, so simple class replace
 // should suffice.
-class KONSOLEAPP_EXPORT ConfigurationDialog : public KPageDialog
+class KONCREPEAPP_EXPORT ConfigurationDialog : public KPageDialog
 {
     Q_OBJECT
 

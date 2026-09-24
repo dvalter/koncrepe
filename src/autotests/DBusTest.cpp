@@ -16,16 +16,16 @@
 #include <QSignalSpy>
 #include <QStandardPaths>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
-/* Exec a new Konsole and grab its dbus */
+/* Exec a new Koncrepe and grab its dbus */
 void DBusTest::initTestCase()
 {
     qRegisterMetaType<QProcess::ExitStatus>();
 
-    const QString interfaceName = QStringLiteral("org.kde.konsole");
+    const QString interfaceName = QStringLiteral("org.kde.koncrepe");
     QDBusConnectionInterface *bus = nullptr;
-    QStringList konsoleServices;
+    QStringList koncrepeServices;
 
     if (!QDBusConnection::sessionBus().isConnected() || ((bus = QDBusConnection::sessionBus().interface()) == nullptr)) {
         QFAIL("Session bus not found");
@@ -34,12 +34,12 @@ void DBusTest::initTestCase()
     QDBusReply<QStringList> serviceReply = bus->registeredServiceNames();
     QVERIFY2(serviceReply.isValid(), "SessionBus interfaces not available");
 
-    // Find all current Konsoles' services running
+    // Find all current Koncrepes' services running
     QStringList allServices = serviceReply;
     for (QStringList::const_iterator it = allServices.constBegin(), end = allServices.constEnd(); it != end; ++it) {
         const QString service = *it;
         if (service.startsWith(interfaceName)) {
-            konsoleServices << service;
+            koncrepeServices << service;
         }
     }
 
@@ -48,7 +48,7 @@ void DBusTest::initTestCase()
     ProfileWriter profileWriter;
 
     do {
-        _testProfileName = QStringLiteral("konsole-dbus-test-profile-%1").arg(QRandomGenerator::global()->generate());
+        _testProfileName = QStringLiteral("koncrepe-dbus-test-profile-%1").arg(QRandomGenerator::global()->generate());
         profile->setProperty(Profile::UntranslatedName, _testProfileName);
         profile->setProperty(Profile::Name, _testProfileName);
         _testProfilePath = profileWriter.getPath(profile);
@@ -59,39 +59,39 @@ void DBusTest::initTestCase()
     profile->setProperty(Profile::LocalTabTitleFormat, QStringLiteral("%D"));
     profileWriter.writeProfile(_testProfilePath, profile);
 
-    // Create a new Konsole with a separate process id
+    // Create a new Koncrepe with a separate process id
     _process = new QProcess;
     _process->setProcessChannelMode(QProcess::ForwardedChannels);
-    _process->start(QStringLiteral("konsole"), QStringList(QStringLiteral("--separate")));
+    _process->start(QStringLiteral("koncrepe"), QStringList(QStringLiteral("--separate")));
 
     if (!_process->waitForStarted()) {
-        QFAIL(QStringLiteral("Unable to exec a new Konsole").toLatin1().data());
+        QFAIL(QStringLiteral("Unable to exec a new Koncrepe").toLatin1().data());
     }
 
-    // Wait for above Konsole to finish starting
+    // Wait for above Koncrepe to finish starting
     QThread::sleep(5);
 
     serviceReply = bus->registeredServiceNames();
     QVERIFY2(serviceReply.isValid(), "SessionBus interfaces not available");
 
-    // Find dbus service of above Konsole
+    // Find dbus service of above Koncrepe
     allServices = serviceReply;
     for (QStringList::const_iterator it = allServices.constBegin(), end = allServices.constEnd(); it != end; ++it) {
         const QString service = *it;
         if (service.startsWith(interfaceName)) {
-            if (!konsoleServices.contains(service)) {
+            if (!koncrepeServices.contains(service)) {
                 _interfaceName = service;
             }
         }
     }
 
-    QVERIFY2(!_interfaceName.isEmpty(), "This test will only work in a Konsole window with a new PID.  A new Konsole PID can't be found.");
+    QVERIFY2(!_interfaceName.isEmpty(), "This test will only work in a Koncrepe window with a new PID.  A new Koncrepe PID can't be found.");
 
-    QDBusInterface iface(_interfaceName, QStringLiteral("/Windows/1"), QStringLiteral("org.kde.konsole.Konsole"));
+    QDBusInterface iface(_interfaceName, QStringLiteral("/Windows/1"), QStringLiteral("org.kde.koncrepe.Koncrepe"));
     QVERIFY(iface.isValid());
 }
 
-/* Close the Konsole window that was opened to test the DBus interface
+/* Close the Koncrepe window that was opened to test the DBus interface
  */
 void DBusTest::cleanupTestCase()
 {
@@ -105,11 +105,11 @@ void DBusTest::cleanupTestCase()
     // Do not use QWidget::close(), as it shows question popup when
     // CloseAllTabs is set to false (default).
     QDBusInterface iface(_interfaceName, QStringLiteral("/MainApplication"), QStringLiteral("org.qtproject.Qt.QCoreApplication"));
-    QVERIFY2(iface.isValid(), "Unable to get a dbus interface to Konsole!");
+    QVERIFY2(iface.isValid(), "Unable to get a dbus interface to Koncrepe!");
 
     QDBusReply<void> instanceReply = iface.call(QStringLiteral("quit"));
     if (!instanceReply.isValid()) {
-        QFAIL(QStringLiteral("Unable to close Konsole: %1").arg(instanceReply.error().message()).toLatin1().data());
+        QFAIL(QStringLiteral("Unable to close Koncrepe: %1").arg(instanceReply.error().message()).toLatin1().data());
     }
     quitSpy.wait();
     _process->kill();
@@ -124,7 +124,7 @@ void DBusTest::testSessions()
     QDBusReply<QString> stringReply;
     QDBusReply<QStringList> listReply;
 
-    QDBusInterface iface(_interfaceName, QStringLiteral("/Sessions/1"), QStringLiteral("org.kde.konsole.Session"));
+    QDBusInterface iface(_interfaceName, QStringLiteral("/Sessions/1"), QStringLiteral("org.kde.koncrepe.Session"));
     QVERIFY(iface.isValid());
 
     //****************** Test is/set MonitorActivity
@@ -263,7 +263,7 @@ void DBusTest::testWindows()
     int sessionCount = -1;
     int initialSessionId = -1;
 
-    QDBusInterface iface(_interfaceName, QStringLiteral("/Windows/1"), QStringLiteral("org.kde.konsole.Window"));
+    QDBusInterface iface(_interfaceName, QStringLiteral("/Windows/1"), QStringLiteral("org.kde.koncrepe.Window"));
     QVERIFY(iface.isValid());
 
     intReply = iface.call(QStringLiteral("sessionCount"));
@@ -295,7 +295,7 @@ void DBusTest::testWindows()
     newSessionId = intReply.value();
     QVERIFY(newSessionId != initialSessionId);
     {
-        QDBusInterface sessionIface(_interfaceName, QStringLiteral("/Sessions/%1").arg(newSessionId), QStringLiteral("org.kde.konsole.Session"));
+        QDBusInterface sessionIface(_interfaceName, QStringLiteral("/Sessions/%1").arg(newSessionId), QStringLiteral("org.kde.koncrepe.Session"));
         QVERIFY(iface.isValid());
 
         listReply = sessionIface.call(QStringLiteral("environment"));
@@ -312,7 +312,7 @@ void DBusTest::testWindows()
     newSessionId = intReply.value();
     QVERIFY(newSessionId != initialSessionId);
     {
-        QDBusInterface sessionIface(_interfaceName, QStringLiteral("/Sessions/%1").arg(newSessionId), QStringLiteral("org.kde.konsole.Session"));
+        QDBusInterface sessionIface(_interfaceName, QStringLiteral("/Sessions/%1").arg(newSessionId), QStringLiteral("org.kde.koncrepe.Session"));
         QVERIFY(iface.isValid());
 
         listReply = sessionIface.call(QStringLiteral("environment"));

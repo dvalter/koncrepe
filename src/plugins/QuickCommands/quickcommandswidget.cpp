@@ -4,7 +4,7 @@
 
 #include "quickcommandswidget.h"
 #include "filtermodel.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 #include "terminalDisplay/TerminalDisplay.h"
 
 #include <QMenu>
@@ -26,7 +26,7 @@
 struct QuickCommandsWidget::Private {
     QuickCommandsModel *model = nullptr;
     FilterModel *filterModel = nullptr;
-    Konsole::SessionController *controller = nullptr;
+    Koncrepe::SessionController *controller = nullptr;
     bool hasShellCheck = false;
     bool isSetup = false;
     QTimer shellCheckTimer;
@@ -265,7 +265,7 @@ void QuickCommandsWidget::setModel(QuickCommandsModel *model)
     priv->model = model;
     priv->filterModel->setSourceModel(model);
 }
-void QuickCommandsWidget::setCurrentController(Konsole::SessionController *controller)
+void QuickCommandsWidget::setCurrentController(Koncrepe::SessionController *controller)
 {
     priv->controller = controller;
 }
@@ -315,7 +315,7 @@ void QuickCommandsWidget::runShellCheck()
 
     QTemporaryFile file;
     if (!file.open()) {
-        qCWarning(KonsoleDebug) << "Failed to open temporary file";
+        qCWarning(KoncrepeDebug) << "Failed to open temporary file";
         return;
     }
 

@@ -7,7 +7,7 @@
 // Own
 #include "RenameTabDialog.h"
 
-// Konsole
+// Koncrepe
 #include "Shortcut_p.h"
 #include "ui_RenameTabDialog.h"
 
@@ -16,7 +16,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-using Konsole::RenameTabDialog;
+using Koncrepe::RenameTabDialog;
 
 RenameTabDialog::RenameTabDialog(QWidget *parent)
     : QDialog(parent)

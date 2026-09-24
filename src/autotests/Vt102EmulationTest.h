@@ -14,7 +14,7 @@
 
 #include "Vt102Emulation.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TestEmulation;
 

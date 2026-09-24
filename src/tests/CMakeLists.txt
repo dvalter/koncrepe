@@ -1,4 +1,4 @@
-add_subdirectory(demo_konsolepart)
+add_subdirectory(demo_koncrepepart)
 
 include(ECMMarkAsTest)
 

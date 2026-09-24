@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -17,14 +17,14 @@
 #include <QStringList>
 #include <QVariant>
 
-// Konsole
-#include "konsoleprivate_export.h"
+// Koncrepe
+#include "koncrepeprivate_export.h"
 #include "Enumeration.h"
 
 #include <map>
 #include <vector>
 
-namespace Konsole
+namespace Koncrepe
 {
 class ProfileGroup;
 
@@ -46,7 +46,7 @@ class ProfileGroup;
  * Profiles can be loaded from disk using ProfileReader instances
  * and saved to disk using ProfileWriter instances.
  */
-class KONSOLEPRIVATE_EXPORT Profile : public QSharedData
+class KONCREPEPRIVATE_EXPORT Profile : public QSharedData
 {
     Q_GADGET
 

@@ -15,7 +15,7 @@
 #include <KLocalizedString>
 #include <KMessageBox>
 
-// Konsole
+// Koncrepe
 #include "keyboardtranslator/KeyboardTranslator.h"
 #include "keyboardtranslator/KeyboardTranslatorManager.h"
 #include "keyboardtranslator/KeyboardTranslatorReader.h"
@@ -23,7 +23,7 @@
 
 #include "widgets/EditProfileDialog.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 KeyBindingEditor::KeyBindingEditor(QWidget *parent)
     : QDialog(parent)
@@ -42,7 +42,7 @@ KeyBindingEditor::KeyBindingEditor(QWidget *parent)
 
     setLayout(layout);
 
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &Konsole::KeyBindingEditor::accept);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &Koncrepe::KeyBindingEditor::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
     setAttribute(Qt::WA_DeleteOnClose);
@@ -52,9 +52,9 @@ KeyBindingEditor::KeyBindingEditor(QWidget *parent)
 
     // description edit
     _ui->descriptionEdit->setPlaceholderText(i18nc("@label:textbox", "Enter descriptive label"));
-    connect(_ui->descriptionEdit, &QLineEdit::textChanged, this, &Konsole::KeyBindingEditor::setTranslatorDescription);
+    connect(_ui->descriptionEdit, &QLineEdit::textChanged, this, &Koncrepe::KeyBindingEditor::setTranslatorDescription);
     // filter edit
-    connect(_ui->filterEdit, &QLineEdit::textChanged, this, &Konsole::KeyBindingEditor::filterRows);
+    connect(_ui->filterEdit, &QLineEdit::textChanged, this, &Koncrepe::KeyBindingEditor::filterRows);
 
     // key bindings table
     _ui->keyBindingTable->setColumnCount(2);
@@ -72,8 +72,8 @@ KeyBindingEditor::KeyBindingEditor(QWidget *parent)
     _ui->addEntryButton->setIcon(QIcon::fromTheme(QStringLiteral("list-add")));
     _ui->removeEntryButton->setIcon(QIcon::fromTheme(QStringLiteral("list-remove")));
 
-    connect(_ui->removeEntryButton, &QPushButton::clicked, this, &Konsole::KeyBindingEditor::removeSelectedEntry);
-    connect(_ui->addEntryButton, &QPushButton::clicked, this, &Konsole::KeyBindingEditor::addNewEntry);
+    connect(_ui->removeEntryButton, &QPushButton::clicked, this, &Koncrepe::KeyBindingEditor::removeSelectedEntry);
+    connect(_ui->addEntryButton, &QPushButton::clicked, this, &Koncrepe::KeyBindingEditor::addNewEntry);
 
     // test area
     _ui->testAreaInputEdit->installEventFilter(this);
@@ -155,7 +155,7 @@ bool KeyBindingEditor::eventFilter(QObject *watched, QEvent *event)
             auto *keyEvent = static_cast<QKeyEvent *>(event);
 
             // The state here is currently set to the state that a newly started
-            // terminal in Konsole will be in ( which is also the same as the
+            // terminal in Koncrepe will be in ( which is also the same as the
             // state just after a reset ), this has 'ANSI' turned on and all other
             // states off.
             //
@@ -254,7 +254,7 @@ void KeyBindingEditor::bindingTableItemChanged(QTableWidgetItem *item)
 
 void KeyBindingEditor::setupKeyBindingTable(const KeyboardTranslator *translator)
 {
-    disconnect(_ui->keyBindingTable, &QTableWidget::itemChanged, this, &Konsole::KeyBindingEditor::bindingTableItemChanged);
+    disconnect(_ui->keyBindingTable, &QTableWidget::itemChanged, this, &Koncrepe::KeyBindingEditor::bindingTableItemChanged);
 
     QList<KeyboardTranslator::Entry> entries = translator->entries();
     _ui->keyBindingTable->setRowCount(entries.count());
@@ -272,7 +272,7 @@ void KeyBindingEditor::setupKeyBindingTable(const KeyboardTranslator *translator
     }
     _ui->keyBindingTable->sortItems(0);
 
-    connect(_ui->keyBindingTable, &QTableWidget::itemChanged, this, &Konsole::KeyBindingEditor::bindingTableItemChanged);
+    connect(_ui->keyBindingTable, &QTableWidget::itemChanged, this, &Koncrepe::KeyBindingEditor::bindingTableItemChanged);
 }
 
 void KeyBindingEditor::accept()

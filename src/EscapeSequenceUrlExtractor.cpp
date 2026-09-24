@@ -16,11 +16,11 @@
 #include <QHostInfo>
 #endif
 
-namespace Konsole
+namespace Koncrepe
 {
 EscapeSequenceUrlExtractor::EscapeSequenceUrlExtractor() = default;
 
-void Konsole::EscapeSequenceUrlExtractor::setScreen(Konsole::Screen *screen)
+void Koncrepe::EscapeSequenceUrlExtractor::setScreen(Koncrepe::Screen *screen)
 {
     _screen = screen;
     clear();
@@ -123,7 +123,7 @@ QVector<ExtractedUrl> EscapeSequenceUrlExtractor::history() const
     return _history;
 }
 
-void Konsole::EscapeSequenceUrlExtractor::toggleUrlInput()
+void Koncrepe::EscapeSequenceUrlExtractor::toggleUrlInput()
 {
     if (_ignoreNextUrlInput) {
         _ignoreNextUrlInput = false;

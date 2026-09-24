@@ -26,7 +26,7 @@ class QPixmap;
 class QKeyEvent;
 class QMouseEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 class TerminalDisplay;
@@ -34,7 +34,7 @@ class TerminalDisplay;
 /**
  * Hotspot type created by FileFilter instances.
  */
-class KONSOLEPRIVATE_EXPORT FileFilterHotSpot : public RegExpFilterHotSpot
+class KONCREPEPRIVATE_EXPORT FileFilterHotSpot : public RegExpFilterHotSpot
 {
     Q_OBJECT
 public:

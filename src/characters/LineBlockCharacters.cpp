@@ -13,7 +13,7 @@
 // Qt
 #include <QPainterPath>
 
-namespace Konsole
+namespace Koncrepe
 {
 namespace LineBlockCharacters
 {
@@ -868,4 +868,4 @@ void draw(QPainter &paint, const QRect &cellRect, const uint &chr, bool bold)
 }
 
 } // namespace LineBlockCharacters
-} // namespace Konsole
+} // namespace Koncrepe

@@ -7,11 +7,11 @@
 #ifndef WINDOWSYSTEMINFO_H
 #define WINDOWSYSTEMINFO_H
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT WindowSystemInfo
+class KONCREPEPRIVATE_EXPORT WindowSystemInfo
 {
 public:
     static bool HAVE_TRANSPARENCY;

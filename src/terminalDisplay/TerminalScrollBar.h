@@ -12,18 +12,18 @@
 // Qt
 #include <QScrollBar>
 
-// Konsole
+// Koncrepe
 #include "Enumeration.h"
 #include "ScreenWindow.h"
 #include "ScrollState.h"
 #include "extras/HighlightScrolledLines.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalDisplay;
 
-class KONSOLEPRIVATE_EXPORT TerminalScrollBar : public QScrollBar
+class KONCREPEPRIVATE_EXPORT TerminalScrollBar : public QScrollBar
 {
     Q_OBJECT
 public:
@@ -163,6 +163,6 @@ private:
     int _lineOpacity = 100;
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif

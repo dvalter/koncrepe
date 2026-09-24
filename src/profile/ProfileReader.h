@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -13,10 +13,10 @@
 
 class KConfig;
 
-namespace Konsole
+namespace Koncrepe
 {
 /** Interface for all classes which can load profile settings from a file. */
-class KONSOLEPRIVATE_EXPORT ProfileReader
+class KONCREPEPRIVATE_EXPORT ProfileReader
 {
 public:
     ProfileReader();

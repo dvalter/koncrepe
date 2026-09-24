@@ -15,7 +15,7 @@
 #include "terminalDisplay/TerminalDisplay.h"
 #include "terminalDisplay/TerminalFonts.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 HotSpot::~HotSpot() = default;
 
@@ -178,16 +178,16 @@ void HotSpot::debug()
     qDebug() << _startLine << _endLine << _startColumn << _endColumn;
 }
 
-bool Konsole::HotSpot::hasDragOperation() const
+bool Koncrepe::HotSpot::hasDragOperation() const
 {
     return false;
 }
 
-void Konsole::HotSpot::startDrag(TerminalDisplay *, QPoint)
+void Koncrepe::HotSpot::startDrag(TerminalDisplay *, QPoint)
 {
 }
 
-void Konsole::HotSpot::setDragPixmap(QDrag *drag, TerminalDisplay *td, QPoint dragPosition) const
+void Koncrepe::HotSpot::setDragPixmap(QDrag *drag, TerminalDisplay *td, QPoint dragPosition) const
 {
     // Use app's, not window's, dpr value to prepare drag pixmap
     // for being displayed on any screens during drag

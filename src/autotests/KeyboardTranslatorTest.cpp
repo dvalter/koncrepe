@@ -12,7 +12,7 @@
 // Qt
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 Q_DECLARE_METATYPE(Qt::KeyboardModifiers)
 

@@ -9,7 +9,7 @@
 // Own
 #include "TerminalScrollBar.h"
 
-// Konsole
+// Koncrepe
 #include "../characters/Character.h"
 #include "TerminalDisplay.h"
 #include "TerminalFonts.h"
@@ -24,7 +24,7 @@
 #include <QRect>
 #include <QToolTip>
 
-namespace Konsole
+namespace Koncrepe
 {
 TerminalScrollBar::TerminalScrollBar(QWidget *parent)
     : QScrollBar(parent)
@@ -444,6 +444,6 @@ double TerminalScrollBar::markerHeight() const
     return height() * _markerPSize / 100;
 }
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #include "moc_TerminalScrollBar.cpp"

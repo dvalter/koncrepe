@@ -10,7 +10,7 @@
 #include <KParts/Part>
 #include <kde_terminal_interface.h>
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalInterfaceTest : public QObject
 {

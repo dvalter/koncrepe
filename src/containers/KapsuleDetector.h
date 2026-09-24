@@ -16,7 +16,7 @@ namespace Kapsule
 class KapsuleClient;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 class KapsuleDetector : public IContainerDetector
 {
@@ -36,6 +36,6 @@ private:
     ContainerInfo buildContainerInfo(const QString &name, const QString &displayName, const QString &icon = {}) const;
     Kapsule::KapsuleClient *_client = nullptr;
 };
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // KAPSULEDETECTOR_H

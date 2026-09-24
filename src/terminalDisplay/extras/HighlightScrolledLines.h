@@ -14,11 +14,11 @@
 #include <QTimer>
 #include <QWidget>
 
-// Konsole
+// Koncrepe
 #include "Enumeration.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalScrollBar;
 /**
@@ -69,6 +69,6 @@ private:
     int _previousScrollCount = 0;
     std::unique_ptr<QTimer> _timer;
 };
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // HIGHLIGHTSCROLLEDLINES_HPP

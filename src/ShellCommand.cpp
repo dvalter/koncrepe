@@ -10,7 +10,7 @@
 // KF
 #include <KShell>
 
-using Konsole::ShellCommand;
+using Koncrepe::ShellCommand;
 
 ShellCommand::ShellCommand(const QString &aCommand)
     : _arguments(KShell::splitArgs(aCommand))

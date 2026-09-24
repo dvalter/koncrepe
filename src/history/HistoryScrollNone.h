@@ -7,16 +7,16 @@
 #ifndef HISTORYSCROLLNONE_H
 #define HISTORYSCROLLNONE_H
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 #include "HistoryScroll.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 //////////////////////////////////////////////////////////////////////
 // Nothing-based history (no history :-)
 //////////////////////////////////////////////////////////////////////
-class KONSOLEPRIVATE_EXPORT HistoryScrollNone : public HistoryScroll
+class KONCREPEPRIVATE_EXPORT HistoryScrollNone : public HistoryScroll
 {
 public:
     HistoryScrollNone();

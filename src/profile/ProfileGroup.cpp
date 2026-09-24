@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -9,9 +9,9 @@
 // Own
 #include "ProfileGroup.h"
 
-// Konsole
+// Koncrepe
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void ProfileGroup::addProfile(const Profile::Ptr &profile)
 {

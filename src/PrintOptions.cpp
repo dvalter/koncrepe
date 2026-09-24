@@ -11,7 +11,7 @@
 #include <KConfigGroup>
 #include <KSharedConfig>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 PrintOptions::PrintOptions(QWidget *parent)
     : QWidget(parent)

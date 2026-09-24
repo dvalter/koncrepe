@@ -10,7 +10,7 @@
 // Qt
 #include <QStandardPaths>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 TemporaryFilesSettings::TemporaryFilesSettings(QWidget *aParent)
     : QWidget(aParent)

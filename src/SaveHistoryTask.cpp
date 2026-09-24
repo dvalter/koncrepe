@@ -26,7 +26,7 @@
 #include "colorscheme/ColorScheme.h"
 #include "colorscheme/ColorSchemeManager.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 QString SaveHistoryTask::_saveDialogRecentURL;
 
@@ -49,8 +49,8 @@ bool SaveHistoryTask::execute()
     QStringList mimeTypes{QStringLiteral("text/plain"), QStringLiteral("text/html")};
     dialog->setMimeTypeFilters(mimeTypes);
 
-    KSharedConfigPtr konsoleConfig = KSharedConfig::openConfig();
-    auto group = konsoleConfig->group(QStringLiteral("SaveHistory Settings"));
+    KSharedConfigPtr koncrepeConfig = KSharedConfig::openConfig();
+    auto group = koncrepeConfig->group(QStringLiteral("SaveHistory Settings"));
 
     if (_saveDialogRecentURL.isEmpty()) {
         const auto list = group.readPathEntry("Recent URLs", QStringList());
@@ -129,8 +129,8 @@ bool SaveHistoryTask::execute()
 
         _jobSession.insert(job, jobInfo);
 
-        connect(job, &KIO::TransferJob::dataReq, this, &Konsole::SaveHistoryTask::jobDataRequested);
-        connect(job, &KIO::TransferJob::result, this, &Konsole::SaveHistoryTask::jobResult);
+        connect(job, &KIO::TransferJob::dataReq, this, &Koncrepe::SaveHistoryTask::jobDataRequested);
+        connect(job, &KIO::TransferJob::result, this, &Koncrepe::SaveHistoryTask::jobResult);
     }
 
     dialog->deleteLater();

@@ -19,9 +19,9 @@
 #include <QVarLengthArray>
 #include <QVector>
 
-// Konsole
+// Koncrepe
 #include "characters/Character.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 #define MODE_Origin 0
 #define MODE_Wrap 1
@@ -48,7 +48,7 @@ struct TerminalGraphicsPlacement_t {
     enum source { Sixel, iTerm, Kitty } source;
 };
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalCharacterDecoder;
 class TerminalDisplay;
@@ -79,7 +79,7 @@ class EscapeSequenceUrlExtractor;
     using selectedText().  When getImage() is used to retrieve the visible image,
     characters which are part of the selection have their colors inverted.
 */
-class KONSOLEPRIVATE_EXPORT Screen
+class KONCREPEPRIVATE_EXPORT Screen
 {
 public:
     /* PlainText: Return plain text (default)
@@ -750,7 +750,7 @@ private:
 
     // when we handle scroll commands, we need to know which screenwindow will scroll
     // use QPointer to track life time of this object, see crashes in bug 508721
-    // via Konsole::Vt102Emulation::resetMode that checks for currentTerminalDisplay()
+    // via Koncrepe::Vt102Emulation::resetMode that checks for currentTerminalDisplay()
     QPointer<QWidget> _currentTerminalDisplay;
 
     void addHistLine();

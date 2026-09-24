@@ -10,7 +10,7 @@
 
 #include "terminalDisplay/TerminalFonts.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 TerminalDisplayAccessible::TerminalDisplayAccessible(TerminalDisplay *display)
     : QAccessibleWidget(display, QAccessible::Terminal, display->sessionController() ? display->sessionController()->userTitle() : QString())
@@ -182,7 +182,7 @@ TerminalDisplay *TerminalDisplayAccessible::display() const
     return qobject_cast<TerminalDisplay *>(widget());
 }
 
-QAccessible::State Konsole::TerminalDisplayAccessible::state() const
+QAccessible::State Koncrepe::TerminalDisplayAccessible::state() const
 {
     QAccessible::State s = QAccessibleWidget::state();
     s.multiLine = true;

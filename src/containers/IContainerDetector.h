@@ -8,7 +8,7 @@
 #define ICONTAINERDETECTOR_H
 
 #include "ContainerInfo.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 #include <QList>
 #include <QObject>
@@ -17,7 +17,7 @@
 
 #include <optional>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 /**
@@ -30,10 +30,10 @@ namespace Konsole
  * to the listContainersFinished() signal to receive results.
  *
  * @internal
- * Exported for ViewManagerTest (can't use konsolecontainers,
- * as the test links already konsoleprivate, which includes that)
+ * Exported for ViewManagerTest (can't use koncrepecontainers,
+ * as the test links already koncrepeprivate, which includes that)
  */
-class KONSOLEPRIVATE_EXPORT IContainerDetector : public QObject
+class KONCREPEPRIVATE_EXPORT IContainerDetector : public QObject
 {
     Q_OBJECT
 
@@ -101,6 +101,6 @@ Q_SIGNALS:
     void containersChanged();
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // ICONTAINERDETECTOR_H

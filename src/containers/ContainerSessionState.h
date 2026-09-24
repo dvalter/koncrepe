@@ -15,13 +15,13 @@
 #include <QPalette>
 #include <QString>
 
-namespace Konsole::ContainerSessionState
+namespace Koncrepe::ContainerSessionState
 {
 
-inline constexpr auto PendingContainerKeyProperty = "konsolePendingContainerKey";
-inline constexpr auto PendingContainerTypeProperty = "konsolePendingContainerType";
-inline constexpr auto PendingContainerNameProperty = "konsolePendingContainerName";
-inline constexpr auto PendingContainerUntilProperty = "konsolePendingContainerUntil";
+inline constexpr auto PendingContainerKeyProperty = "koncrepePendingContainerKey";
+inline constexpr auto PendingContainerTypeProperty = "koncrepePendingContainerType";
+inline constexpr auto PendingContainerNameProperty = "koncrepePendingContainerName";
+inline constexpr auto PendingContainerUntilProperty = "koncrepePendingContainerUntil";
 inline constexpr qint64 PendingContainerGraceMs = 20000;
 
 struct PendingContainerInfo {
@@ -99,6 +99,6 @@ inline QColor colorForContainerKey(const QString &containerKey)
                            (hashedColor.blue() * 3 + accent.blue()) / 4);
 }
 
-} // namespace Konsole::ContainerSessionState
+} // namespace Koncrepe::ContainerSessionState
 
 #endif // CONTAINERSESSIONSTATE_H

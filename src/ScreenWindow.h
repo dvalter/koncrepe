@@ -12,12 +12,12 @@
 #include <QPoint>
 #include <QRect>
 
-// Konsole
+// Koncrepe
 #include "Screen.h"
 #include "characters/Character.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Provides a window onto a section of a terminal screen.  A terminal widget can then render
@@ -36,7 +36,7 @@ namespace Konsole
  * be called.  This in turn will update the window's position and emit the outputChanged() signal
  * if necessary.
  */
-class KONSOLEPRIVATE_EXPORT ScreenWindow : public QObject
+class KONCREPEPRIVATE_EXPORT ScreenWindow : public QObject
 {
     Q_OBJECT
 

@@ -11,15 +11,15 @@
 #include <QSplitter>
 #include <QSplitterHandle>
 
-// Konsole
-#include "konsoleprivate_export.h"
+// Koncrepe
+#include "koncrepeprivate_export.h"
 
 class QDragMoveEvent;
 class QDragEnterEvent;
 class QDropEvent;
 class QDragLeaveEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalDisplay;
 
@@ -54,7 +54,7 @@ private:
  * insert a new view container.
  * Containers can only be removed from the hierarchy by deleting them.
  */
-class KONSOLEPRIVATE_EXPORT ViewSplitter : public QSplitter
+class KONCREPEPRIVATE_EXPORT ViewSplitter : public QSplitter
 {
     Q_OBJECT
 

@@ -7,7 +7,7 @@
 // Own
 #include "WindowSystemInfo.h"
 
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 #include <QtGlobal>
 
@@ -16,7 +16,7 @@
 #include <KX11Extras>
 #endif
 
-using Konsole::WindowSystemInfo;
+using Koncrepe::WindowSystemInfo;
 
 bool WindowSystemInfo::HAVE_TRANSPARENCY = false;
 

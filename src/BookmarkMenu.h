@@ -12,8 +12,8 @@
 // KF
 #include <KBookmarkMenu>
 
-// Konsole
-#include "konsoleprivate_export.h"
+// Koncrepe
+#include "koncrepeprivate_export.h"
 
 class KActionCollection;
 
@@ -23,7 +23,7 @@ class KActionCollection;
  * the easiest way is to "hijack" it's protected method to public
  * and just cast around.
  */
-class KONSOLEPRIVATE_EXPORT BookmarkMenu : public KBookmarkMenu
+class KONCREPEPRIVATE_EXPORT BookmarkMenu : public KBookmarkMenu
 {
     Q_OBJECT
 

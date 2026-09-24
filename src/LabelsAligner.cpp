@@ -12,7 +12,7 @@
 #include <QGridLayout>
 #include <QWidget>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 LabelsAligner::LabelsAligner(QWidget *refWidget)
     : _refWidget(refWidget)

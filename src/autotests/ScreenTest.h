@@ -11,7 +11,7 @@
 
 #include "../Screen.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class ScreenTest : public QObject
 {

@@ -1,4 +1,4 @@
-add_definitions(-DTRANSLATION_DOMAIN=\"konsole\")
+add_definitions(-DTRANSLATION_DOMAIN=\"koncrepe\")
 
 ### Handle DragonFlyBSD here instead of using __DragonFly__
 if(${CMAKE_SYSTEM_NAME} MATCHES "DragonFly")
@@ -9,8 +9,8 @@ endif()
 
 include(ECMAddAppIcon)
 
-configure_file(config-konsole.h.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/config-konsole.h)
+configure_file(config-koncrepe.h.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/config-koncrepe.h)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     find_package(PkgConfig QUIET)
@@ -19,7 +19,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     endif()
     if(XKBCOMMON_FOUND)
         message(STATUS "Found xkbcommon, enabling win32-input-mode support")
-        set(KONSOLE_HAVE_XKBCOMMON TRUE)
+        set(KONCREPE_HAVE_XKBCOMMON TRUE)
     else()
         message(STATUS "xkbcommon not found — building without win32-input-mode support")
     endif()
@@ -35,52 +35,52 @@ if(BUILD_TESTING)
 endif()
 
 ### Security concerns about reading arbitrary screen positions
-option(ENABLE_DECRQCRA "Konsole: enable DEC request checksum rectangular area" OFF)
+option(ENABLE_DECRQCRA "Koncrepe: enable DEC request checksum rectangular area" OFF)
 
 ### Development tools
-option(KONSOLE_BUILD_UNI2CHARACTERWIDTH "Konsole: build uni2characterwidth executable" OFF)
+option(KONCREPE_BUILD_UNI2CHARACTERWIDTH "Koncrepe: build uni2characterwidth executable" OFF)
 
 set(dbus_xml_srcs)
 if(HAVE_DBUS)
-    ### Konsole source files shared between embedded terminal and main application
-    # qdbuscpp2xml -m  Session.h -o org.kde.konsole.Session.xml
-    # qdbuscpp2xml -M -s ViewManager.h -o org.kde.konsole.Konsole.xml
+    ### Koncrepe source files shared between embedded terminal and main application
+    # qdbuscpp2xml -m  Session.h -o org.kde.koncrepe.Session.xml
+    # qdbuscpp2xml -M -s ViewManager.h -o org.kde.koncrepe.Koncrepe.xml
 
     # Generate dbus .xml files; do not store .xml in source folder
-    qt_generate_dbus_interface(ViewManager.h org.kde.konsole.Window.xml OPTIONS -m)
+    qt_generate_dbus_interface(ViewManager.h org.kde.koncrepe.Window.xml OPTIONS -m)
 
     qt_add_dbus_adaptor(windowadaptors_SRCS
-                        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.konsole.Window.xml
+                        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.koncrepe.Window.xml
                         ViewManager.h
-                        Konsole::ViewManager)
+                        Koncrepe::ViewManager)
 
-    # qdbuscpp2xml -m  Session.h -o org.kde.konsole.Session.xml
+    # qdbuscpp2xml -m  Session.h -o org.kde.koncrepe.Session.xml
     # Generate dbus .xml files; do not store .xml in source folder
-    qt_generate_dbus_interface(session/Session.h org.kde.konsole.Session.xml OPTIONS -m)
+    qt_generate_dbus_interface(session/Session.h org.kde.koncrepe.Session.xml OPTIONS -m)
 
     qt_add_dbus_adaptor(
         sessionadaptors_SRCS
-        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.konsole.Session.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.koncrepe.Session.xml
         session/Session.h
-        Konsole::Session
+        Koncrepe::Session
     )
 
     set(dbus_xml_srcs
-        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.konsole.Session.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.konsole.Window.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.koncrepe.Session.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/org.kde.koncrepe.Window.xml
     )
 endif()
 
-add_library(konsolelogging OBJECT)
-set_target_properties(konsolelogging PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(konsolelogging PUBLIC Qt::Core)
+add_library(koncrepelogging OBJECT)
+set_target_properties(koncrepelogging PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(koncrepelogging PUBLIC Qt::Core)
 
-ecm_qt_declare_logging_category(konsolelogging
-    HEADER konsoledebug.h
-    IDENTIFIER KonsoleDebug
-    CATEGORY_NAME org.kde.konsole
-    DESCRIPTION "Konsole"
-    EXPORT KONSOLE
+ecm_qt_declare_logging_category(koncrepelogging
+    HEADER koncrepedebug.h
+    IDENTIFIER KoncrepeDebug
+    CATEGORY_NAME org.kde.koncrepe
+    DESCRIPTION "Koncrepe"
+    EXPORT KONCREPE
 )
 
 add_subdirectory(colorscheme)
@@ -90,9 +90,9 @@ add_subdirectory(decoders)
 add_subdirectory(containers)
 add_subdirectory(plugins)
 
-add_library(konsoleprivate)
+add_library(koncrepeprivate)
 
-target_sources(konsoleprivate PRIVATE
+target_sources(koncrepeprivate PRIVATE
     ${windowadaptors_SRCS}
     BookmarkHandler.cpp
     BookmarkMenu.cpp
@@ -193,25 +193,25 @@ target_sources(konsoleprivate PRIVATE
     widgets/TerminalHeaderBar.cpp
     widgets/ViewContainer.cpp
     widgets/ViewSplitter.cpp
-    widgets/KonsolePrintManager.cpp
+    widgets/KoncrepePrintManager.cpp
 
     ${dbus_xml_srcs}
 
     ../data/data.qrc
-    ../desktop/konsole.qrc
+    ../desktop/koncrepe.qrc
 )
 
 if(WIN32)
     # windows conpty backend
-    target_sources(konsoleprivate PRIVATE
+    target_sources(koncrepeprivate PRIVATE
         ptyqt/iptyprocess.cpp
         ptyqt/conptyprocess.cpp
     )
 endif()
 
-kconfig_add_kcfg_files(konsoleprivate settings/KonsoleSettings.kcfgc)
+kconfig_add_kcfg_files(koncrepeprivate settings/KoncrepeSettings.kcfgc)
 
-ki18n_wrap_ui(konsoleprivate
+ki18n_wrap_ui(koncrepeprivate
     CopyInputDialog.ui
     HistorySizeDialog.ui
     KeyBindingEditor.ui
@@ -235,25 +235,25 @@ ki18n_wrap_ui(konsoleprivate
     widgets/RenameTabWidget.ui
 )
 
-generate_export_header(konsoleprivate)
+generate_export_header(koncrepeprivate)
 
-if(KONSOLE_HAVE_XKBCOMMON)
-    target_compile_definitions(konsoleprivate PUBLIC HAVE_XKBCOMMON)
-    target_include_directories(konsoleprivate PUBLIC ${XKBCOMMON_INCLUDE_DIRS})
-    target_link_libraries(konsoleprivate PRIVATE ${XKBCOMMON_LIBRARIES})
+if(KONCREPE_HAVE_XKBCOMMON)
+    target_compile_definitions(koncrepeprivate PUBLIC HAVE_XKBCOMMON)
+    target_include_directories(koncrepeprivate PUBLIC ${XKBCOMMON_INCLUDE_DIRS})
+    target_link_libraries(koncrepeprivate PRIVATE ${XKBCOMMON_LIBRARIES})
 endif()
 
-target_link_libraries(konsoleprivate
+target_link_libraries(koncrepeprivate
     PUBLIC
         KF6::ConfigCore
         KF6::XmlGui
     PRIVATE
-        konsolecolorscheme
+        koncrepecolorscheme
         keyboardtranslator
-        konsolecharacters
-        konsoledecoders
-        konsolecontainers
-        konsolelogging
+        koncrepecharacters
+        koncrepedecoders
+        koncrepecontainers
+        koncrepelogging
         KF6::Bookmarks
         KF6::BookmarksWidgets
         KF6::GuiAddons
@@ -273,31 +273,31 @@ target_link_libraries(konsoleprivate
 )
 
 if (HAVE_LIBSSH)
-    target_link_libraries(konsoleprivate PRIVATE ssh)
+    target_link_libraries(koncrepeprivate PRIVATE ssh)
 endif()
 
 if(NOT WIN32)
-    target_link_libraries(konsoleprivate PRIVATE KF6::Pty)
+    target_link_libraries(koncrepeprivate PRIVATE KF6::Pty)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
     #kinfo_getfile() is in libutil
-    target_link_libraries(konsoleprivate PRIVATE util)
+    target_link_libraries(koncrepeprivate PRIVATE util)
 endif()
 
 if(HAIKU)
-    target_link_libraries(konsoleprivate PRIVATE network) # for undefined reference to `inet_aton'
+    target_link_libraries(koncrepeprivate PRIVATE network) # for undefined reference to `inet_aton'
 endif()
 
-set_target_properties(konsoleprivate PROPERTIES
+set_target_properties(koncrepeprivate PROPERTIES
     VERSION ${RELEASE_SERVICE_VERSION}
 )
 
-install(TARGETS konsoleprivate ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} LIBRARY NAMELINK_SKIP)
+install(TARGETS koncrepeprivate ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} LIBRARY NAMELINK_SKIP)
 
-### Konsole Application
+### Koncrepe Application
 
-add_library(konsoleapp
+add_library(koncrepeapp
     Application.cpp
     MainWindow.cpp
     settings/ConfigurationDialog.cpp
@@ -308,19 +308,19 @@ add_library(konsoleapp
     settings/ProfileSettings.cpp
     settings/TabBarSettings.cpp
     settings/ThumbnailsSettings.cpp
-    pluginsystem/IKonsolePlugin.cpp
+    pluginsystem/IKoncrepePlugin.cpp
     pluginsystem/PluginManager.cpp
     delegates/ProfileShortcutDelegate.cpp
 )
 
-generate_export_header(konsoleapp)
+generate_export_header(koncrepeapp)
 
-target_compile_definitions(konsoleapp PRIVATE -DRELEASE_SERVICE_VERSION="${RELEASE_SERVICE_VERSION}")
+target_compile_definitions(koncrepeapp PRIVATE -DRELEASE_SERVICE_VERSION="${RELEASE_SERVICE_VERSION}")
 
-target_link_libraries(konsoleapp
+target_link_libraries(koncrepeapp
     PRIVATE
-        konsoleprivate
-        konsolelogging
+        koncrepeprivate
+        koncrepelogging
         KF6::Bookmarks
         KF6::Crash
         KF6::I18n
@@ -329,29 +329,29 @@ target_link_libraries(konsoleapp
         KF6::WindowSystem
 )
 if(HAVE_DBUS)
-    target_link_libraries(konsoleapp
+    target_link_libraries(koncrepeapp
         PRIVATE
             KF6::GlobalAccel
     )
 endif()
 
-set_target_properties(konsoleapp PROPERTIES
+set_target_properties(koncrepeapp PROPERTIES
     VERSION ${RELEASE_SERVICE_VERSION}
 )
 
-install(TARGETS konsoleapp ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} LIBRARY NAMELINK_SKIP)
+install(TARGETS koncrepeapp ${KDE_INSTALL_TARGETS_DEFAULT_ARGS} LIBRARY NAMELINK_SKIP)
 
 
 # Sets the icon on Windows and OSX
 ecm_add_app_icon(ICONS_SOURCES ICONS ${ICONS_SRCS})
 
-add_executable(konsole
+add_executable(koncrepe
     main.cpp
 )
 
-target_link_libraries(konsole
-    konsoleprivate
-    konsoleapp
+target_link_libraries(koncrepe
+    koncrepeprivate
+    koncrepeapp
     KF6::CoreAddons
     KF6::Crash
     KF6::I18n
@@ -359,43 +359,43 @@ target_link_libraries(konsole
     KF6::WindowSystem
 )
 if(HAVE_DBUS)
-    target_link_libraries(konsole
+    target_link_libraries(koncrepe
         KF6::DBusAddons
     )
 endif()
 
 if(APPLE)
-    set_target_properties(konsole PROPERTIES
-        MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.konsole"
-        MACOSX_BUNDLE_BUNDLE_NAME "Konsole"
-        MACOSX_BUNDLE_DISPLAY_NAME "Konsole"
-        MACOSX_BUNDLE_INFO_STRING "Konsole, the KDE terminal emulator"
-        MACOSX_BUNDLE_LONG_VERSION_STRING "Konsole ${RELEASE_SERVICE_VERSION}"
+    set_target_properties(koncrepe PROPERTIES
+        MACOSX_BUNDLE_GUI_IDENTIFIER "org.kde.koncrepe"
+        MACOSX_BUNDLE_BUNDLE_NAME "Koncrepe"
+        MACOSX_BUNDLE_DISPLAY_NAME "Koncrepe"
+        MACOSX_BUNDLE_INFO_STRING "Koncrepe, the KDE terminal emulator"
+        MACOSX_BUNDLE_LONG_VERSION_STRING "Koncrepe ${RELEASE_SERVICE_VERSION}"
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_VERSION_MINOR}"
         MACOSX_BUNDLE_BUNDLE_VERSION "${RELEASE_SERVICE_VERSION}"
-        MACOSX_BUNDLE_COPYRIGHT "1997-2022 The Konsole Developers")
+        MACOSX_BUNDLE_COPYRIGHT "1997-2022 The Koncrepe Developers")
 endif()
 
-install(TARGETS konsole ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
-install(FILES settings/konsole.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})
+install(TARGETS koncrepe ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+install(FILES settings/koncrepe.kcfg DESTINATION ${KDE_INSTALL_KCFGDIR})
 
-### Embedded Konsole KPart
+### Embedded Koncrepe KPart
 
-add_library(konsolepart MODULE
+add_library(koncrepepart MODULE
     Part.cpp
     settings/PartInfo.cpp
     settings/ProfileSettings.cpp
     delegates/ProfileShortcutDelegate.cpp
 )
 
-target_link_libraries(konsolepart
-    konsoleprivate
-    konsolelogging
+target_link_libraries(koncrepepart
+    koncrepeprivate
+    koncrepelogging
     KF6::I18n
     KF6::Parts
 )
 
-install(TARGETS konsolepart DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf6/parts)
+install(TARGETS koncrepepart DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf6/parts)
 
 # Add cmake-options -DBUILD_COVERAGE=ON -DCOVERAGE_GENERATE_HTML=ON
 if(COVERAGE_GENERATE_HTML)

@@ -7,7 +7,7 @@
 
 #include "RegExpFilterHotspot.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 RegExpFilterHotSpot::RegExpFilterHotSpot(int startLine, int startColumn, int endLine, int endColumn, const QStringList &capturedTexts)
     : HotSpot(startLine, startColumn, endLine, endColumn)

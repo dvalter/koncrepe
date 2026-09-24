@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -14,11 +14,11 @@
 
 #include <QIcon>
 
-// Konsole
+// Koncrepe
 #include "Session.h"
 
-using Konsole::Session;
-using Konsole::SessionListModel;
+using Koncrepe::Session;
+using Koncrepe::SessionListModel;
 
 SessionListModel::SessionListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -31,7 +31,7 @@ void SessionListModel::setSessions(const QList<Session *> &sessions)
     _sessions = sessions;
 
     for (Session *session : sessions) {
-        connect(session, &Konsole::Session::finished, this, &Konsole::SessionListModel::sessionFinished);
+        connect(session, &Koncrepe::Session::finished, this, &Koncrepe::SessionListModel::sessionFinished);
     }
 
     endResetModel();

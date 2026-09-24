@@ -8,7 +8,7 @@
 
 #include <QRegularExpression>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 QStringList parseDistroboxContainerNames(const QString &output)
@@ -53,4 +53,4 @@ QStringList parseDistroboxContainerNames(const QString &output)
     return names;
 }
 
-} // namespace Konsole
+} // namespace Koncrepe

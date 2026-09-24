@@ -11,14 +11,14 @@
 #include <QBitArray>
 #include <QWidget>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class QAction;
 class QTimer;
 class QLineEdit;
 class QToolButton;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A widget which allows users to search incrementally through a document for a
@@ -41,7 +41,7 @@ namespace Konsole
  * as a regular expression.
  * The matchRegExpToggled() signal is emitted when this is changed.
  */
-class KONSOLEPRIVATE_EXPORT IncrementalSearchBar : public QWidget
+class KONCREPEPRIVATE_EXPORT IncrementalSearchBar : public QWidget
 {
     Q_OBJECT
 

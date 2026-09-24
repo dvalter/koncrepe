@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
     SPDX-FileCopyrightText: 2020-2020 Gustavo Carneiro <gcarneiroa@hotmail.com>
@@ -13,7 +13,7 @@
 // Qt
 #include <QtGlobal>
 
-namespace Konsole
+namespace Koncrepe
 {
 RandomizationRange::RandomizationRange()
     : hue(0.0)

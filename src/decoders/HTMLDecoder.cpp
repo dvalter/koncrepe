@@ -7,13 +7,13 @@
 // Own
 #include "HTMLDecoder.h"
 
-// Konsole characters
+// Koncrepe characters
 #include <ExtendedCharTable.h>
 
 // Qt
 #include <QTextStream>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 HTMLDecoder::HTMLDecoder(const QColor *colorTable)
     : _output(nullptr)

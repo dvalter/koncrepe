@@ -7,8 +7,8 @@
 // Own
 #include "ViewManager.h"
 
-#include "config-konsole.h"
-#include "konsoledebug.h"
+#include "config-koncrepe.h"
+#include "koncrepedebug.h"
 
 // Qt
 #include <QFile>
@@ -31,7 +31,7 @@
 #include <KLocalizedString>
 #include <KMessageBox>
 
-// Konsole
+// Koncrepe
 #if HAVE_DBUS
 #include <windowadaptor.h>
 #endif
@@ -52,7 +52,7 @@
 #include "widgets/ViewContainer.h"
 #include "widgets/ViewSplitter.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 int ViewManager::lastManagerId = 0;
 
@@ -81,11 +81,11 @@ ViewManager::ViewManager(QObject *parent, KActionCollection *collection)
     /* TODO: Reconnect
     // emit a signal when all of the views held by this view manager are destroyed
     */
-    connect(_viewContainer.data(), &Konsole::TabbedViewContainer::empty, this, &Konsole::ViewManager::empty);
+    connect(_viewContainer.data(), &Koncrepe::TabbedViewContainer::empty, this, &Koncrepe::ViewManager::empty);
 
     // listen for profile changes
-    connect(ProfileManager::instance(), &Konsole::ProfileManager::profileChanged, this, &Konsole::ViewManager::profileChanged);
-    connect(SessionManager::instance(), &Konsole::SessionManager::sessionUpdated, this, &Konsole::ViewManager::updateViewsForSession);
+    connect(ProfileManager::instance(), &Koncrepe::ProfileManager::profileChanged, this, &Koncrepe::ViewManager::profileChanged);
+    connect(SessionManager::instance(), &Koncrepe::SessionManager::sessionUpdated, this, &Koncrepe::ViewManager::updateViewsForSession);
 
     _managerId = ++lastManagerId;
 
@@ -183,7 +183,7 @@ void ViewManager::setupActions()
     action->setIcon(QIcon::fromTheme(QStringLiteral("view-split-top-bottom")));
     action->setText(i18nc("@action:inmenu", "Load a new tab with layout 2x2 terminals"));
     connect(action, &QAction::triggered, this, [this]() {
-        this->loadLayout(QStringLiteral(":/konsole/layouts/2x2-terminals.json"));
+        this->loadLayout(QStringLiteral(":/koncrepe/layouts/2x2-terminals.json"));
     });
     collection->addAction(QStringLiteral("load-terminals-layout-2x2"), action);
     splitViewActions->addAction(action);
@@ -192,7 +192,7 @@ void ViewManager::setupActions()
     action->setIcon(QIcon::fromTheme(QStringLiteral("view-split-left-right")));
     action->setText(i18nc("@action:inmenu", "Load a new tab with layout 2x1 terminals"));
     connect(action, &QAction::triggered, this, [this]() {
-        this->loadLayout(QStringLiteral(":/konsole/layouts/2x1-terminals.json"));
+        this->loadLayout(QStringLiteral(":/koncrepe/layouts/2x1-terminals.json"));
     });
     collection->addAction(QStringLiteral("load-terminals-layout-2x1"), action);
     splitViewActions->addAction(action);
@@ -201,7 +201,7 @@ void ViewManager::setupActions()
     action->setIcon(QIcon::fromTheme(QStringLiteral("view-split-top-bottom")));
     action->setText(i18nc("@action:inmenu", "Load a new tab with layout 1x2 terminals"));
     connect(action, &QAction::triggered, this, [this]() {
-        this->loadLayout(QStringLiteral(":/konsole/layouts/1x2-terminals.json"));
+        this->loadLayout(QStringLiteral(":/koncrepe/layouts/1x2-terminals.json"));
     });
     collection->addAction(QStringLiteral("load-terminals-layout-1x2"), action);
     splitViewActions->addAction(action);
@@ -210,13 +210,13 @@ void ViewManager::setupActions()
     action->setText(i18nc("@action:inmenu", "Expand View"));
     action->setEnabled(false);
     connect(action, &QAction::triggered, this, &ViewManager::expandActiveContainer);
-    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_BracketRight);
+    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_BracketRight);
     collection->addAction(QStringLiteral("expand-active-view"), action);
     _multiSplitterOnlyActions << action;
 
     action = new QAction(this);
     action->setText(i18nc("@action:inmenu", "Shrink View"));
-    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_BracketLeft);
+    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_BracketLeft);
     action->setEnabled(false);
     collection->addAction(QStringLiteral("shrink-active-view"), action);
     connect(action, &QAction::triggered, this, &ViewManager::shrinkActiveContainer);
@@ -232,7 +232,7 @@ void ViewManager::setupActions()
 
     // Ctrl+Shift+D is not used as a shortcut by default because it is too close
     // to Ctrl+D - which will terminate the session in many cases
-    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_H);
+    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_H);
 
     action = collection->addAction(QStringLiteral("detach-tab"));
     action->setEnabled(true);
@@ -307,7 +307,7 @@ void ViewManager::setupActions()
     collection->addAction(QStringLiteral("last-used-tab"), action);
 
     action = new QAction(i18nc("@action Shortcut entry", "Toggle Between Two Tabs"), this);
-    connect(action, &QAction::triggered, this, &Konsole::ViewManager::toggleTwoViews);
+    connect(action, &QAction::triggered, this, &Koncrepe::ViewManager::toggleTwoViews);
     collection->addAction(QStringLiteral("toggle-two-tabs"), action);
     _multiTabOnlyActions << action;
 
@@ -368,7 +368,7 @@ void ViewManager::setupActions()
 
     action = new QAction(this);
     action->setText(i18nc("@action:inmenu", "Equal size to all views"));
-    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::SHIFT | Qt::Key_Backslash);
+    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::SHIFT | Qt::Key_Backslash);
     action->setEnabled(false);
     collection->addAction(QStringLiteral("equal-size-view"), action);
     connect(action, &QAction::triggered, this, &ViewManager::equalSizeAllContainers);
@@ -422,7 +422,7 @@ void ViewManager::switchToView(int index)
     _viewContainer->setCurrentIndex(index);
 }
 
-void ViewManager::switchToTerminalDisplay(Konsole::TerminalDisplay *terminalDisplay)
+void ViewManager::switchToTerminalDisplay(Koncrepe::TerminalDisplay *terminalDisplay)
 {
     auto splitter = ViewSplitter::parentSplitterForDisplay(terminalDisplay);
     auto toplevelSplitter = splitter->getToplevelSplitter();
@@ -639,7 +639,7 @@ Session *ViewManager::forgetTerminal(TerminalDisplay *terminal)
     removeController(terminal->sessionController());
     auto session = _sessionMap.take(terminal);
     if (session != nullptr) {
-        disconnect(session, &Konsole::Session::finished, this, &Konsole::ViewManager::sessionFinished);
+        disconnect(session, &Koncrepe::Session::finished, this, &Koncrepe::ViewManager::sessionFinished);
     }
     _viewContainer->disconnectTerminalDisplay(terminal);
     updateTerminalDisplayHistory(terminal, true);
@@ -659,7 +659,7 @@ Session *ViewManager::createSession(const Profile::Ptr &profile, const QString &
     if (!directory.isEmpty()) {
         session->setInitialWorkingDirectory(directory);
     }
-    session->addEnvironmentEntry(QStringLiteral("KONSOLE_DBUS_WINDOW=/Windows/%1").arg(managerId()));
+    session->addEnvironmentEntry(QStringLiteral("KONCREPE_DBUS_WINDOW=/Windows/%1").arg(managerId()));
 
     // Determine container context for the new session.
     // Priority: inherit from active session (if enabled)
@@ -893,16 +893,16 @@ SessionController *ViewManager::createController(Session *session, TerminalDispl
     // create a new controller for the session, and ensure that this view manager
     // is notified when the view gains the focus
     auto controller = new SessionController(session, view, this);
-    connect(controller, &Konsole::SessionController::viewFocused, this, &Konsole::ViewManager::controllerChanged);
-    connect(session, &Konsole::Session::destroyed, controller, &Konsole::SessionController::deleteLater);
-    connect(session, &Konsole::Session::primaryScreenInUse, controller, &Konsole::SessionController::setupPrimaryScreenSpecificActions);
-    connect(session, &Konsole::Session::selectionChanged, controller, &Konsole::SessionController::selectionChanged);
-    connect(session, &Konsole::Session::containerContextChanged, this, &Konsole::ViewManager::handleSessionContainerContextChanged, Qt::UniqueConnection);
-    connect(view, &Konsole::TerminalDisplay::destroyed, controller, &Konsole::SessionController::deleteLater);
-    connect(controller, &Konsole::SessionController::viewDragAndDropped, this, &Konsole::ViewManager::forgetController);
-    connect(controller, &Konsole::SessionController::requestSplitViewLeftRight, this, &Konsole::ViewManager::splitLeftRight);
-    connect(controller, &Konsole::SessionController::requestSplitViewTopBottom, this, &Konsole::ViewManager::splitTopBottom);
-    connect(this, &Konsole::ViewManager::contextMenuAdditionalActionsChanged, controller, &Konsole::SessionController::setContextMenuAdditionalActions);
+    connect(controller, &Koncrepe::SessionController::viewFocused, this, &Koncrepe::ViewManager::controllerChanged);
+    connect(session, &Koncrepe::Session::destroyed, controller, &Koncrepe::SessionController::deleteLater);
+    connect(session, &Koncrepe::Session::primaryScreenInUse, controller, &Koncrepe::SessionController::setupPrimaryScreenSpecificActions);
+    connect(session, &Koncrepe::Session::selectionChanged, controller, &Koncrepe::SessionController::selectionChanged);
+    connect(session, &Koncrepe::Session::containerContextChanged, this, &Koncrepe::ViewManager::handleSessionContainerContextChanged, Qt::UniqueConnection);
+    connect(view, &Koncrepe::TerminalDisplay::destroyed, controller, &Koncrepe::SessionController::deleteLater);
+    connect(controller, &Koncrepe::SessionController::viewDragAndDropped, this, &Koncrepe::ViewManager::forgetController);
+    connect(controller, &Koncrepe::SessionController::requestSplitViewLeftRight, this, &Koncrepe::ViewManager::splitLeftRight);
+    connect(controller, &Koncrepe::SessionController::requestSplitViewTopBottom, this, &Koncrepe::ViewManager::splitTopBottom);
+    connect(this, &Koncrepe::ViewManager::contextMenuAdditionalActionsChanged, controller, &Koncrepe::SessionController::setContextMenuAdditionalActions);
 
     // if this is the first controller created then set it as the active controller
     if (_pluggedController.isNull()) {
@@ -980,7 +980,7 @@ void ViewManager::removeController(SessionController *controller)
         _pluggedController.clear();
     }
     // disconnect now!! important as a focus change may happen in between and we will end up using a deleted controller
-    disconnect(controller, &Konsole::SessionController::viewFocused, this, &Konsole::ViewManager::controllerChanged);
+    disconnect(controller, &Koncrepe::SessionController::viewFocused, this, &Koncrepe::ViewManager::controllerChanged);
     controller->deleteLater();
 }
 
@@ -1004,7 +1004,7 @@ SessionController *ViewManager::activeViewController() const
 
 void ViewManager::attachView(TerminalDisplay *terminal, Session *session)
 {
-    connect(session, &Konsole::Session::finished, this, &Konsole::ViewManager::sessionFinished, Qt::UniqueConnection);
+    connect(session, &Koncrepe::Session::finished, this, &Koncrepe::ViewManager::sessionFinished, Qt::UniqueConnection);
 
     // Disconnect from the other viewcontainer.
     unregisterTerminal(terminal);
@@ -1043,7 +1043,7 @@ TerminalDisplay *ViewManager::createView(Session *session)
     // can be deleted
     //
     // Use Qt::UniqueConnection to avoid duplicate connection
-    connect(session, &Konsole::Session::finished, this, &Konsole::ViewManager::sessionFinished, Qt::UniqueConnection);
+    connect(session, &Koncrepe::Session::finished, this, &Koncrepe::ViewManager::sessionFinished, Qt::UniqueConnection);
     TerminalDisplay *display = createTerminalDisplay();
     createController(session, display);
 
@@ -1063,7 +1063,7 @@ TerminalDisplay *ViewManager::createView(Session *session)
     session->setDarkBackground(colorSchemeForProfile(profile)->hasDarkBackground());
     display->setFocus(Qt::OtherFocusReason);
     //     updateDetachViewState();
-    connect(display, &TerminalDisplay::activationRequest, this, &Konsole::ViewManager::activationRequest);
+    connect(display, &TerminalDisplay::activationRequest, this, &Koncrepe::ViewManager::activationRequest);
 
     return display;
 }
@@ -1075,17 +1075,17 @@ TabbedViewContainer *ViewManager::createContainer()
     connect(container, &TabbedViewContainer::detachTab, this, &ViewManager::detachTab);
 
     // connect signals and slots
-    connect(container, &Konsole::TabbedViewContainer::viewAdded, this, [this, container]() {
+    connect(container, &Koncrepe::TabbedViewContainer::viewAdded, this, [this, container]() {
         containerViewsChanged(container);
     });
-    connect(container, &Konsole::TabbedViewContainer::viewRemoved, this, [this, container]() {
+    connect(container, &Koncrepe::TabbedViewContainer::viewRemoved, this, [this, container]() {
         containerViewsChanged(container);
     });
 
     connect(container, &TabbedViewContainer::newViewRequest, this, &ViewManager::newViewRequest);
-    connect(container, &Konsole::TabbedViewContainer::newViewWithProfileRequest, this, &Konsole::ViewManager::newViewWithProfileRequest);
-    connect(container, &Konsole::TabbedViewContainer::newViewInContainerRequest, this, &Konsole::ViewManager::newViewInContainerRequest);
-    connect(container, &Konsole::TabbedViewContainer::activeViewChanged, this, &Konsole::ViewManager::activateView);
+    connect(container, &Koncrepe::TabbedViewContainer::newViewWithProfileRequest, this, &Koncrepe::ViewManager::newViewWithProfileRequest);
+    connect(container, &Koncrepe::TabbedViewContainer::newViewInContainerRequest, this, &Koncrepe::ViewManager::newViewInContainerRequest);
+    connect(container, &Koncrepe::TabbedViewContainer::activeViewChanged, this, &Koncrepe::ViewManager::activateView);
 
     return container;
 }
@@ -1288,7 +1288,7 @@ void ViewManager::saveLayoutFile()
     saveLayout(QFileDialog::getSaveFileName(this->widget(),
                                             i18nc("@title:window", "Save Tab Layout"),
                                             QStringLiteral("~/"),
-                                            i18nc("@item:inlistbox", "Konsole View Layout (*.json)")));
+                                            i18nc("@item:inlistbox", "Koncrepe View Layout (*.json)")));
 }
 
 void ViewManager::saveLayout(QString fileName)
@@ -1409,7 +1409,7 @@ void ViewManager::loadLayoutFile()
     loadLayout(QFileDialog::getOpenFileName(this->widget(),
                                             i18nc("@title:window", "Load Tab Layout"),
                                             QStringLiteral("~/"),
-                                            i18nc("@item:inlistbox", "Konsole View Layout (*.json)")));
+                                            i18nc("@item:inlistbox", "Koncrepe View Layout (*.json)")));
 }
 
 void ViewManager::restoreSessions(const KConfigGroup &group)

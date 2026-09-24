@@ -7,17 +7,17 @@
 #ifndef PROFILE_MODEL_H
 #define PROFILE_MODEL_H
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 #include <QAbstractTableModel>
 #include <QExplicitlySharedDataPointer>
 #include <QList>
 
-namespace Konsole
+namespace Koncrepe
 {
 class Profile;
 
-class KONSOLEPRIVATE_EXPORT ProfileModel : public QAbstractTableModel
+class KONCREPEPRIVATE_EXPORT ProfileModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:

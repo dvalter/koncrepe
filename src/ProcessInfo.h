@@ -12,9 +12,9 @@
 #include <QString>
 #include <QVector>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Takes a snapshot of the state of a process and provides access to
@@ -58,7 +58,7 @@ namespace Konsole
  *   }
  * @endcode
  */
-class KONSOLEPRIVATE_EXPORT ProcessInfo
+class KONCREPEPRIVATE_EXPORT ProcessInfo
 {
 public:
     /**
@@ -162,7 +162,7 @@ public:
         NoError,
         /** The nature of the error is unknown. */
         UnknownError,
-        /** Konsole does not have permission to obtain the process information. */
+        /** Koncrepe does not have permission to obtain the process information. */
         PermissionsError,
     };
 

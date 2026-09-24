@@ -12,7 +12,7 @@
 #include <QStringList>
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void ShellCommandTest::init()
 {

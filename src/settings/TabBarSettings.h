@@ -9,7 +9,7 @@
 
 #include "ui_TabBarSettings.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TabBarSettings : public QWidget, private Ui::TabBarSettings
 {

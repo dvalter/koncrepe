@@ -12,11 +12,11 @@
 // KF
 #include <KPageDialog>
 
-// Konsole
+// Koncrepe
 #include "colorscheme/ColorScheme.h"
 #include "colorscheme/ColorSchemeEditor.h"
 #include "colorscheme/ColorSchemeViewDelegate.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 #include "profile/Profile.h"
 #include "profile/ProfileGroup.h"
@@ -46,7 +46,7 @@ class EditProfileMousePage;
 class EditProfileAdvancedPage;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A dialog which allows the user to edit a profile.
@@ -61,7 +61,7 @@ namespace Konsole
  * the persistent argument set to false.  These changes are then
  * un-done when the dialog is closed.
  */
-class KONSOLEPRIVATE_EXPORT EditProfileDialog : public KPageDialog
+class KONCREPEPRIVATE_EXPORT EditProfileDialog : public KPageDialog
 {
     Q_OBJECT
 

@@ -13,7 +13,7 @@
 
 #include "terminalDisplay/TerminalDisplay.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 TerminalImageFilterChain::TerminalImageFilterChain(TerminalDisplay *terminalDisplay)
     : FilterChain(terminalDisplay)

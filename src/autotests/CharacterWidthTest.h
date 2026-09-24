@@ -9,7 +9,7 @@
 
 #include <QObject>
 
-namespace Konsole
+namespace Koncrepe
 {
 class CharacterWidthTest : public QObject
 {

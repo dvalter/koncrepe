@@ -25,7 +25,7 @@
 // CharacterWidth.cpp file is automatically generated - do not edit it.
 //
 // To build uni2characterwidth binary, add
-// -DKONSOLE_BUILD_UNI2CHARACTERWIDTH=TRUE to cmake-options
+// -DKONCREPE_BUILD_UNI2CHARACTERWIDTH=TRUE to cmake-options
 //
 // To change anything here, edit CharacterWidth.src.cpp and regenerate the file
 // using following command:

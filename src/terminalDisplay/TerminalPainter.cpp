@@ -9,7 +9,7 @@
 // Own
 #include "TerminalPainter.h"
 
-// Konsole
+// Koncrepe
 #include "../Screen.h"
 #include "../characters/LineBlockCharacters.h"
 #include "../filterHotSpots/FilterChain.h"
@@ -38,7 +38,7 @@
 // more information can be found in: https://unicode.org/reports/tr9/
 const QChar LTR_OVERRIDE_CHAR(0x202D);
 
-namespace Konsole
+namespace Koncrepe
 {
 QVariant interpolatePolygonF(const QPolygonF &start, const QPolygonF &end, qreal progress)
 {

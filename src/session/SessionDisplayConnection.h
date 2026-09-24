@@ -11,14 +11,14 @@
 #include <QObject>
 #include <QPointer>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 class TerminalDisplay;
 
-class KONSOLEPRIVATE_EXPORT SessionDisplayConnection : public QObject
+class KONCREPEPRIVATE_EXPORT SessionDisplayConnection : public QObject
 {
     Q_OBJECT
 public:

@@ -10,26 +10,26 @@
 
 #include <QObject>
 
-#include "konsoleapp_export.h"
+#include "koncrepeapp_export.h"
 #include <memory>
 
-namespace Konsole
+namespace Koncrepe
 {
-class IKonsolePlugin;
+class IKoncrepePlugin;
 class MainWindow;
 
 struct PluginManagerPrivate;
 
-class KONSOLEAPP_EXPORT PluginManager : public QObject
+class KONCREPEAPP_EXPORT PluginManager : public QObject
 {
     Q_OBJECT
 public:
     PluginManager();
     ~PluginManager() override;
     void loadAllPlugins();
-    void registerMainWindow(Konsole::MainWindow *window);
+    void registerMainWindow(Koncrepe::MainWindow *window);
 
-    std::vector<IKonsolePlugin *> plugins() const;
+    std::vector<IKoncrepePlugin *> plugins() const;
 
 private:
     std::unique_ptr<PluginManagerPrivate> d;

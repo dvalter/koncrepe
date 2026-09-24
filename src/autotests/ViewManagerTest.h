@@ -12,7 +12,7 @@
 
 #include <memory>
 
-namespace Konsole
+namespace Koncrepe
 {
 class ViewManagerTest : public QObject
 {

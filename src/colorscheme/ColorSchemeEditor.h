@@ -17,7 +17,7 @@ namespace Ui
 class ColorSchemeEditor;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 class ColorScheme;
 

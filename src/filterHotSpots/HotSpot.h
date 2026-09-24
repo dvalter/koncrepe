@@ -10,7 +10,7 @@
 
 #include <QObject>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 #include <QList>
 #include <QRect>
 #include <QRegion>
@@ -22,7 +22,7 @@ class QMouseEvent;
 class QKeyEvent;
 class QDrag;
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalDisplay;
 
@@ -38,7 +38,7 @@ class TerminalDisplay;
  * Hotspots may have more than one action, in which case the list of actions can be obtained using the
  * actions() method.  These actions may then be displayed in a popup menu or toolbar for example.
  */
-class KONSOLEPRIVATE_EXPORT HotSpot : public QObject
+class KONCREPEPRIVATE_EXPORT HotSpot : public QObject
 {
     // krazy suggest using Q_OBJECT here but moc can not handle
     // nested classes

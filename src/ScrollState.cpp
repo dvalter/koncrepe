@@ -8,7 +8,7 @@
 
 #include <QWheelEvent>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void ScrollState::addWheelEvent(const QWheelEvent *wheel)
 {

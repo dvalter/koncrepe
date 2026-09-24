@@ -12,7 +12,7 @@
 #include <QString>
 #include <QTest>
 
-// Konsole
+// Koncrepe
 #include "../ProcessInfo.h"
 #include "../session/Session.h"
 
@@ -21,7 +21,7 @@
 
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 std::unique_ptr<ProcessInfo> ProcessInfoTest::createProcInfo(const KProcess &proc)
 {

@@ -8,7 +8,7 @@
 // Own
 #include "HistorySizeDialog.h"
 
-// Konsole
+// Koncrepe
 #include "ui_HistorySizeDialog.h"
 
 #include <KLocalizedString>
@@ -16,7 +16,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 HistorySizeDialog::HistorySizeDialog(QWidget *parent)
     : QDialog(parent)

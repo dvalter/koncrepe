@@ -11,7 +11,7 @@
 // Qt
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void CharacterWidthTest::testWidth_data()
 {
@@ -20,7 +20,7 @@ void CharacterWidthTest::testWidth_data()
 
     /* This is a work in progress.... */
 
-    /* konsole_wcwidth uses -1 C0/C1 and DEL */
+    /* koncrepe_wcwidth uses -1 C0/C1 and DEL */
     QTest::newRow("0x007F") << uint(0x007F) << -1;
 
     QTest::newRow("0x0300") << uint(0x0300) << 0;

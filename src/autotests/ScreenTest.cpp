@@ -11,7 +11,7 @@
 #include <QString>
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void ScreenTest::doLargeScreenCopyVerification(const QString &putToScreen, const QString &expectedSelection)
 {

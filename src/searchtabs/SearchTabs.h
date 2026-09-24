@@ -15,16 +15,16 @@
 #include <QLineEdit>
 #include <QTreeView>
 
-// Konsole
+// Koncrepe
 #include "ViewManager.h"
 #include "widgets/ViewContainer.h"
 
 class SearchTabsFilterProxyModel;
 
-namespace Konsole
+namespace Koncrepe
 {
 
-class KONSOLEPRIVATE_EXPORT SearchTabs : public QFrame
+class KONCREPEPRIVATE_EXPORT SearchTabs : public QFrame
 {
 public:
     SearchTabs(ViewManager *viewManager);

@@ -16,10 +16,10 @@
 #include <KLocalization>
 #include <KLocalizedString>
 
-// Konsole
+// Koncrepe
 #include "ui_HistorySizeWidget.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 HistorySizeWidget::HistorySizeWidget(QWidget *parent)
     : QWidget(parent)
@@ -36,13 +36,13 @@ HistorySizeWidget::HistorySizeWidget(QWidget *parent)
     modeGroup->addButton(_ui->noHistoryButton);
     modeGroup->addButton(_ui->fixedSizeHistoryButton);
     modeGroup->addButton(_ui->unlimitedHistoryButton);
-    connect(modeGroup, static_cast<void (QButtonGroup::*)(QAbstractButton *)>(&QButtonGroup::buttonClicked), this, &Konsole::HistorySizeWidget::buttonClicked);
+    connect(modeGroup, static_cast<void (QButtonGroup::*)(QAbstractButton *)>(&QButtonGroup::buttonClicked), this, &Koncrepe::HistorySizeWidget::buttonClicked);
 
     auto formatString = ki18ncp("@item number of lines", "%v line", "%v lines");
     KLocalization::setupSpinBoxFormatString(_ui->historyLineSpinner, formatString);
     setLineCount(HistorySizeWidget::DefaultLineCount);
 
-    connect(_ui->historyLineSpinner, &QSpinBox::valueChanged, this, &Konsole::HistorySizeWidget::historySizeChanged);
+    connect(_ui->historyLineSpinner, &QSpinBox::valueChanged, this, &Koncrepe::HistorySizeWidget::historySizeChanged);
 
     auto warningButtonSizePolicy = _ui->fixedSizeHistoryWarningButton->sizePolicy();
     warningButtonSizePolicy.setRetainSizeWhenHidden(true);
@@ -66,7 +66,7 @@ HistorySizeWidget::HistorySizeWidget(QWidget *parent)
         const auto message =
             xi18nc("@info:tooltip",
                    "When using this option, the scrollback data will be written unencrypted to temporary files. Those temporary files will be "
-                   "deleted automatically when Konsole is closed in a normal manner.<nl/>Use <emphasis>Settings → Configure Konsole → Temporary "
+                   "deleted automatically when Koncrepe is closed in a normal manner.<nl/>Use <emphasis>Settings → Configure Koncrepe → Temporary "
                    "Files</emphasis> to select the location of the temporary files.");
         const QPoint pos = QPoint(_ui->unlimitedHistoryWrapper->width() / 2, _ui->unlimitedHistoryWrapper->height());
         QWhatsThis::showText(_ui->unlimitedHistoryWrapper->mapToGlobal(pos), message, _ui->unlimitedHistoryWrapper);

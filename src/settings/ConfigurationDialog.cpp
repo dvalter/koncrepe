@@ -12,7 +12,7 @@
 // Own
 #include "ConfigurationDialog.h"
 
-// Konsole
+// Koncrepe
 #include "ConfigDialogButtonGroupManager.h"
 
 // Qt
@@ -23,7 +23,7 @@
 #include <KConfigDialogManager>
 #include <KLocalizedString>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ConfigurationDialog::ConfigurationDialog(QWidget *parent, KCoreConfigSkeleton *config)
     : KPageDialog(parent)
@@ -125,7 +125,7 @@ void ConfigurationDialog::setRestoreDefaultsButtonEnabled(bool enabled)
     }
 }
 
-void Konsole::ConfigurationDialog::showEvent(QShowEvent *event)
+void Koncrepe::ConfigurationDialog::showEvent(QShowEvent *event)
 {
     if (!_shown) {
         _manager->updateWidgets();

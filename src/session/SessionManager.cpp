@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -16,13 +16,13 @@
 #include <KConfig>
 #include <KConfigGroup>
 
-// Konsole
+// Koncrepe
 #include "Emulation.h" // to connect the URL escape sequence extractor
 #include "Enumeration.h"
 #include "EscapeSequenceUrlExtractor.h"
 #include "Screen.h"
 #include "ShouldApplyProperty.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
 #include "history/HistoryTypeFile.h"
 #include "history/HistoryTypeNone.h"
@@ -36,18 +36,18 @@
 #include "terminalDisplay/TerminalDisplay.h"
 #include "terminalDisplay/TerminalFonts.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 SessionManager::SessionManager()
 {
     ProfileManager *profileMananger = ProfileManager::instance();
-    connect(profileMananger, &Konsole::ProfileManager::profileChanged, this, &Konsole::SessionManager::profileChanged);
+    connect(profileMananger, &Koncrepe::ProfileManager::profileChanged, this, &Koncrepe::SessionManager::profileChanged);
 }
 
 SessionManager::~SessionManager()
 {
     if (!_sessions.isEmpty()) {
-        qCDebug(KonsoleDebug) << "Konsole SessionManager destroyed with" << _sessions.count() << "session(s) still alive";
+        qCDebug(KoncrepeDebug) << "Koncrepe SessionManager destroyed with" << _sessions.count() << "session(s) still alive";
         // ensure that the Session doesn't later try to call back and do things to the
         // SessionManager
         for (Session *session : std::as_const(_sessions)) {
@@ -97,12 +97,12 @@ Session *SessionManager::createSession(Profile::Ptr profile)
     Q_ASSERT(session);
     applyProfile(session, profile, false);
 
-    connect(session, &Konsole::Session::profileChangeCommandReceived, this, [this, session](const QString &text) {
+    connect(session, &Koncrepe::Session::profileChangeCommandReceived, this, [this, session](const QString &text) {
         sessionProfileCommandReceived(session, text);
     });
 
     // ask for notification when session dies
-    connect(session, &Konsole::Session::finished, this, &SessionManager::sessionTerminated);
+    connect(session, &Koncrepe::Session::finished, this, &SessionManager::sessionTerminated);
 
     // add session to active list
     _sessions << session;
@@ -190,7 +190,7 @@ void SessionManager::applyProfile(Session *session, const Profile::Ptr &profile,
         // e.g. the second version should be higher than the first one:
         // 18.04.12 -> 180412
         // 18.08.0  -> 180800
-        QStringList list = QStringLiteral(KONSOLE_VERSION).split(QLatin1Char('.'));
+        QStringList list = QStringLiteral(KONCREPE_VERSION).split(QLatin1Char('.'));
         if (list[2].length() < 2) {
             list[2].prepend(QLatin1String("0"));
         }
@@ -198,7 +198,7 @@ void SessionManager::applyProfile(Session *session, const Profile::Ptr &profile,
 
         QStringList environment = profile->environment();
         environment << QStringLiteral("PROFILEHOME=%1").arg(profile->defaultWorkingDirectory());
-        environment << QStringLiteral("KONSOLE_VERSION=%1").arg(numericVersion);
+        environment << QStringLiteral("KONCREPE_VERSION=%1").arg(numericVersion);
 #ifdef Q_OS_WIN
         // Needed on windows otherwise powershell will refuse to start
         environment += QProcess::systemEnvironment();
@@ -417,7 +417,7 @@ Session *SessionManager::idToSession(int id)
         }
     }
     // this should not happen
-    qCDebug(KonsoleDebug) << "Failed to find session for ID" << id;
+    qCDebug(KoncrepeDebug) << "Failed to find session for ID" << id;
     return nullptr;
 }
 

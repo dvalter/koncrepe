@@ -7,7 +7,7 @@
 // Own
 #include "Pty.h"
 
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
 // Qt
 #include <QStringList>
@@ -25,7 +25,7 @@
 #include <KPtyDevice>
 #include <KSandbox>
 
-using Konsole::Pty;
+using Koncrepe::Pty;
 
 static int getShellProcessId(QLatin1String tty)
 {
@@ -96,7 +96,7 @@ Pty::Pty(int masterFd, QObject *aParent)
     setUseUtmp(true);
     setPtyChannels(KPtyProcess::AllChannels);
 
-    connect(pty(), &KPtyDevice::readyRead, this, &Konsole::Pty::dataReceived);
+    connect(pty(), &KPtyDevice::readyRead, this, &Koncrepe::Pty::dataReceived);
 }
 
 Pty::~Pty() = default;
@@ -108,7 +108,7 @@ void Pty::sendData(const QByteArray &data)
     }
 
     if (pty()->write(data) == -1) {
-        qCDebug(KonsoleDebug) << "Could not send input data to terminal process.";
+        qCDebug(KoncrepeDebug) << "Could not send input data to terminal process.";
         return;
     }
 }
@@ -162,7 +162,7 @@ void Pty::setFlowControlEnabled(bool enable)
         }
 
         if (!pty()->tcSetAttr(&ttmode)) {
-            qCDebug(KonsoleDebug) << "Unable to set terminal attributes.";
+            qCDebug(KoncrepeDebug) << "Unable to set terminal attributes.";
         }
     }
 }
@@ -174,7 +174,7 @@ bool Pty::flowControlEnabled() const
         pty()->tcGetAttr(&ttmode);
         return ((ttmode.c_iflag & IXON) != 0U);
     } else {
-        qCDebug(KonsoleDebug) << "Unable to get flow control status, terminal not connected.";
+        qCDebug(KoncrepeDebug) << "Unable to get flow control status, terminal not connected.";
         return _xon;
     }
 }
@@ -194,7 +194,7 @@ void Pty::setUtf8Mode(bool enable)
         }
 
         if (!pty()->tcSetAttr(&ttmode)) {
-            qCDebug(KonsoleDebug) << "Unable to set terminal attributes.";
+            qCDebug(KoncrepeDebug) << "Unable to set terminal attributes.";
         }
     }
 #else
@@ -212,7 +212,7 @@ void Pty::setEraseChar(char eChar)
         ttmode.c_cc[VERASE] = eChar;
 
         if (!pty()->tcSetAttr(&ttmode)) {
-            qCDebug(KonsoleDebug) << "Unable to set terminal attributes.";
+            qCDebug(KoncrepeDebug) << "Unable to set terminal attributes.";
         }
     }
 }
@@ -224,7 +224,7 @@ char Pty::eraseChar() const
         pty()->tcGetAttr(&ttyAttributes);
         return ttyAttributes.c_cc[VERASE];
     } else {
-        qCDebug(KonsoleDebug) << "Unable to get erase char attribute, terminal not connected.";
+        qCDebug(KoncrepeDebug) << "Unable to get erase char attribute, terminal not connected.";
         return _eraseChar;
     }
 }
@@ -312,15 +312,15 @@ void Pty::setWriteable(bool writeable)
     if (QT_STAT(pty()->ttyName(), &sbuf) == 0) {
         if (writeable) {
             if (::chmod(pty()->ttyName(), sbuf.st_mode | S_IWGRP) < 0) {
-                qCDebug(KonsoleDebug) << "Could not set writeable on " << pty()->ttyName();
+                qCDebug(KoncrepeDebug) << "Could not set writeable on " << pty()->ttyName();
             }
         } else {
             if (::chmod(pty()->ttyName(), sbuf.st_mode & ~(S_IWGRP | S_IWOTH)) < 0) {
-                qCDebug(KonsoleDebug) << "Could not unset writeable on " << pty()->ttyName();
+                qCDebug(KoncrepeDebug) << "Could not unset writeable on " << pty()->ttyName();
             }
         }
     } else {
-        qCDebug(KonsoleDebug) << "Could not stat " << pty()->ttyName();
+        qCDebug(KoncrepeDebug) << "Could not stat " << pty()->ttyName();
     }
 }
 
@@ -370,11 +370,11 @@ int Pty::foregroundProcessGroup() const
         if (foregroundPid != -1) {
             return foregroundPid;
         } else {
-            qCWarning(KonsoleDebug, "Failed to get foreground process group id for %d: %s", master_fd, strerror(errno));
+            qCWarning(KoncrepeDebug, "Failed to get foreground process group id for %d: %s", master_fd, strerror(errno));
             return 0;
         }
     }
-    qWarning(KonsoleDebug, "foregroundProcessGroup master_fd < 0");
+    qWarning(KoncrepeDebug, "foregroundProcessGroup master_fd < 0");
 
     return 0;
 }
@@ -397,7 +397,7 @@ int Pty::flatpakSpawnProcessId() const
 
 #include "ptyqt/conptyprocess.h"
 
-using Konsole::Pty;
+using Koncrepe::Pty;
 
 Pty::Pty(QObject *aParent)
     : Pty(-1, aParent)

@@ -7,14 +7,14 @@
 // Own
 #include "PlainTextDecoder.h"
 
-// Konsole characters
+// Koncrepe characters
 #include <ExtendedCharTable.h>
 
 // Qt
 #include <QList>
 #include <QTextStream>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 PlainTextDecoder::PlainTextDecoder()
     : _output(nullptr)

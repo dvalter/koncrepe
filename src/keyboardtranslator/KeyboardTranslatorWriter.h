@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -11,7 +11,7 @@
 
 #include "KeyboardTranslator.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /** Writes a keyboard translation to disk. */
 class KeyboardTranslatorWriter

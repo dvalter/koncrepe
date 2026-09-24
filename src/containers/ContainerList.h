@@ -11,15 +11,15 @@
 #include <QList>
 #include <QObject>
 
-// Konsole
+// Koncrepe
 #include "ContainerInfo.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class QAction;
 class QActionGroup;
 class QMenu;
 
-namespace Konsole
+namespace Koncrepe
 {
 
 /**
@@ -39,7 +39,7 @@ namespace Konsole
  * When no containers are available, nothing is added and the menu appears
  * unchanged (no section headers, no empty state).
  */
-class KONSOLEPRIVATE_EXPORT ContainerList : public QObject
+class KONCREPEPRIVATE_EXPORT ContainerList : public QObject
 {
     Q_OBJECT
 
@@ -101,6 +101,6 @@ private:
     QList<ContainerInfo> _containers;
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // CONTAINERLIST_H

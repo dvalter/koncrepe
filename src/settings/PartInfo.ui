@@ -14,7 +14,7 @@
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications that use KonsolePart share profiles.&lt;/p&gt;&lt;p&gt;They do not share with Konsole or other applications:&lt;ul&gt;&lt;li&gt;default profile&lt;/li&gt;&lt;li&gt;show in menu&lt;/li&gt;&lt;li&gt;shortcuts&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;p&gt;Feel free to open a Konsole &lt;a href=&quot;https://bugs.kde.org/enter_bug.cgi?format=guided&amp;product=konsole&amp;component=kpart&quot;&gt;bug report&lt;/a&gt; if you desire a change to how these are handled.&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications that use KoncrepePart share profiles.&lt;/p&gt;&lt;p&gt;They do not share with Koncrepe or other applications:&lt;ul&gt;&lt;li&gt;default profile&lt;/li&gt;&lt;li&gt;show in menu&lt;/li&gt;&lt;li&gt;shortcuts&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;p&gt;Feel free to open a Koncrepe &lt;a href=&quot;https://bugs.kde.org/enter_bug.cgi?format=guided&amp;product=konsole&amp;component=kpart&quot;&gt;bug report&lt;/a&gt; if you desire a change to how these are handled.&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

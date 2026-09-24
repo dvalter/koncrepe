@@ -9,12 +9,12 @@
 #define COMPACTHISTORYSCROLL_H
 
 #include "history/HistoryScroll.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 #include <deque>
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT CompactHistoryScroll final : public HistoryScroll
+class KONCREPEPRIVATE_EXPORT CompactHistoryScroll final : public HistoryScroll
 {
     typedef QVector<Character> TextLine;
 

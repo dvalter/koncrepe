@@ -7,7 +7,7 @@
 
 #include "SessionTask.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 SessionTask::SessionTask(QObject *parent)
     : QObject(parent)

@@ -13,7 +13,7 @@
 #include "../decoders/PlainTextDecoder.h"
 #include "Emulation.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 void SearchHistoryTask::addScreenWindow(Session *session, ScreenWindow *searchWindow)
 {

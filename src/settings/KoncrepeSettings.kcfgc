@@ -1,0 +1,11 @@
+File=koncrepe.kcfg
+NameSpace=Koncrepe
+ClassName=KoncrepeSettings
+Singleton=true
+MemberVariables=private
+ItemAccessors=true
+Mutators=true
+GlobalEnums=true
+SetUserTexts=true
+Visibility=KONCREPEPRIVATE_EXPORT
+IncludeFiles=\"koncrepeprivate_export.h\"

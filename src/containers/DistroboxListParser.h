@@ -10,7 +10,7 @@
 #include <QString>
 #include <QStringList>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 QStringList parseDistroboxContainerNames(const QString &output);

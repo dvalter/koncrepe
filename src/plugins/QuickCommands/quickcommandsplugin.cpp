@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "quickcommandsplugin.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 #include "quickcommandsmodel.h"
 #include "quickcommandswidget.h"
 
@@ -20,17 +20,17 @@
 #include <QDockWidget>
 #include <kcommandbar.h>
 
-K_PLUGIN_CLASS_WITH_JSON(QuickCommandsPlugin, "konsole_quickcommands.json")
+K_PLUGIN_CLASS_WITH_JSON(QuickCommandsPlugin, "koncrepe_quickcommands.json")
 
 struct QuickCommandsPlugin::Private {
     QuickCommandsModel model;
     std::unique_ptr<QAction> showQuickAccess = nullptr;
-    QMap<Konsole::MainWindow *, QuickCommandsWidget *> widgetForWindow;
-    QMap<Konsole::MainWindow *, QDockWidget *> dockForWindow;
+    QMap<Koncrepe::MainWindow *, QuickCommandsWidget *> widgetForWindow;
+    QMap<Koncrepe::MainWindow *, QDockWidget *> dockForWindow;
 };
 
 QuickCommandsPlugin::QuickCommandsPlugin(QObject *object, const QVariantList &args)
-    : Konsole::IKonsolePlugin(object, args)
+    : Koncrepe::IKoncrepePlugin(object, args)
     , priv(std::make_unique<Private>())
 {
     priv->showQuickAccess = std::make_unique<QAction>();
@@ -39,7 +39,7 @@ QuickCommandsPlugin::QuickCommandsPlugin(QObject *object, const QVariantList &ar
 
 QuickCommandsPlugin::~QuickCommandsPlugin() = default;
 
-void QuickCommandsPlugin::createWidgetsForMainWindow(Konsole::MainWindow *mainWindow)
+void QuickCommandsPlugin::createWidgetsForMainWindow(Koncrepe::MainWindow *mainWindow)
 {
     auto *qcDockWidget = new QDockWidget(mainWindow);
     auto *qcWidget = new QuickCommandsWidget(mainWindow);
@@ -66,7 +66,7 @@ void QuickCommandsPlugin::createWidgetsForMainWindow(Konsole::MainWindow *mainWi
     priv->dockForWindow[mainWindow] = qcDockWidget;
 }
 
-void QuickCommandsPlugin::activeViewChanged(Konsole::SessionController *controller, Konsole::MainWindow *mainWindow)
+void QuickCommandsPlugin::activeViewChanged(Koncrepe::SessionController *controller, Koncrepe::MainWindow *mainWindow)
 {
     if (mainWindow == nullptr || controller == nullptr) {
         return;
@@ -86,13 +86,13 @@ void QuickCommandsPlugin::activeViewChanged(Konsole::SessionController *controll
     mainWindow->actionCollection()->setDefaultShortcut(priv->showQuickAccess.get(), shortcutEntry);
 
     // controller may exist while its view is being torn down
-    QPointer<Konsole::TerminalDisplay> terminalDisplay = controller->view();
+    QPointer<Koncrepe::TerminalDisplay> terminalDisplay = controller->view();
     if (terminalDisplay == nullptr) {
         return;
     }
     terminalDisplay->addAction(priv->showQuickAccess.get());
 
-    QPointer<Konsole::SessionController> controllerPtr(controller);
+    QPointer<Koncrepe::SessionController> controllerPtr(controller);
     connect(priv->showQuickAccess.get(), &QAction::triggered, this, [this, terminalDisplay, controllerPtr] {
         if (terminalDisplay == nullptr) {
             return;
@@ -135,7 +135,7 @@ void QuickCommandsPlugin::activeViewChanged(Konsole::SessionController *controll
     priv->widgetForWindow[mainWindow]->setCurrentController(controller);
 }
 
-QList<QAction *> QuickCommandsPlugin::menuBarActions(Konsole::MainWindow *mainWindow) const
+QList<QAction *> QuickCommandsPlugin::menuBarActions(Koncrepe::MainWindow *mainWindow) const
 {
     QAction *toggleVisibilityAction = new QAction(i18n("Show Quick Commands"), mainWindow);
     toggleVisibilityAction->setCheckable(true);

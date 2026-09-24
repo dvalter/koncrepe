@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -19,16 +19,16 @@
 class QIODevice;
 class QTextStream;
 
-Q_DECLARE_LOGGING_CATEGORY(KonsoleKeyTrDebug)
+Q_DECLARE_LOGGING_CATEGORY(KoncrepeKeyTrDebug)
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A converter which maps between key sequences pressed by the user and the
  * character strings which should be sent to the terminal and commands
  * which should be invoked when those character sequences are pressed.
  *
- * Konsole supports multiple keyboard translators, allowing the user to
+ * Koncrepe supports multiple keyboard translators, allowing the user to
  * specify the character sequences which are sent to the terminal
  * when particular key sequences are pressed.
  *
@@ -132,7 +132,7 @@ public:
          * Returns the character sequence associated with this entry, optionally replacing
          * wildcard '*' characters with numbers to indicate the keyboard modifiers being pressed.
          *
-         * TODO: The numbers used to replace '*' characters are taken from the Konsole/KDE 3 code.
+         * TODO: The numbers used to replace '*' characters are taken from the Koncrepe/KDE 3 code.
          * Document them.
          *
          * @param expandWildCards Specifies whether wild cards (occurrences of the '*' character) in
@@ -389,7 +389,7 @@ inline KeyboardTranslator::States KeyboardTranslator::Entry::stateMask() const
 }
 }
 
-Q_DECLARE_METATYPE(Konsole::KeyboardTranslator::Entry)
-Q_DECLARE_METATYPE(const Konsole::KeyboardTranslator *)
+Q_DECLARE_METATYPE(Koncrepe::KeyboardTranslator::Entry)
+Q_DECLARE_METATYPE(const Koncrepe::KeyboardTranslator *)
 
 #endif // KEYBOARDTRANSLATOR_H

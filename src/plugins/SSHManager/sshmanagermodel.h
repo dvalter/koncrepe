@@ -14,7 +14,7 @@
 #include <memory>
 #include <optional>
 
-namespace Konsole
+namespace Koncrepe
 {
 class SessionController;
 class Session;
@@ -33,7 +33,7 @@ public:
     explicit SSHManagerModel(QObject *parent = nullptr);
     ~SSHManagerModel() override;
 
-    void setSessionController(Konsole::SessionController *controller);
+    void setSessionController(Koncrepe::SessionController *controller);
 
     /** Connected to Session::hostnameChanged, tries to set the profile to
      * the current configured profile for the specified SSH host
@@ -62,9 +62,9 @@ public:
 private:
     QStandardItem *m_sshConfigTopLevelItem = nullptr;
     QFileSystemWatcher m_sshConfigWatcher;
-    Konsole::Session *m_session = nullptr;
+    Koncrepe::Session *m_session = nullptr;
 
-    QHash<Konsole::Session *, QString> m_sessionToProfileName;
+    QHash<Koncrepe::Session *, QString> m_sessionToProfileName;
 
     bool manageProfile = false;
 };

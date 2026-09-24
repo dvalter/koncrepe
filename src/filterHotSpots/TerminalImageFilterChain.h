@@ -14,12 +14,12 @@
 #include "../characters/Character.h"
 #include "FilterChain.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalDisplay;
 
 /** A filter chain which processes character images from terminal displays */
-class KONSOLEPRIVATE_EXPORT TerminalImageFilterChain : public FilterChain
+class KONCREPEPRIVATE_EXPORT TerminalImageFilterChain : public FilterChain
 {
 public:
     explicit TerminalImageFilterChain(TerminalDisplay *terminalDisplay);

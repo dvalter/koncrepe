@@ -14,7 +14,7 @@
 
 class QKeyEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 class PartManualTest : public QObject
 {

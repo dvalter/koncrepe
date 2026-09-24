@@ -12,7 +12,7 @@
 
 #include <Enumeration.h>
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalDisplay;
 

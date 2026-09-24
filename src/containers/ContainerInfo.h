@@ -12,7 +12,7 @@
 
 #include <optional>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 class IContainerDetector;
@@ -62,8 +62,8 @@ struct ContainerInfo {
     }
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
-Q_DECLARE_METATYPE(Konsole::ContainerInfo)
+Q_DECLARE_METATYPE(Koncrepe::ContainerInfo)
 
 #endif // CONTAINERINFO_H

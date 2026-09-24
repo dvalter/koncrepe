@@ -21,11 +21,11 @@
 #include <KLocalizedString>
 #include <KPluginFactory>
 
-// Konsole
+// Koncrepe
 #include "Emulation.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "ViewManager.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 #include "profile/ProfileManager.h"
 #include "session/SessionController.h"
 #include "session/SessionManager.h"
@@ -35,9 +35,9 @@
 #include "widgets/EditProfileDialog.h"
 #include "widgets/ViewContainer.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
-K_PLUGIN_FACTORY_WITH_JSON(KonsolePartFactory, "konsolepart.json", registerPlugin<Konsole::Part>();)
+K_PLUGIN_FACTORY_WITH_JSON(KoncrepePartFactory, "koncrepepart.json", registerPlugin<Koncrepe::Part>();)
 
 Part::Part(QObject *parent, const QVariantList &)
     : KParts::ReadOnlyPart(parent)
@@ -48,9 +48,9 @@ Part::Part(QObject *parent, const QVariantList &)
     _viewManager = new ViewManager(this, actionCollection());
     _viewManager->setNavigationMethod(ViewManager::NoNavigation);
 
-    connect(_viewManager, &Konsole::ViewManager::activeViewChanged, this, &Konsole::Part::activeViewChanged);
-    connect(_viewManager, &Konsole::ViewManager::empty, this, &Konsole::Part::terminalExited);
-    connect(_viewManager, &Konsole::ViewManager::newViewRequest, this, &Konsole::Part::newTab);
+    connect(_viewManager, &Koncrepe::ViewManager::activeViewChanged, this, &Koncrepe::Part::activeViewChanged);
+    connect(_viewManager, &Koncrepe::ViewManager::empty, this, &Koncrepe::Part::terminalExited);
+    connect(_viewManager, &Koncrepe::ViewManager::newViewRequest, this, &Koncrepe::Part::newTab);
 
     _viewManager->widget()->setParent(widget());
 
@@ -242,10 +242,10 @@ void Part::createSession(const QString &profileName, const QString &directory)
         if (activeSession && activeSession->isInContainer()) {
             session->setContainerContext(activeSession->containerContext());
         } else {
-            qDebug(KonsoleDebug) << "Active session is not in a container, cannot inherit container context.";
+            qDebug(KoncrepeDebug) << "Active session is not in a container, cannot inherit container context.";
         }
     } else {
-        qDebug(KonsoleDebug) << "Not inheriting container context because"
+        qDebug(KoncrepeDebug) << "Not inheriting container context because"
                              << (profile->inheritContainerContext() ? "no plugged controller." : "inheritance is disabled in profile.");
     }
 
@@ -266,16 +266,16 @@ void Part::activeViewChanged(SessionController *controller)
     // remove existing controller
     if (_pluggedController != nullptr) {
         removeChildClient(_pluggedController);
-        disconnect(_pluggedController, &Konsole::SessionController::titleChanged, this, &Konsole::Part::activeViewTitleChanged);
-        disconnect(_pluggedController, &Konsole::SessionController::currentDirectoryChanged, this, &Konsole::Part::currentDirectoryChanged);
+        disconnect(_pluggedController, &Koncrepe::SessionController::titleChanged, this, &Koncrepe::Part::activeViewTitleChanged);
+        disconnect(_pluggedController, &Koncrepe::SessionController::currentDirectoryChanged, this, &Koncrepe::Part::currentDirectoryChanged);
     }
 
     // insert new controller
     insertChildClient(controller);
 
-    connect(controller, &Konsole::SessionController::titleChanged, this, &Konsole::Part::activeViewTitleChanged);
+    connect(controller, &Koncrepe::SessionController::titleChanged, this, &Koncrepe::Part::activeViewTitleChanged);
     activeViewTitleChanged(controller);
-    connect(controller, &Konsole::SessionController::currentDirectoryChanged, this, &Konsole::Part::currentDirectoryChanged);
+    connect(controller, &Koncrepe::SessionController::currentDirectoryChanged, this, &Koncrepe::Part::currentDirectoryChanged);
 
     disconnect(controller->view(), &TerminalDisplay::overrideShortcutCheck, this, &Part::overrideTerminalShortcut);
     connect(controller->view(), &TerminalDisplay::overrideShortcutCheck, this, &Part::overrideTerminalShortcut);
@@ -286,7 +286,7 @@ void Part::activeViewChanged(SessionController *controller)
 void Part::overrideTerminalShortcut(QKeyEvent *event, bool &override)
 {
     // Shift+Insert is commonly used as the alternate shortcut for
-    // pasting in KDE apps(including konsole), so it deserves some
+    // pasting in KDE apps(including koncrepe), so it deserves some
     // special treatment.
     if (((event->modifiers() & Qt::ShiftModifier) != 0U) && (event->key() == Qt::Key_Insert)) {
         override = false;
@@ -306,11 +306,11 @@ void Part::activeViewTitleChanged(ViewProperties *properties)
 void Part::showManageProfilesDialog(QWidget *parent)
 {
     // Make sure this string is unique among all users of this part
-    if (KConfigDialog::showDialog(QStringLiteral("konsolepartmanageprofiles"))) {
+    if (KConfigDialog::showDialog(QStringLiteral("koncrepepartmanageprofiles"))) {
         return;
     }
 
-    KConfigDialog *settingsDialog = new KConfigDialog(parent, QStringLiteral("konsolepartmanageprofiles"), KonsoleSettings::self());
+    KConfigDialog *settingsDialog = new KConfigDialog(parent, QStringLiteral("koncrepepartmanageprofiles"), KoncrepeSettings::self());
     settingsDialog->setFaceType(KPageDialog::Tabbed);
 
     auto profileSettings = new ProfileSettings(settingsDialog);
@@ -373,11 +373,11 @@ void Part::setMonitorSilenceEnabled(bool enabled)
 
     if (enabled) {
         activeSession()->setMonitorSilence(true);
-        connect(activeSession(), &Konsole::Session::notificationsChanged, this, &Konsole::Part::notificationChanged, Qt::UniqueConnection);
+        connect(activeSession(), &Koncrepe::Session::notificationsChanged, this, &Koncrepe::Part::notificationChanged, Qt::UniqueConnection);
     } else {
         activeSession()->setMonitorSilence(false);
         if (!activeSession()->isMonitorActivity()) {
-            disconnect(activeSession(), &Konsole::Session::notificationsChanged, this, &Konsole::Part::notificationChanged);
+            disconnect(activeSession(), &Koncrepe::Session::notificationsChanged, this, &Koncrepe::Part::notificationChanged);
         }
     }
 }
@@ -388,11 +388,11 @@ void Part::setMonitorActivityEnabled(bool enabled)
 
     if (enabled) {
         activeSession()->setMonitorActivity(true);
-        connect(activeSession(), &Konsole::Session::notificationsChanged, this, &Konsole::Part::notificationChanged, Qt::UniqueConnection);
+        connect(activeSession(), &Koncrepe::Session::notificationsChanged, this, &Koncrepe::Part::notificationChanged, Qt::UniqueConnection);
     } else {
         activeSession()->setMonitorActivity(false);
         if (!activeSession()->isMonitorSilence()) {
-            disconnect(activeSession(), &Konsole::Session::notificationsChanged, this, &Konsole::Part::notificationChanged);
+            disconnect(activeSession(), &Koncrepe::Session::notificationsChanged, this, &Koncrepe::Part::notificationChanged);
         }
     }
 }

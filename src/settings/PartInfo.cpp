@@ -7,7 +7,7 @@
 // Own
 #include "PartInfo.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 PartInfoSettings::PartInfoSettings(QWidget *parent)
     : QWidget(parent)

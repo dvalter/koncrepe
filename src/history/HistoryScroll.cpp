@@ -9,7 +9,7 @@
 
 #include "HistoryType.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 HistoryScroll::HistoryScroll(HistoryType *t)
     : _historyType(t)

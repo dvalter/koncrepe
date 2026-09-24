@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -19,7 +19,7 @@
 
 class KConfig;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 class Profile;
@@ -27,7 +27,7 @@ class Profile;
 /**
  * Manages running terminal sessions.
  */
-class KONSOLEPRIVATE_EXPORT SessionManager : public QObject
+class KONCREPEPRIVATE_EXPORT SessionManager : public QObject
 {
     Q_OBJECT
 

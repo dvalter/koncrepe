@@ -12,7 +12,7 @@
 #include "session/Session.h"
 #include "terminalDisplay/TerminalDisplay.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 EscapeSequenceUrlFilter::EscapeSequenceUrlFilter(Session *session, TerminalDisplay *window)
     : _session(session)

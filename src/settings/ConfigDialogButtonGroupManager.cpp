@@ -18,7 +18,7 @@
 #include <QString>
 #include <QTimer>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // const QString ConfigDialogButtonGroupManager::ManagedNamePrefix;
 const QString ConfigDialogButtonGroupManager::ManagedNamePrefix = QStringLiteral("kcfg_");

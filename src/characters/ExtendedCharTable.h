@@ -13,7 +13,7 @@
 
 #include <functional>
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A table which stores sequences of unicode characters, referenced

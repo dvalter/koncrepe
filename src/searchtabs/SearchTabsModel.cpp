@@ -7,10 +7,10 @@
 // Own
 #include "SearchTabsModel.h"
 
-// Konsole
+// Koncrepe
 #include "ViewProperties.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 SearchTabsModel::SearchTabsModel(QObject *parent)
     : QAbstractTableModel(parent)

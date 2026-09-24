@@ -7,7 +7,7 @@
 #include "HistoryTypeNone.h"
 #include "HistoryScrollNone.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 HistoryTypeNone::HistoryTypeNone() = default;
 

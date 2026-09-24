@@ -1,4 +1,4 @@
-# [linux.keytab] Konsole Keyboard Table (Linux console keys)
+# [linux.keytab] Koncrepe Keyboard Table (Linux console keys)
 #
 # --------------------------------------------------------------
 
@@ -114,7 +114,7 @@ key Enter-NewLine : "\r"
 
 key Space +Control : "\x00"
 
-# some of keys are used by konsole.
+# some of keys are used by koncrepe.
 
 key Up      +Shift        : scrollLineUp
 key PgUp    +Shift-Ctrl   : scrollPageUp
@@ -131,4 +131,4 @@ key PgDown  +Shift+Ctrl   : scrollPromptDown
 
 #----------------------------------------------------------
 
-# Following other strings as emitted by konsole.
+# Following other strings as emitted by koncrepe.

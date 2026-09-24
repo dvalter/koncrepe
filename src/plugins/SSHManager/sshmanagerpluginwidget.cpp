@@ -40,7 +40,7 @@
 struct SSHManagerTreeWidget::Private {
     SSHManagerModel *model = nullptr;
     SSHManagerFilterModel *filterModel = nullptr;
-    Konsole::SessionController *controller = nullptr;
+    Koncrepe::SessionController *controller = nullptr;
     bool isSetup = false;
 };
 
@@ -78,8 +78,8 @@ SSHManagerTreeWidget::SSHManagerTreeWidget(QWidget *parent)
         d->filterModel->invalidate();
     });
 
-    connect(Konsole::ProfileModel::instance(), &Konsole::ProfileModel::rowsRemoved, this, &SSHManagerTreeWidget::updateProfileList);
-    connect(Konsole::ProfileModel::instance(), &Konsole::ProfileModel::rowsInserted, this, &SSHManagerTreeWidget::updateProfileList);
+    connect(Koncrepe::ProfileModel::instance(), &Koncrepe::ProfileModel::rowsRemoved, this, &SSHManagerTreeWidget::updateProfileList);
+    connect(Koncrepe::ProfileModel::instance(), &Koncrepe::ProfileModel::rowsInserted, this, &SSHManagerTreeWidget::updateProfileList);
     updateProfileList();
 
     ui->treeView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -148,9 +148,9 @@ void SSHManagerTreeWidget::updateProfileList()
 {
     ui->profile->clear();
     ui->profile->addItem(i18n("Don't Change"));
-    auto model = Konsole::ProfileModel::instance();
+    auto model = Koncrepe::ProfileModel::instance();
     for (int i = 0, end = model->rowCount(QModelIndex()); i < end; i++) {
-        const int column = Konsole::ProfileModel::Column::PROFILE;
+        const int column = Koncrepe::ProfileModel::Column::PROFILE;
         const int role = Qt::DisplayRole;
         const QModelIndex currIdx = model->index(i, column);
         const auto profileName = model->data(currIdx, role).toString();
@@ -358,7 +358,7 @@ void SSHManagerTreeWidget::setModel(SSHManagerModel *model)
     connect(ui->btnManageProfile, &QPushButton::clicked, d->model, &SSHManagerModel::setManageProfile);
 }
 
-void SSHManagerTreeWidget::setCurrentController(Konsole::SessionController *controller)
+void SSHManagerTreeWidget::setCurrentController(Koncrepe::SessionController *controller)
 {
     qCDebug(SshManagerPluginDebug) << "Controller changed to" << controller;
 

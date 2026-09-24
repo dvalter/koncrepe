@@ -9,7 +9,7 @@
 
 class QWheelEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Represents accumulation of wheel scroll from scroll events.

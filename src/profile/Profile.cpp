@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
     SPDX-FileCopyrightText: 2022 Harald Sitter <sitter@kde.org>
@@ -19,9 +19,9 @@
 // KF
 #include <KLocalizedString>
 
-// Konsole
+// Koncrepe
 #include "ProfileGroup.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 #ifndef Q_OS_WIN
 #ifdef HAVE_GETPWUID
@@ -33,7 +33,7 @@
 
 #include <KSandbox>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 #if defined(Q_OS_WIN)
 #define DEFAULT_ENCODING QStringLiteral("utf8")
@@ -48,7 +48,7 @@ using namespace Konsole;
 // as that is used when reading/writing profiles from/to disk
 //
 // the other names are usually shorter versions for convenience
-// when parsing konsoleprofile commands
+// when parsing koncrepeprofile commands
 static const char GENERAL_GROUP[] = "General";
 static const char KEYBOARD_GROUP[] = "Keyboard";
 static const char APPEARANCE_GROUP[] = "Appearance";

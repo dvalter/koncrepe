@@ -8,13 +8,13 @@
 // Own
 #include "Screen.h"
 
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Qt
 #include <QFile>
 #include <QTextStream>
 
-// Konsole decoders
+// Koncrepe decoders
 #include <HTMLDecoder.h>
 #include <PlainTextDecoder.h>
 
@@ -35,7 +35,7 @@ extern "C" {
 }
 #endif
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // Macro to convert x,y position on screen to position within an image.
 //
@@ -2585,7 +2585,7 @@ void Screen::fillWithDefaultChar(Character *dest, int count)
     std::fill_n(dest, count, Screen::DefaultChar);
 }
 
-void Konsole::Screen::setEnableUrlExtractor(const bool enable)
+void Koncrepe::Screen::setEnableUrlExtractor(const bool enable)
 {
     if (enable) {
         if (_escapeSequenceUrlExtractor) {
@@ -2601,7 +2601,7 @@ void Konsole::Screen::setEnableUrlExtractor(const bool enable)
     }
 }
 
-Konsole::EscapeSequenceUrlExtractor *Konsole::Screen::urlExtractor() const
+Koncrepe::EscapeSequenceUrlExtractor *Koncrepe::Screen::urlExtractor() const
 {
     return _escapeSequenceUrlExtractor.get();
 }

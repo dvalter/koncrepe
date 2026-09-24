@@ -18,10 +18,10 @@
 #include <KFuzzyMatcher>
 #include <KLocalizedString>
 
-// Konsole
-#include "KonsoleSettings.h"
+// Koncrepe
+#include "KoncrepeSettings.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
@@ -295,7 +295,7 @@ void SearchTabs::updateViewGeometry()
     }
 
     // set the position above the south tab bar
-    auto tabBarPos = (QTabWidget::TabPosition)KonsoleSettings::tabBarPosition();
+    auto tabBarPos = (QTabWidget::TabPosition)KoncrepeSettings::tabBarPosition();
     if (tabBarPos == QTabWidget::South && isTabBarVisible) {
         y = mainWindowHeight - tabBarHeight - size.height() - 6;
     }

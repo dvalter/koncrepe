@@ -6,7 +6,7 @@
 
 #include "NullProcessInfo.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 NullProcessInfo::NullProcessInfo(int pid)
     : ProcessInfo(pid)

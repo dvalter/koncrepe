@@ -8,7 +8,7 @@
 #include "TerminalInterfaceTest.h"
 #include "../profile/Profile.h"
 #include "../profile/ProfileManager.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Qt
 #include <QDir>
@@ -29,7 +29,7 @@
 
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 /* TerminalInterface found in KParts/kde_terminal_interface.h
  *
@@ -45,7 +45,7 @@ using namespace Konsole;
 
 void TerminalInterfaceTest::initTestCase()
 {
-    /* Try to test against build konsolepart, so move directory containing
+    /* Try to test against build koncrepepart, so move directory containing
       executable to front of libraryPaths.  KPluginLoader should find the
       part first in the build dir over the system installed ones.
       I believe the CI installs first and then runs the test so the other
@@ -54,7 +54,7 @@ void TerminalInterfaceTest::initTestCase()
     const auto libraryPaths = QCoreApplication::libraryPaths();
     auto buildPath = libraryPaths.last();
     QCoreApplication::removeLibraryPath(buildPath);
-    // konsolepart.so is in ../autotests/
+    // koncrepepart.so is in ../autotests/
     if (buildPath.endsWith(QStringLiteral("/autotests"))) {
         buildPath.chop(10);
     }
@@ -64,10 +64,10 @@ void TerminalInterfaceTest::initTestCase()
 // Test with no shell running
 void TerminalInterfaceTest::testTerminalInterfaceNoShell()
 {
-    // create a Konsole part and attempt to connect to it
+    // create a Koncrepe part and attempt to connect to it
     _terminalPart = createPart();
     if (_terminalPart == nullptr) {
-        QFAIL("konsolepart not found.");
+        QFAIL("koncrepepart not found.");
     }
 
     TerminalInterface *terminal = qobject_cast<TerminalInterface *>(_terminalPart);
@@ -94,10 +94,10 @@ void TerminalInterfaceTest::testTerminalInterfaceNoShell()
 // Test with default shell running
 void TerminalInterfaceTest::testTerminalInterface()
 {
-    // create a Konsole part and attempt to connect to it
+    // create a Koncrepe part and attempt to connect to it
     _terminalPart = createPart();
     if (_terminalPart == nullptr) {
-        QFAIL("konsolepart not found.");
+        QFAIL("koncrepepart not found.");
     }
 
     TerminalInterface *terminal = qobject_cast<TerminalInterface *>(_terminalPart);
@@ -160,10 +160,10 @@ void TerminalInterfaceTest::testTerminalInterfaceUsingSpy()
 #endif
     QString currentDirectory;
 
-    // create a Konsole part and attempt to connect to it
+    // create a Koncrepe part and attempt to connect to it
     _terminalPart = createPart();
     if (_terminalPart == nullptr) {
-        QFAIL("konsolepart not found.");
+        QFAIL("koncrepepart not found.");
     }
 
     TerminalInterface *terminal = qobject_cast<TerminalInterface *>(_terminalPart);
@@ -280,7 +280,7 @@ void TerminalInterfaceTest::testTerminalInterfaceV2()
 
     _terminalPart = createPart();
     if (_terminalPart == nullptr) {
-        QFAIL("konsolepart not found.");
+        QFAIL("koncrepepart not found.");
     }
 
     TerminalInterface *terminal = qobject_cast<TerminalInterface *>(_terminalPart);
@@ -299,7 +299,7 @@ void TerminalInterfaceTest::testTerminalInterfaceV2()
 
 KParts::Part *TerminalInterfaceTest::createPart()
 {
-    const KPluginMetaData metaData(QStringLiteral("konsolepart"));
+    const KPluginMetaData metaData(QStringLiteral("koncrepepart"));
     Q_ASSERT(metaData.isValid());
 
     KPluginFactory::Result<KParts::Part> result = KPluginFactory::instantiatePlugin<KParts::Part>(metaData, this);

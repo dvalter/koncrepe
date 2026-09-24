@@ -7,7 +7,7 @@
 // Own
 #include "ColorSchemeEditor.h"
 
-#include "../config-konsole.h"
+#include "../config-koncrepe.h"
 
 // Qt
 #include <QColorDialog>
@@ -26,12 +26,12 @@
 // KF
 #include <KLocalizedString>
 
-// Konsole
+// Koncrepe
 #include "../characters/CharacterColor.h"
 #include "ColorScheme.h"
 #include "ui_ColorSchemeEditor.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // colorTable is one third the length of _table in ColorScheme class,
 // because intense and faint colors are in separate columns
@@ -57,8 +57,8 @@ ColorSchemeEditor::ColorSchemeEditor(bool supportsTransparentWindows, QWidget *p
     connect(buttonBox, &QDialogButtonBox::accepted, this, &ColorSchemeEditor::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &ColorSchemeEditor::reject);
     mainLayout->addWidget(buttonBox);
-    connect(buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &Konsole::ColorSchemeEditor::saveColorScheme);
-    connect(okButton, &QPushButton::clicked, this, &Konsole::ColorSchemeEditor::saveColorScheme);
+    connect(buttonBox->button(QDialogButtonBox::Apply), &QPushButton::clicked, this, &Koncrepe::ColorSchemeEditor::saveColorScheme);
+    connect(okButton, &QPushButton::clicked, this, &Koncrepe::ColorSchemeEditor::saveColorScheme);
 
     // ui
     _ui = new Ui::ColorSchemeEditor();
@@ -66,19 +66,19 @@ ColorSchemeEditor::ColorSchemeEditor(bool supportsTransparentWindows, QWidget *p
 
     // description edit
     _ui->descriptionEdit->setClearButtonEnabled(true);
-    connect(_ui->descriptionEdit, &QLineEdit::textChanged, this, &Konsole::ColorSchemeEditor::setDescription);
+    connect(_ui->descriptionEdit, &QLineEdit::textChanged, this, &Koncrepe::ColorSchemeEditor::setDescription);
 
     // transparency slider
     QFontMetrics metrics(font());
     _ui->transparencyPercentLabel->setMinimumWidth(metrics.boundingRect(QStringLiteral("100%")).width());
 
-    connect(_ui->transparencySlider, &QSlider::valueChanged, this, &Konsole::ColorSchemeEditor::setTransparencyPercentLabel);
+    connect(_ui->transparencySlider, &QSlider::valueChanged, this, &Koncrepe::ColorSchemeEditor::setTransparencyPercentLabel);
 
     // blur behind window
-    connect(_ui->blurCheckBox, &QCheckBox::toggled, this, &Konsole::ColorSchemeEditor::setBlur);
+    connect(_ui->blurCheckBox, &QCheckBox::toggled, this, &Koncrepe::ColorSchemeEditor::setBlur);
 
     // randomized background
-    connect(_ui->randomizedBackgroundCheck, &QCheckBox::toggled, this, &Konsole::ColorSchemeEditor::setRandomizedBackgroundColor);
+    connect(_ui->randomizedBackgroundCheck, &QCheckBox::toggled, this, &Koncrepe::ColorSchemeEditor::setRandomizedBackgroundColor);
 
     // wallpaper stuff
     auto dirModel = new QFileSystemModel(this);
@@ -91,16 +91,16 @@ ColorSchemeEditor::ColorSchemeEditor(bool supportsTransparentWindows, QWidget *p
     _ui->wallpaperPath->setClearButtonEnabled(true);
     _ui->wallpaperSelectButton->setIcon(QIcon::fromTheme(QStringLiteral("image-x-generic")));
 
-    connect(_ui->wallpaperTransparencySlider, &QSlider::valueChanged, this, &Konsole::ColorSchemeEditor::setWallpaperOpacity);
+    connect(_ui->wallpaperTransparencySlider, &QSlider::valueChanged, this, &Koncrepe::ColorSchemeEditor::setWallpaperOpacity);
 
-    connect(_ui->wallpaperSelectButton, &QToolButton::clicked, this, &Konsole::ColorSchemeEditor::selectWallpaper);
-    connect(_ui->wallpaperPath, &QLineEdit::textChanged, this, &Konsole::ColorSchemeEditor::wallpaperPathChanged);
+    connect(_ui->wallpaperSelectButton, &QToolButton::clicked, this, &Koncrepe::ColorSchemeEditor::selectWallpaper);
+    connect(_ui->wallpaperPath, &QLineEdit::textChanged, this, &Koncrepe::ColorSchemeEditor::wallpaperPathChanged);
 
-    connect(_ui->wallpaperScalingType, &QComboBox::currentIndexChanged, this, &Konsole::ColorSchemeEditor::scalingTypeChanged);
-    connect(_ui->wallpaperHorizontalAnchorSlider, &QSlider::valueChanged, this, &Konsole::ColorSchemeEditor::horizontalAnchorChanged);
-    connect(_ui->wallpaperVerticalAnchorSlider, &QSlider::valueChanged, this, &Konsole::ColorSchemeEditor::verticalAnchorChanged);
+    connect(_ui->wallpaperScalingType, &QComboBox::currentIndexChanged, this, &Koncrepe::ColorSchemeEditor::scalingTypeChanged);
+    connect(_ui->wallpaperHorizontalAnchorSlider, &QSlider::valueChanged, this, &Koncrepe::ColorSchemeEditor::horizontalAnchorChanged);
+    connect(_ui->wallpaperVerticalAnchorSlider, &QSlider::valueChanged, this, &Koncrepe::ColorSchemeEditor::verticalAnchorChanged);
 
-    connect(_ui->wallpaperFlipType, &QComboBox::currentIndexChanged, this, &Konsole::ColorSchemeEditor::flipTypeChanged);
+    connect(_ui->wallpaperFlipType, &QComboBox::currentIndexChanged, this, &Koncrepe::ColorSchemeEditor::flipTypeChanged);
 
     // color table
     _ui->colorTable->setColumnCount(4);
@@ -123,7 +123,7 @@ ColorSchemeEditor::ColorSchemeEditor(bool supportsTransparentWindows, QWidget *p
 
     _ui->colorTable->verticalHeader()->hide();
 
-    connect(_ui->colorTable, &QTableWidget::itemClicked, this, &Konsole::ColorSchemeEditor::editColorItem);
+    connect(_ui->colorTable, &QTableWidget::itemClicked, this, &Koncrepe::ColorSchemeEditor::editColorItem);
 
     // warning label when transparency is not available
     _ui->transparencyWarningWidget->setWordWrap(true);

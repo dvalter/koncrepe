@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -9,12 +9,12 @@
 #ifndef KEYBOARDTRANSLATORREADER_H
 #define KEYBOARDTRANSLATORREADER_H
 
-// Konsole
+// Koncrepe
 #include "KeyboardTranslator.h"
 
 class QIODevice;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Parses the contents of a Keyboard Translator (.keytab) file and

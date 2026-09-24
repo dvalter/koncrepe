@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -19,18 +19,18 @@
 
 #include <vector>
 
-// Konsole
+// Koncrepe
 #include "Profile.h"
 
-Q_DECLARE_LOGGING_CATEGORY(KonsoleProfileDebug)
+Q_DECLARE_LOGGING_CATEGORY(KoncrepeProfileDebug)
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Manages profiles which specify various settings for terminal sessions
  * and their displays.
  */
-class KONSOLEPRIVATE_EXPORT ProfileManager : public QObject
+class KONCREPEPRIVATE_EXPORT ProfileManager : public QObject
 {
     Q_OBJECT
 
@@ -74,8 +74,8 @@ public:
      *
      * @p path may be relative or absolute.  The path may just be the
      * base name of the profile to load (eg. if the profile's full path
-     * is "<konsole data dir>/My Profile.profile" then any of the
-     * "konsole/My Profile.profile", "My Profile.profile" and
+     * is "<koncrepe data dir>/My Profile.profile" then any of the
+     * "koncrepe/My Profile.profile", "My Profile.profile" and
      * "My Profile" will be accepted)
      *
      * @return Pointer to a profile which can be passed to
@@ -244,7 +244,7 @@ private:
     // Uses std::find to find "profile" _profiles
     Iterator findProfile(const Profile::Ptr &profile) const;
 
-    // loads light/dark theme profile assignments from KonsoleSettings
+    // loads light/dark theme profile assignments from KoncrepeSettings
     void loadLightDarkProfiles();
 
     // A list of all loaded profiles, sorted by profile name

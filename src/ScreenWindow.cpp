@@ -7,9 +7,9 @@
 // Own
 #include "ScreenWindow.h"
 
-// Konsole
+// Koncrepe
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ScreenWindow::ScreenWindow(Screen *screen, QObject *parent)
     : QObject(parent)

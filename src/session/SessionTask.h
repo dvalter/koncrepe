@@ -14,7 +14,7 @@
 
 #include "Session.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Abstract class representing a task which can be performed on a group of sessions.

@@ -9,7 +9,7 @@
 
 #include "charactersdebug.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ExtendedCharTable::ExtendedCharTable() = default;
 

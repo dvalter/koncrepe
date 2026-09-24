@@ -5,7 +5,7 @@
 */
 
 #include "DetachableTabBar.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "widgets/ViewContainer.h"
 
 #include <QApplication>
@@ -17,7 +17,7 @@
 #include <QColor>
 #include <QPainter>
 
-namespace Konsole
+namespace Koncrepe
 {
 DetachableTabBar::DetachableTabBar(QWidget *parent)
     : QTabBar(parent)
@@ -80,7 +80,7 @@ void DetachableTabBar::setDetachableTabData(int idx, const DetachableTabData &da
 void DetachableTabBar::mousePressEvent(QMouseEvent *event)
 {
     QTabBar::mousePressEvent(event);
-    _containers = window()->findChildren<Konsole::TabbedViewContainer *>();
+    _containers = window()->findChildren<Koncrepe::TabbedViewContainer *>();
 }
 
 void DetachableTabBar::mouseMoveEvent(QMouseEvent *event)
@@ -124,12 +124,12 @@ void DetachableTabBar::mouseReleaseEvent(QMouseEvent *event)
         tabId = tabAt(event->pos());
         if (tabId == -1) {
             Q_EMIT newTabRequest();
-        } else if (KonsoleSettings::closeTabOnMiddleMouseButton()) {
+        } else if (KoncrepeSettings::closeTabOnMiddleMouseButton()) {
             Q_EMIT closeTab(tabId);
         }
         break;
     case Qt::LeftButton:
-        _containers = window()->findChildren<Konsole::TabbedViewContainer *>();
+        _containers = window()->findChildren<Koncrepe::TabbedViewContainer *>();
         break;
     default:
         break;
@@ -162,12 +162,12 @@ void DetachableTabBar::mouseDoubleClickEvent(QMouseEvent *event)
 
 void DetachableTabBar::dragEnterEvent(QDragEnterEvent *event)
 {
-    const auto dragId = QStringLiteral("konsole/terminal_display");
+    const auto dragId = QStringLiteral("koncrepe/terminal_display");
     if (!event->mimeData()->hasFormat(dragId)) {
         return;
     }
     auto other_pid = event->mimeData()->data(dragId).toInt();
-    // don't accept the drop if it's another instance of konsole
+    // don't accept the drop if it's another instance of koncrepe
     if (qApp->applicationPid() != other_pid) {
         return;
     }

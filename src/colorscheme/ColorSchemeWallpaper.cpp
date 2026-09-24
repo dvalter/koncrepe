@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -9,7 +9,7 @@
 // Own
 #include "ColorSchemeWallpaper.h"
 
-// Konsole
+// Koncrepe
 #include "ColorScheme.h"
 
 // Qt
@@ -18,7 +18,7 @@
 #include <QMovie>
 #include <QPainter>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ColorSchemeWallpaper::ColorSchemeWallpaper(const QString &path,
                                            const ColorSchemeWallpaper::FillStyle style,

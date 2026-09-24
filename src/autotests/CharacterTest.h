@@ -8,7 +8,7 @@
 
 #include <QObject>
 
-namespace Konsole
+namespace Koncrepe
 {
 class CharacterTest : public QObject
 {

@@ -9,7 +9,7 @@
 // Own
 #include "TerminalColor.h"
 
-// Konsole
+// Koncrepe
 #include "colorscheme/ColorScheme.h"
 
 // Qt
@@ -17,7 +17,7 @@
 #include <QPalette>
 #include <QTimer>
 
-namespace Konsole
+namespace Koncrepe
 {
 TerminalColor::TerminalColor(QObject *parent)
     : QObject(parent)

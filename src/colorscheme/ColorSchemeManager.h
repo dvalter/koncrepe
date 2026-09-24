@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
     SPDX-FileCopyrightText: 2018 Harald Sitter <sitter@kde.org>
@@ -14,10 +14,10 @@
 #include <QHash>
 #include <QStringList>
 
-// Konsole
+// Koncrepe
 #include "ColorScheme.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Manages the color schemes available for use by terminal displays.
@@ -36,7 +36,7 @@ public:
     ColorSchemeManager();
 
     /**
-     * Returns the default color scheme for Konsole
+     * Returns the default color scheme for Koncrepe
      */
     const std::shared_ptr<const ColorScheme> &defaultColorScheme() const;
 

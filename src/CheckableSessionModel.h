@@ -10,11 +10,11 @@
 // Qt
 #include <QSet>
 
-// Konsole
+// Koncrepe
 #include "session/Session.h"
 #include "session/SessionListModel.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A list of sessions with a checkbox next to each one which allows the

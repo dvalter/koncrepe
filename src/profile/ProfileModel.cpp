@@ -5,7 +5,7 @@
 */
 
 #include "ProfileModel.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "Profile.h"
 #include "ProfileManager.h"
 
@@ -13,7 +13,7 @@
 
 #include <QIcon>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ProfileModel *ProfileModel::instance()
 {
@@ -26,7 +26,7 @@ ProfileModel::ProfileModel()
     connect(ProfileManager::instance(), &ProfileManager::profileAdded, this, &ProfileModel::add);
     connect(ProfileManager::instance(), &ProfileManager::profileRemoved, this, &ProfileModel::remove);
     connect(ProfileManager::instance(), &ProfileManager::profileChanged, this, &ProfileModel::update);
-    connect(KonsoleSettings::self(), &KonsoleSettings::configChanged, this, &ProfileModel::populate);
+    connect(KoncrepeSettings::self(), &KoncrepeSettings::configChanged, this, &ProfileModel::populate);
     populate();
 }
 int ProfileModel::rowCount(const QModelIndex &unused) const
@@ -82,11 +82,11 @@ QVariant ProfileModel::data(const QModelIndex &idx, int role) const
                 txt += i18nc("@label:textbox added to the name of the built-in profile, to point out it's read-only", " [Read-only]");
             }
 
-            if (!KonsoleSettings::syncProfileWithSystemTheme() && ProfileManager::instance()->defaultProfile() == profile) {
+            if (!KoncrepeSettings::syncProfileWithSystemTheme() && ProfileManager::instance()->defaultProfile() == profile) {
                 txt += i18nc("@label:textbox added to the name of the current default profile", " [Default]");
             }
 
-            if (KonsoleSettings::syncProfileWithSystemTheme()) {
+            if (KoncrepeSettings::syncProfileWithSystemTheme()) {
                 if (ProfileManager::instance()->lightProfile() == profile) {
                     txt += i18nc("@label:textbox added to profile name when used for light system theme", " [Light]");
                 }
@@ -100,7 +100,7 @@ QVariant ProfileModel::data(const QModelIndex &idx, int role) const
         case Qt::DecorationRole:
             return QIcon::fromTheme(profile->icon());
         case Qt::FontRole:
-            if (!KonsoleSettings::syncProfileWithSystemTheme() && ProfileManager::instance()->defaultProfile() == profile) {
+            if (!KoncrepeSettings::syncProfileWithSystemTheme() && ProfileManager::instance()->defaultProfile() == profile) {
                 QFont font;
                 font.setBold(true);
                 return font;

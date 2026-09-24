@@ -11,18 +11,18 @@
 // Qt
 #include <QDialog>
 
-// Konsole
+// Koncrepe
 #include "Enumeration.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 namespace Ui
 {
 class HistorySizeDialog;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT HistorySizeDialog : public QDialog
+class KONCREPEPRIVATE_EXPORT HistorySizeDialog : public QDialog
 {
     Q_OBJECT
 

@@ -7,10 +7,10 @@
 
 // Own
 #include "terminalDisplay/TerminalDisplay.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 
 // Config
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Qt
 #include <QAccessible>
@@ -45,7 +45,7 @@
 #include <KMessageWidget>
 #include <KShell>
 
-// Konsole
+// Koncrepe
 #include "extras/AutoScrollHandler.h"
 #include "extras/CompositeWidgetFocusWatcher.h"
 
@@ -55,7 +55,7 @@
 #include "../characters/ExtendedCharTable.h"
 #include "../characters/LineBlockCharacters.h"
 #include "../decoders/PlainTextDecoder.h"
-#include "../widgets/KonsolePrintManager.h"
+#include "../widgets/KoncrepePrintManager.h"
 #include "../widgets/TerminalDisplayAccessible.h"
 #include "Emulation.h" // to connect the URL escape sequence extractor
 #include "EscapeSequenceUrlExtractor.h"
@@ -81,7 +81,7 @@
 
 #define MAX_LINE_WIDTH 1024
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 int TerminalDisplay::loc(int x, int y) const
 {
@@ -126,20 +126,20 @@ void TerminalDisplay::setScreenWindow(ScreenWindow *window)
     _screenWindow = window;
 
     if (!_screenWindow.isNull()) {
-        connect(_screenWindow.data(), &Konsole::ScreenWindow::outputChanged, this, &Konsole::TerminalDisplay::updateImage);
-        connect(_screenWindow.data(), &Konsole::ScreenWindow::currentResultLineChanged, this, &Konsole::TerminalDisplay::updateImage);
-        connect(_screenWindow.data(), &Konsole::ScreenWindow::outputChanged, this, [this]() {
+        connect(_screenWindow.data(), &Koncrepe::ScreenWindow::outputChanged, this, &Koncrepe::TerminalDisplay::updateImage);
+        connect(_screenWindow.data(), &Koncrepe::ScreenWindow::currentResultLineChanged, this, &Koncrepe::TerminalDisplay::updateImage);
+        connect(_screenWindow.data(), &Koncrepe::ScreenWindow::outputChanged, this, [this]() {
             _filterUpdateRequired = true;
         });
-        connect(_screenWindow.data(), &Konsole::ScreenWindow::screenAboutToChange, this, [this]() {
+        connect(_screenWindow.data(), &Koncrepe::ScreenWindow::screenAboutToChange, this, [this]() {
             _iPntSel = QPoint(-1, -1);
             _pntSel = QPoint(-1, -1);
             _tripleSelBegin = QPoint(-1, -1);
         });
-        connect(_screenWindow.data(), &Konsole::ScreenWindow::scrolled, this, [this]() {
+        connect(_screenWindow.data(), &Koncrepe::ScreenWindow::scrolled, this, [this]() {
             _filterUpdateRequired = true;
         });
-        connect(_screenWindow.data(), &Konsole::ScreenWindow::outputChanged, this, []() {
+        connect(_screenWindow.data(), &Koncrepe::ScreenWindow::outputChanged, this, []() {
             QGuiApplication::inputMethod()->update(Qt::ImCursorRectangle);
         });
         if (_wallpaper->isAnimated()) {
@@ -180,7 +180,7 @@ static UCharDirection BiDiClass([[maybe_unused]] const void *context, UChar32 c)
 /*                                                                           */
 /* ------------------------------------------------------------------------- */
 
-namespace Konsole
+namespace Koncrepe
 {
 #ifndef QT_NO_ACCESSIBILITY
 /**
@@ -236,11 +236,11 @@ TerminalDisplay::TerminalDisplay(QWidget *parent)
     _scrollBar->setScroll(0, 0);
     _scrollBar->setCursor(Qt::ArrowCursor);
     _headerBar->setCursor(Qt::ArrowCursor);
-    connect(_headerBar, &TerminalHeaderBar::requestToggleExpansion, this, &Konsole::TerminalDisplay::requestToggleExpansion);
+    connect(_headerBar, &TerminalHeaderBar::requestToggleExpansion, this, &Koncrepe::TerminalDisplay::requestToggleExpansion);
     connect(_headerBar, &TerminalHeaderBar::requestMoveToNewTab, this, [this] {
         requestMoveToNewTab(this);
     });
-    connect(_scrollBar, &QScrollBar::sliderMoved, this, &Konsole::TerminalDisplay::viewScrolledByUser);
+    connect(_scrollBar, &QScrollBar::sliderMoved, this, &Koncrepe::TerminalDisplay::viewScrolledByUser);
 
     _hoverLinkIndicator = new QLabel(this);
     _hoverLinkIndicator->setStyleSheet(QStringLiteral("background-color:palette(window); padding: 2px;"));
@@ -249,12 +249,12 @@ TerminalDisplay::TerminalDisplay(QWidget *parent)
     // setup timers for blinking text
     _blinkTextTimer = new QTimer(this);
     _blinkTextTimer->setInterval(TEXT_BLINK_DELAY);
-    connect(_blinkTextTimer, &QTimer::timeout, this, &Konsole::TerminalDisplay::blinkTextEvent);
+    connect(_blinkTextTimer, &QTimer::timeout, this, &Koncrepe::TerminalDisplay::blinkTextEvent);
 
     // setup timers for blinking cursor
     _blinkCursorTimer = new QTimer(this);
     _blinkCursorTimer->setInterval(QApplication::cursorFlashTime() / 2);
-    connect(_blinkCursorTimer, &QTimer::timeout, this, &Konsole::TerminalDisplay::blinkCursorEvent);
+    connect(_blinkCursorTimer, &QTimer::timeout, this, &Koncrepe::TerminalDisplay::blinkCursorEvent);
 
     // hide mouse cursor on keystroke or idle
     KCursor::setAutoHideCursor(this, true);
@@ -310,10 +310,10 @@ TerminalDisplay::TerminalDisplay(QWidget *parent)
     });
 
 #ifndef QT_NO_ACCESSIBILITY
-    QAccessible::installFactory(Konsole::accessibleInterfaceFactory);
+    QAccessible::installFactory(Koncrepe::accessibleInterfaceFactory);
 #endif
 
-    connect(KonsoleSettings::self(), &KonsoleSettings::configChanged, this, &TerminalDisplay::setupHeaderVisibility);
+    connect(KoncrepeSettings::self(), &KoncrepeSettings::configChanged, this, &TerminalDisplay::setupHeaderVisibility);
 
     _terminalColor = new TerminalColor(this);
     connect(_terminalColor, &TerminalColor::onPalette, _scrollBar, &TerminalScrollBar::updatePalette);
@@ -332,7 +332,7 @@ TerminalDisplay::TerminalDisplay(QWidget *parent)
         return _terminalColor->backgroundColor();
     };
 
-    _printManager.reset(new KonsolePrintManager(ldrawBackground, ldrawContents, lgetBackgroundColor));
+    _printManager.reset(new KoncrepePrintManager(ldrawBackground, ldrawContents, lgetBackgroundColor));
     ubidi = ubidi_open();
 
     animationTimer = new QTimer(this);
@@ -485,7 +485,7 @@ void TerminalDisplay::updateImage()
     // optimization - scroll the existing image where possible and
     // avoid expensive text drawing for parts of the image that
     // can simply be moved up or down
-    // disable this shortcut for transparent konsole with scaled pixels, otherwise we get rendering artifacts, see BUG 350651
+    // disable this shortcut for transparent koncrepe with scaled pixels, otherwise we get rendering artifacts, see BUG 350651
     if (!(WindowSystemInfo::HAVE_TRANSPARENCY && (qApp->devicePixelRatio() > 1.0)) && _wallpaper->isNull() && !_searchBar->isVisible()) {
         // if the flow control warning is enabled this will interfere with the
         // scrolling optimizations and cause artifacts.  the simple solution here
@@ -745,7 +745,7 @@ void TerminalDisplay::paintEvent(QPaintEvent *pe)
     for (const QRect &rect : region) {
         dirtyImageRegion += widgetToImage(rect);
         // We can use the opacity settings only if we are in a top level window which actually supports opacity.
-        // Many apps that use a konsole part such as kate or dolphin don't for performance reasons.
+        // Many apps that use a koncrepe part such as kate or dolphin don't for performance reasons.
         // This will result in repaint glitches iin wayland due to missing damage information
         const bool useOpacity = window() && window()->testAttribute(Qt::WA_TranslucentBackground);
         _terminalPainter->drawBackground(paint, rect, _terminalColor->backgroundColor(), useOpacity);
@@ -1439,7 +1439,7 @@ void TerminalDisplay::mouseMoveEvent(QMouseEvent *ev)
         return;
     }
 
-    if (!hasFocus() && KonsoleSettings::focusFollowsMouse()) {
+    if (!hasFocus() && KoncrepeSettings::focusFollowsMouse()) {
         setFocus();
     }
 
@@ -2453,7 +2453,7 @@ void TerminalDisplay::doPaste(QString text, bool appendReturn)
         }
     }
 
-    // Most code in Konsole uses UTF-32. We're filtering
+    // Most code in Koncrepe uses UTF-32. We're filtering
     // UTF-16 here, as all control characters can be represented
     // in this encoding as single code unit. If you ever need to
     // filter anything above 0xFFFF (specific code points or
@@ -3484,7 +3484,7 @@ int TerminalDisplay::bidiMap(Character *screenline,
 {
     // screenline is the input line: the nth element is the nth character in the (logical) line in UCS4 encoding.
     // line is a translation of screenline to Utf-16 for ICU library
-    // UTF-16 characters are not of constant length (and there are konsole's extended characters as well)
+    // UTF-16 characters are not of constant length (and there are koncrepe's extended characters as well)
     // log2line and line2log translate positions in screenline to positions in line (and reverse)
     const int linewidth = _usedColumns;
     uint32_t notSkipped[MAX_LINE_WIDTH / 32] = {};

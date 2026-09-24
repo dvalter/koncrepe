@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -24,7 +24,7 @@
 // STL
 #include <random>
 
-// Konsole
+// Koncrepe
 #include "colorschemedebug.h"
 
 // define DEBUG_LOADING_TIME
@@ -47,7 +47,7 @@ const double MaxSaturation = 100.0;
 const double MaxLightness = 100.0;
 }
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // The following are almost IBM standard color codes, with some slight
 // gamma correction for the dim colors to compensate for bright X screens.
@@ -544,7 +544,7 @@ void ColorScheme::writeColorEntry(KConfig &config, int index) const
         "Transparent",
         "Transparency",
         "Bold",
-        // Uncomment when people stop using Konsole from 2019:
+        // Uncomment when people stop using Koncrepe from 2019:
         // "MaxRandomHue",
         // "MaxRandomValue",
         // "MaxRandomSaturation"

@@ -11,10 +11,10 @@
 #include <QStringList>
 #include <QVector>
 
-// Konsole
+// Koncrepe
 #include "ViewManager.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 
 struct TabEntry {

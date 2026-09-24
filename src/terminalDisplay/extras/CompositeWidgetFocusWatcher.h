@@ -10,7 +10,7 @@
 
 #include <QWidget>
 
-namespace Konsole
+namespace Koncrepe
 {
 // Watches compositeWidget and all its focusable children,
 // and emits focusChanged() signal when either compositeWidget's
@@ -32,6 +32,6 @@ private:
     void registerWidgetAndChildren(QWidget *widget);
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // COMPOSITEWIDGET_H

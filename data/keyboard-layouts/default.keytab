@@ -194,7 +194,7 @@ key F12 +AnyMod  : "\E[24;*~"
 
 key Space +Control : "\x00"
 
-# Some keys are used by konsole to cause operations.
+# Some keys are used by koncrepe to cause operations.
 # The scroll* operations refer to the history buffer.
 
 key Up      -Alt-Ctrl+Shift-AppScreen  : scrollLineUp

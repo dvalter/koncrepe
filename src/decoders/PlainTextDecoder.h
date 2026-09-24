@@ -7,14 +7,14 @@
 #ifndef PLAINTEXTDECODER_H
 #define PLAINTEXTDECODER_H
 
-// Konsole decoders
+// Koncrepe decoders
 #include "TerminalCharacterDecoder.h"
 
 class QTextStream;
 template<typename>
 class QList;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A terminal character decoder which produces plain text, ignoring colors and other appearance-related

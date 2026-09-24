@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -15,10 +15,10 @@
 #include <KConfig>
 #include <KConfigGroup>
 
-// Konsole
+// Koncrepe
 #include "ShellCommand.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // FIXME: A dup line from Profile.cpp - redo these
 static const char GENERAL_GROUP[] = "General";
@@ -30,8 +30,8 @@ ProfileWriter::~ProfileWriter() = default;
 QString ProfileWriter::getPath(const Profile::Ptr &profile)
 {
     // If any changes are made to this location, check that programs using
-    // the Konsole part can write/save profiles
-    static const QString localDataLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/konsole");
+    // the Koncrepe part can write/save profiles
+    static const QString localDataLocation = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1String("/koncrepe");
 
     return localDataLocation + QLatin1Char('/') + profile->untranslatedName() + QLatin1String(".profile");
 }

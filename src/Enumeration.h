@@ -7,7 +7,7 @@
 #ifndef ENUMERATION_H
 #define ENUMERATION_H
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * This class serves as a place for putting enum definitions that are
@@ -109,7 +109,7 @@ public:
 
     /**
      * This enum describes the text editor cmd used to open local text file URLs
-     * in Konsole, where line and column data are appended to the file URL, e.g.:
+     * in Koncrepe, where line and column data are appended to the file URL, e.g.:
      * /path/to/file:123:123
      */
     enum TextEditorCmd {

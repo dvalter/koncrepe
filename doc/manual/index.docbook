@@ -1,16 +1,17 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.5-Based Variant V1.1//EN"
  "dtd/kdedbx45.dtd" [
+<!ENTITY koncrepe "<application>Koncrepe</application>">
 <!ENTITY % English "INCLUDE">
 <!ENTITY % addindex "IGNORE">
 <!ENTITY Ahmad.Samir '<personname><firstname>Ahmad</firstname><surname>Samir</surname></personname>'>
 <!ENTITY Ahmad.Samir.mail '<email>a.samirh78@gmail.com</email>'>
 ]>
 
-<book id="konsole" lang="&language;">
+<book id="koncrepe" lang="&language;">
 
 <bookinfo>
-<title>The &konsole; Handbook</title>
+<title>The &koncrepe; Handbook</title>
 <authorgroup>
 <author>&Jonathan.Singer; &Jonathan.Singer.mail;</author>
 <author>&Kurt.Hindenburg; &Kurt.Hindenburg.mail;</author>
@@ -55,11 +56,11 @@
 <date>2024-04-23</date>
 <releaseinfo>KDE Gear 24.05</releaseinfo>
 
-<abstract><para>&konsole; is &kde;'s terminal emulator.</para></abstract>
+<abstract><para>&koncrepe; is &kde;'s terminal emulator.</para></abstract>
 
 <keywordset>
 <keyword>KDE</keyword>
-<keyword>konsole</keyword>
+<keyword>koncrepe</keyword>
 <keyword>kdebase</keyword>
 <keyword>command</keyword>
 <keyword>line</keyword>
@@ -74,12 +75,12 @@
 <sect1 id="terminal">
 <title>What is a terminal?</title>
 
-<para>&konsole; is an X terminal
+<para>&koncrepe; is an X terminal
 emulator, often referred to as a terminal or a shell. It emulates a command line interface in a text only window.
 </para>
 
-<para>&konsole; typically runs a command shell, an application that executes commands that you type.
-The shell the &konsole; runs depends on your account settings.
+<para>&koncrepe; typically runs a command shell, an application that executes commands that you type.
+The shell the &koncrepe; runs depends on your account settings.
 Consult your operating system documentation to know what the shell is, how to configure it and how to use it.
 </para>
 </sect1>
@@ -87,7 +88,7 @@ Consult your operating system documentation to know what the shell is, how to co
 <sect1 id="scrollback">
 <title>Scrollback</title>
 
-<para>&konsole; uses the notion of scrollback
+<para>&koncrepe; uses the notion of scrollback
 to allow users to view previously displayed output.
 By default, scrollback is on
 and set to save 10,000 lines of
@@ -112,7 +113,7 @@ to open this window).
 
 <sect1 id="selection">
 <title>Selection Mode</title>
-<para>&konsole; has a selection by keyboard mode. In this mode it is possible to move around the scrollback and select text
+<para>&koncrepe; has a selection by keyboard mode. In this mode it is possible to move around the scrollback and select text
 without the mouse.</para>
 
 <para>
@@ -150,7 +151,7 @@ of common commands.  Examples could include:
 
 </para>
 
-<para>All new and changed profiles are saved in the user's local home folder in <filename>$<envar>XDG_DATA_HOME</envar>/konsole</filename>.</para>
+<para>All new and changed profiles are saved in the user's local home folder in <filename>$<envar>XDG_DATA_HOME</envar>/koncrepe</filename>.</para>
 
 <para>
 Procedure to create a new profile:
@@ -199,8 +200,8 @@ For the left handed mouse button order, swap left and right in the text below.
 <term><mousebutton>Left</mousebutton></term>
 
 <listitem><para> All &LMB; clicks will be sent to a mouse-aware
-application running in &konsole;.
-If an application will react on mouse clicks, &konsole;
+application running in &koncrepe;.
+If an application will react on mouse clicks, &koncrepe;
 indicates this by showing an arrow cursor. If not, an I-beam (bar)
 cursor is shown.</para>
 
@@ -209,7 +210,7 @@ dragging the mouse over the screen with a mouse-unaware application
 running will mark a region of the text. While dragging the mouse, the marked
 text is displayed in reversed color for visual feedback. Select <guimenuitem>Copy</guimenuitem>
 from the <guimenu>Edit</guimenu> menu to copy the marked text to the clipboard for further use
-within &konsole; or another application. The selected text can also be
+within &koncrepe; or another application. The selected text can also be
 dragged and dropped into compatible applications. Hold the &Ctrl; key and
 drag the selected text to the desired location.</para>
 
@@ -229,11 +230,11 @@ will select text in columns.
 triple-click to select an entire line.</para>
 
 <para>If the upper or lower edge of the text area is touched while
-marking, &konsole; scrolls up or down, eventually exposing text within
+marking, &koncrepe; scrolls up or down, eventually exposing text within
 the history buffer. The scrolling stops when the mouse stops
 moving.</para>
 
-<para>After the mouse is released, &konsole; attempts to keep the text
+<para>After the mouse is released, &koncrepe; attempts to keep the text
 in the clipboard visible by holding the marked area reversed. The
 marked area reverts back to normal as soon as the contents of the
 clipboard change, the text within the marked area is altered or the
@@ -259,7 +260,7 @@ with caution.
 the &LMB; and &RMB; together emulates the &MMB; of a three button mouse.</para></note>
 
 <para>If you have a <mousebutton>wheel</mousebutton> as the middle button,
-rolling it in a mouse-unaware program will move &konsole;'s scrollbar.</para>
+rolling it in a mouse-unaware program will move &koncrepe;'s scrollbar.</para>
 
 </listitem>
 </varlistentry>
@@ -295,7 +296,7 @@ rolling it in a mouse-unaware program will move &konsole;'s scrollbar.</para>
 
 <sect1 id="drag-and-drop">
 <title>Drag and Drop</title>
-<para>If you drop a file, folder or &URL; on a &konsole; window, a context
+<para>If you drop a file, folder or &URL; on a &koncrepe; window, a context
 menu appears with these actions:
 </para>
 <screenshot>
@@ -346,7 +347,7 @@ the context menu, if you have the rights to delete the dropped file or folder.
 <guimenuitem>Change Directory To</guimenuitem> </menuchoice>
 </term> <listitem>
 <para>If a folder is dropped, this action appears in the context menu and allows you to
-change the working folder of the &konsole; session.</para></listitem>
+change the working folder of the &koncrepe; session.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -372,9 +373,9 @@ on the <guilabel>Mouse</guilabel> tab in the profile settings dialog.
 <sect1 id="semantic-shell-integration">
 <title>Semantic Shell Integration</title>
 
-<para>A shell program running in Konsole may emit escape sequences that partition the text
+<para>A shell program running in Koncrepe may emit escape sequences that partition the text
 displayed into three types: shell prompt, user input and command output. Using this semantic information enables
-various enhancements in Konsole.
+various enhancements in Koncrepe.
 
 <itemizedlist>
 <listitem><para>
@@ -502,7 +503,7 @@ Problematic characters follow Unicode standard, rather than glibc's wcwidth(). C
 <sect1 id="visualhints">
 <title>Visual Hints</title>
 <para>
-In addition to the various visual hints described in <xref linkend="semantic-shell-integration"/>, &konsole; has other visual hints:
+In addition to the various visual hints described in <xref linkend="semantic-shell-integration"/>, &koncrepe; has other visual hints:
 </para>
 
 <itemizedlist>
@@ -524,7 +525,7 @@ Cycling between the three displayed modes can also be done by a keyboard shortcu
 <title>Container Awareness</title>
 
 <para>
-&konsole; can detect when the foreground process is running inside a Linux container such as
+&koncrepe; can detect when the foreground process is running inside a Linux container such as
 <application>Distrobox</application>, <application>Toolbox</application>, or
 <application>Kapsule</application>, and provides visual feedback to help you keep track of
 which terminal is running inside which container.
@@ -533,7 +534,7 @@ which terminal is running inside which container.
 <sect2 id="container-indicators">
 <title>Visual Indicators</title>
 
-<para>When a container is detected, &konsole; shows two indicators:</para>
+<para>When a container is detected, &koncrepe; shows two indicators:</para>
 
 <itemizedlist>
 <listitem><para>
@@ -551,7 +552,7 @@ The label disappears automatically when the foreground process returns to the ho
 
 <para>
 Both indicators can be enabled or disabled independently in
-<menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure &konsole;…</guimenuitem>
+<menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure &koncrepe;…</guimenuitem>
 <guimenuitem>Tab Bar / Splitters</guimenuitem></menuchoice>:
 </para>
 
@@ -606,7 +607,7 @@ container session will enter the same container instead of starting on the host.
 <sect1 id="menubar">
 <title>The Menubar</title>
 
-<para>The menubar is at the top of the &konsole; window.
+<para>The menubar is at the top of the &koncrepe; window.
 If the menubar is hidden,
 <guimenuitem>Show Menu Bar</guimenuitem> can be reached by
 <mousebutton>right</mousebutton> clicking in the window
@@ -628,7 +629,7 @@ to show or hide the menubar.
 <guimenu>File</guimenu><guimenuitem>New Window</guimenuitem>
 </menuchoice>
 </term>
-<listitem><para><action>Opens a new separate &konsole; window with the default profile</action>
+<listitem><para><action>Opens a new separate &koncrepe; window with the default profile</action>
 </para></listitem></varlistentry>
 
 <varlistentry>
@@ -699,8 +700,8 @@ at the current directory</action>.  By default, that is
 <guimenu>File</guimenu>
 <guimenuitem>Close Window</guimenuitem></menuchoice>
 </term>
-<listitem><para><action>Quits &konsole;</action></para>
-<note><para>&konsole; will display a confirmation dialog if there is more than one
+<listitem><para><action>Quits &koncrepe;</action></para>
+<note><para>&koncrepe; will display a confirmation dialog if there is more than one
 session open or if there are certain programs running in any session.
 These dialogs can be disabled by clicking on the <guibutton>Do not ask again</guibutton> checkbox.
 </para>
@@ -845,7 +846,7 @@ the name format, the remote tab title format and the color of the current tab</a
 <term><menuchoice>
 <shortcut><keycombo action="simul">&Ctrl;&Shift;<keycap>F</keycap></keycombo></shortcut>
 <guimenu>Edit</guimenu><guimenuitem>Find...</guimenuitem></menuchoice></term>
-<listitem><para><action>Opens a search bar at the bottom of &konsole;'s window
+<listitem><para><action>Opens a search bar at the bottom of &koncrepe;'s window
 </action></para>
 <para>This allows for case sensitive, forward or backwards, and regular expressions searches.</para>
 </listitem>
@@ -968,7 +969,7 @@ Any output on one view is duplicated in the other view.
 <listitem><para><action>Opens the current tab in a
 separate window</action>
 </para><para>
-Quitting the previous &konsole; window will not
+Quitting the previous &koncrepe; window will not
 affect the newly created window.
 </para></listitem>
 </varlistentry>
@@ -988,7 +989,7 @@ separate window</action>
 <guimenu>View</guimenu><guimenuitem>Save tab layout to file</guimenuitem></menuchoice>
 </term>
 <listitem><para><action>Allows you to save the tab layout of the current view in a specialized
-&konsole; layout file which can then be loaded to restore one of your favorite layouts.</action>
+&koncrepe; layout file which can then be loaded to restore one of your favorite layouts.</action>
 </para></listitem>
 </varlistentry>
 
@@ -1017,7 +1018,7 @@ Prompt</guimenuitem></menuchoice></term>
 <listitem><para><action>Toggles the monitoring of the current tab for
 a shell prompt.</action>
 </para><para>
-When a shell prompt is displayed, &konsole; will show a notification. This option is shown only when semantic integration is enabled in the shell.
+When a shell prompt is displayed, &koncrepe; will show a notification. This option is shown only when semantic integration is enabled in the shell.
 </para></listitem>
 </varlistentry>
 
@@ -1057,7 +1058,7 @@ Process Finishing</guimenuitem></menuchoice></term>
 <listitem><para><action>Toggles the monitoring of the current tab for
 the process finishing</action>.
 </para><para>
-If checked, upon finishing the current process, &konsole; will show a notification <guilabel>The process '<replaceable>name of the process</replaceable>' has finished running in session '<replaceable>name of the session</replaceable>'</guilabel>.
+If checked, upon finishing the current process, &koncrepe; will show a notification <guilabel>The process '<replaceable>name of the process</replaceable>' has finished running in session '<replaceable>name of the session</replaceable>'</guilabel>.
 </para></listitem>
 </varlistentry>
 
@@ -1116,7 +1117,7 @@ and resets the terminal</action></para></listitem>
 <term><menuchoice>
 <shortcut><keycap>F11</keycap></shortcut>
 <guimenu>View</guimenu><guimenuitem>Full Screen Mode</guimenuitem></menuchoice></term>
-<listitem><para><action>Toggles &konsole; filling the entire screen</action></para></listitem>
+<listitem><para><action>Toggles &koncrepe; filling the entire screen</action></para></listitem>
 </varlistentry>
 
 </variablelist>
@@ -1155,7 +1156,7 @@ A dialog will open for the bookmark folder name.
 <listitem><para><action>Opens the bookmark editor</action></para>
 <note><para>The keditbookmarks program must be installed for this menu item to appear.</para>
 <para>You can use the bookmark editor to manually add URLs.
-Currently, &konsole; accepts the following:
+Currently, &koncrepe; accepts the following:
 <itemizedlist mark="opencircle">
 <listitem><para>ssh://user@host:port</para></listitem>
 <listitem><para>telnet://user@host:port</para></listitem>
@@ -1209,7 +1210,7 @@ Profiles...</guimenuitem></menuchoice></term>
 <varlistentry>
 <term><menuchoice><guimenu>Settings</guimenu><guimenuitem>Window
 Color Scheme</guimenuitem></menuchoice></term>
-<listitem><para><action>Change &konsole;'s &GUI; to the specified scheme</action>
+<listitem><para><action>Change &koncrepe;'s &GUI; to the specified scheme</action>
 </para>
 </listitem>
 </varlistentry>
@@ -1225,7 +1226,7 @@ Menu Bar</guimenuitem></menuchoice></term>
 
 <varlistentry>
 <term><menuchoice><guimenu>Settings</guimenu><guimenuitem>Toolbars Shown</guimenuitem></menuchoice></term>
-<listitem><para><action>Allows visibility toggling of the &konsole; toolbars</action></para>
+<listitem><para><action>Allows visibility toggling of the &koncrepe; toolbars</action></para>
 </listitem>
 </varlistentry>
 
@@ -1238,7 +1239,7 @@ Menu Bar</guimenuitem></menuchoice></term>
 <varlistentry>
 <term><menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure Language...
 </guimenuitem></menuchoice></term>
-<listitem><para><action>Opens window to choose an interface translation of &konsole;.</action>
+<listitem><para><action>Opens window to choose an interface translation of &koncrepe;.</action>
 </para>
 </listitem>
 </varlistentry>
@@ -1249,7 +1250,7 @@ Shortcuts...</guimenuitem></menuchoice></term>
 <listitem><para><action>Opens the keyboard shortcut editor.</action> More on shortcuts configuration
 can be found in the <ulink url="help:/fundamentals/shortcuts.html">&kde; Fundamentals</ulink>.</para>
 
-<para>Additionally &konsole; has a few special shortcuts with no corresponding menu item:</para>
+<para>Additionally &koncrepe; has a few special shortcuts with no corresponding menu item:</para>
 
 <informaltable>
 <tgroup cols="2">
@@ -1303,16 +1304,16 @@ Notifications...</guimenuitem></menuchoice></term>
 
 <varlistentry>
 <term><menuchoice><guimenu>Settings</guimenu><guimenuitem>Configure
-&konsole;...</guimenuitem></menuchoice></term>
-<listitem><para><action>Opens the &konsole; settings editor</action></para>
+&koncrepe;...</guimenuitem></menuchoice></term>
+<listitem><para><action>Opens the &koncrepe; settings editor</action></para>
 <para>
-    This dialog has options influencing the appearance and behaviour of the &konsole; window.
+    This dialog has options influencing the appearance and behaviour of the &koncrepe; window.
 </para>
 <itemizedlist>
     <listitem>
         <para>
             The <guilabel>General</guilabel> page allows configuring the menubar visibility,
-            remembering the &konsole; window size, running all &konsole; windows in a single process,
+            remembering the &koncrepe; window size, running all &koncrepe; windows in a single process,
             enabling menu accelerators, showing window title on the titlebar, removing window titlebar and frame, and focusing terminals when the mouse pointer is moved over them.
             It is also possible to configure the search case sensitivity, usage of the regular expression,
             highlighting all matches, and the search direction (<guilabel>Search backwards</guilabel> is the default).
@@ -1363,7 +1364,7 @@ Notifications...</guimenuitem></menuchoice></term>
 
 <sect2 id="help-menu">
 <title>Help Menu</title>
-<para>&konsole; has the some of the common &kde; <guimenu>Help</guimenu>
+<para>&koncrepe; has the some of the common &kde; <guimenu>Help</guimenu>
 menu items, for more information read the section about the <ulink url="help:/fundamentals/menus.html#menus-help">Help Menu</ulink>
 of the &kde; Fundamentals.
 </para><!-- Only negative to using this is that it shows shortcut F1 for Handbook -->
@@ -1372,7 +1373,7 @@ of the &kde; Fundamentals.
 </sect1>
 
 <sect1 id="console-dialogs">
-<title>&konsole; Dialogs</title>
+<title>&koncrepe; Dialogs</title>
 
 <sect2 id="configure-tab-settings-dialog">
 <title>Configure Tab Settings Dialog</title>
@@ -1385,7 +1386,7 @@ These changes are temporary and can be made permanent by editing the current pro
 </para>
 
 <para>
-&konsole; will substitute these tokens for local tabs:
+&koncrepe; will substitute these tokens for local tabs:
 </para>
 <itemizedlist mark="opencircle">
 <listitem><para>%n : program name</para></listitem>
@@ -1399,7 +1400,7 @@ These changes are temporary and can be made permanent by editing the current pro
 </itemizedlist>
 
 <para>
-&konsole; will substitute these tokens for remote tabs:
+&koncrepe; will substitute these tokens for remote tabs:
 <itemizedlist mark="opencircle">
     <listitem><para>%c : current program</para></listitem>
     <listitem><para>%h : remote host (short)</para></listitem>
@@ -1484,7 +1485,7 @@ for the current tab only and will not be saved to the profile.
 <chapter id="command-line-options">
 <title>Command-line Options</title>
 
-<para>When &konsole; is started from the command line, various options
+<para>When &koncrepe; is started from the command line, various options
 can be specified to modify its behavior.</para>
 
 <variablelist>
@@ -1495,13 +1496,13 @@ can be specified to modify its behavior.</para>
 
 <varlistentry>
 <term><option>--profile</option> <parameter>file</parameter></term>
-<listitem><para><action>Start &konsole;</action> using the specified profile
+<listitem><para><action>Start &koncrepe;</action> using the specified profile
 instead of the default profile.</para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>--layout</option> <parameter>file</parameter></term>
-<listitem><para><action>Start &konsole;</action> using a <link linkend="save-layout">saved &JSON; layout file</link>.</para></listitem>
+<listitem><para><action>Start &koncrepe;</action> using a <link linkend="save-layout">saved &JSON; layout file</link>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -1541,7 +1542,7 @@ Empty lines or lines with <userinput>#</userinput> at the beginning are ignored,
 <simplelist>
 <member><userinput>title:</userinput> a name for this tab, tab default if blank or not specified</member>
 <member><userinput>workdir:</userinput> working directory, <filename class="directory"> ~</filename> if blank or not specified</member>
-<member><userinput>profile:</userinput> a &konsole; profile to use, the default if blank or not specified</member>
+<member><userinput>profile:</userinput> a &koncrepe; profile to use, the default if blank or not specified</member>
 <member><userinput>command:</userinput> a command to run</member>
 </simplelist>
 <para>Each line should contain at least one of <userinput>command</userinput> or <userinput>profile</userinput> field.
@@ -1553,14 +1554,14 @@ Empty lines or lines with <userinput>#</userinput> at the beginning are ignored,
 
 <varlistentry>
 <term><option>--background-mode</option></term>
-<listitem><para><action>Start &konsole;</action> in the background and bring to the front when <keycombo action="simul">&Ctrl;&Shift;<keycap>F12</keycap></keycombo> (by default) is pressed.
+<listitem><para><action>Start &koncrepe;</action> in the background and bring to the front when <keycombo action="simul">&Ctrl;&Shift;<keycap>F12</keycap></keycombo> (by default) is pressed.
 </para></listitem>
 </varlistentry>
 
 <varlistentry>
 <term><option>--separate</option></term>
 <term><option>--nofork</option></term>
-<listitem><para><action>Run</action> the new instance of &konsole; in a separate process.
+<listitem><para><action>Run</action> the new instance of &koncrepe; in a separate process.
 </para></listitem>
 </varlistentry>
 
@@ -1590,7 +1591,7 @@ Empty lines or lines with <userinput>#</userinput> at the beginning are ignored,
 
 <varlistentry>
 <term><option>--fullscreen</option></term>
-<listitem><para><action>Start &konsole; in fullscreen mode</action>.</para></listitem>
+<listitem><para><action>Start &koncrepe; in fullscreen mode</action>.</para></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -1612,7 +1613,7 @@ Empty lines or lines with <userinput>#</userinput> at the beginning are ignored,
 </para>
 <para>
 For more information, please visit
-<ulink url="https://api.kde.org/4.14-api/applications-apidocs/konsole/html/classKonsole_1_1Profile.html">&konsole; API Reference</ulink>.
+<ulink url="https://api.kde.org/4.14-api/applications-apidocs/konsole/html/classKonsole_1_1Profile.html">&koncrepe; API Reference</ulink>.
 <!--FIXME update url to kf5 when available on api.kde.org-->
 </para>
 </listitem>
@@ -1628,20 +1629,20 @@ For more information, please visit
 <term><option>-e</option> <parameter>command</parameter></term>
 <listitem><para><action>Execute</action>
 <parameter>command</parameter> instead of the normal shell.</para>
-<note><para>This option will catch all following arguments passed to &konsole;, and execute it as <parameter>command</parameter>. So this option should always be used as the last option.</para></note>
+<note><para>This option will catch all following arguments passed to &koncrepe;, and execute it as <parameter>command</parameter>. So this option should always be used as the last option.</para></note>
 </listitem>
 </varlistentry>
 
 </variablelist>
 
-<para>&konsole; also accepts generic &Qt; and &kf6-full; options, see man pages qt6options and kf6options.</para>
+<para>&koncrepe; also accepts generic &Qt; and &kf6-full; options, see man pages qt6options and kf6options.</para>
 
 </chapter>
 
 <chapter id="scripting">
-<title>Scripting &konsole;</title>
+<title>Scripting &koncrepe;</title>
 
-<para>&konsole; does support numerous methods that can be used with &DBus;.
+<para>&koncrepe; does support numerous methods that can be used with &DBus;.
 </para>
 <para>There are two ways to use the &DBus; interface: &Qt;'s &GUI;
 <application>qdbusviewer</application>
@@ -1662,14 +1663,14 @@ will display all services available.
 <listitem><para>
 <prompt>&percnt;</prompt>
 <command>qdbus</command>
-<option>org.kde.konsole</option>
-will display the &DBus; interface for &konsole;.
+<option>org.kde.koncrepe</option>
+will display the &DBus; interface for &koncrepe;.
 </para></listitem>
 
 <listitem><para>
 <prompt>&percnt;</prompt>
 <command>qdbus</command>
-<option>org.kde.konsole /Windows/1</option>
+<option>org.kde.koncrepe /Windows/1</option>
 will display methods for controlling window 1.
 </para>
 </listitem>
@@ -1677,29 +1678,29 @@ will display methods for controlling window 1.
 <listitem><para>
 <prompt>&percnt;</prompt>
 <command>qdbus</command>
-<option>org.kde.konsole $KONSOLE_DBUS_WINDOW</option>
+<option>org.kde.koncrepe $KONCREPE_DBUS_WINDOW</option>
 will display methods for controlling the current window.
 </para></listitem>
 
 <listitem><para>
 <prompt>&percnt;</prompt>
 <command>qdbus</command>
-<option>org.kde.konsole /Sessions/1</option>
+<option>org.kde.koncrepe /Sessions/1</option>
 will display methods for controlling session 1.
 </para></listitem>
 
 <listitem><para>
 <prompt>&percnt;</prompt>
 <command>qdbus</command>
-<option>org.kde.konsole $KONSOLE_DBUS_SESSION</option>
+<option>org.kde.koncrepe $KONCREPE_DBUS_SESSION</option>
 will display methods for controlling the current session.
 </para></listitem>
 
 <listitem><para>
 <prompt>&percnt;</prompt>
 <command>qdbus</command>
-<option>$KONSOLE_DBUS_SERVICE $KONSOLE_DBUS_SESSION</option>
-will display methods for controlling the current &konsole;'s session.
+<option>$KONCREPE_DBUS_SERVICE $KONCREPE_DBUS_SESSION</option>
+will display methods for controlling the current &koncrepe;'s session.
 </para></listitem>
 
 </itemizedlist>
@@ -1707,21 +1708,21 @@ will display methods for controlling the current &konsole;'s session.
 
 <para>
 If any of the above commands outputs:
-Service 'org.kde.konsole' does not exist, change
-<option>org.kde.konsole</option> to one of the following:
+Service 'org.kde.koncrepe' does not exist, change
+<option>org.kde.koncrepe</option> to one of the following:
 
 <itemizedlist>
 
 <listitem><para>
-<option>org.kde.konsole-`pidof -s konsole`</option>
+<option>org.kde.koncrepe-`pidof -s koncrepe`</option>
 (will select first pid)
 </para></listitem>
 <listitem><para>
-<option>$KONSOLE_DBUS_SERVICE</option>
-(this can be used from the current &konsole;)
+<option>$KONCREPE_DBUS_SERVICE</option>
+(this can be used from the current &koncrepe;)
 </para></listitem>
 <listitem><para>
-<option>select one from the output of 'qdbus | grep konsole'</option>
+<option>select one from the output of 'qdbus | grep koncrepe'</option>
 </para></listitem>
 
 </itemizedlist>
@@ -1738,15 +1739,15 @@ For more information, please visit
 <title>Terminal Key Bindings</title>
 
 <sect1>
-<title>How &konsole; Uses Key Bindings</title>
+<title>How &koncrepe; Uses Key Bindings</title>
 
 <sect2 id="intro">
 <title>Introduction</title>
-<para>&konsole; uses *.keytab files to translate key combinations into control characters and escape sequences that are sent to the shell or to interactive programs (typically programs that use the Alternate Screen buffer, &eg; <application>vim</application>, <application>less</application>, <application>screen</application>) running in the shell.</para>
+<para>&koncrepe; uses *.keytab files to translate key combinations into control characters and escape sequences that are sent to the shell or to interactive programs (typically programs that use the Alternate Screen buffer, &eg; <application>vim</application>, <application>less</application>, <application>screen</application>) running in the shell.</para>
 
-<para>Users can customize the key bindings settings in &konsole; using the Key Bindings Editor. A key combination can be configured to send a specific control or escape sequence to the terminal.</para>
+<para>Users can customize the key bindings settings in &koncrepe; using the Key Bindings Editor. A key combination can be configured to send a specific control or escape sequence to the terminal.</para>
 
-<para>You can open the Key Bindings Editor from the menu entry <menuchoice><guimenu>Settings</guimenu><guimenuitem>Edit Current Profile</guimenuitem></menuchoice>, and going to the <guilabel>Keyboard</guilabel> tab. Listed there are the Key Bindings schemas that come by default with &konsole;.</para>
+<para>You can open the Key Bindings Editor from the menu entry <menuchoice><guimenu>Settings</guimenu><guimenuitem>Edit Current Profile</guimenuitem></menuchoice>, and going to the <guilabel>Keyboard</guilabel> tab. Listed there are the Key Bindings schemas that come by default with &koncrepe;.</para>
 </sect2>
 
 <sect2 id="table-fields">
@@ -1795,8 +1796,8 @@ Space+Ctrl
 <varlistentry>
 <term>Ansi</term>
 <listitem>
-<para>If this mode is set, &konsole; will send ANSI escape and control sequences</para>
-<para>If this mode is reset &konsole; will send VT52 escape and control sequences</para>
+<para>If this mode is set, &koncrepe; will send ANSI escape and control sequences</para>
+<para>If this mode is reset &koncrepe; will send VT52 escape and control sequences</para>
 </listitem>
 </varlistentry>
 
@@ -1807,7 +1808,7 @@ Space+Ctrl
 <para>If this mode is reset the key combination will only affect the terminal when it's using the Normal Screen buffer</para>
 
 <note>
-<para>&konsole; makes use of two screen buffers:</para>
+<para>&koncrepe; makes use of two screen buffers:</para>
 <itemizedlist>
 <listitem>
 <para>The Normal Screen buffer (default): allows you to scroll back to view previous lines of output, this is the default buffer you usually use to execute commands... &etc;</para>
@@ -1832,7 +1833,7 @@ Space+Ctrl
 <term>AppCursorKeys</term>
 <listitem>
 <para>This mode implements the VT100 <ulink url="https://www.vt100.net/docs/vt100-ug/chapter3.html#DECCKM">Cursor Keys Mode (DECCKM)</ulink>. It controls the escape sequences each Cursor Key (<keycap>Up</keycap>, <keycap>Down</keycap>, <keycap>Right</keycap>, <keycap>Left</keycap>) sends, depending on whether this mode is set or reset</para>
-<para>By default &konsole; follows the XTerm behavior of treating the <keycap>Home</keycap> and <keycap>End</keycap> keys as cursor keys with respect to DECCKM</para>
+<para>By default &koncrepe; follows the XTerm behavior of treating the <keycap>Home</keycap> and <keycap>End</keycap> keys as cursor keys with respect to DECCKM</para>
 </listitem>
 </varlistentry>
 
@@ -1862,15 +1863,15 @@ Space+Ctrl
 <listitem><para>A+Shift : <quote>A</quote></para></listitem>
 <listitem><para>a       : <quote>a</quote></para></listitem>
 </itemizedlist>
-<para>&konsole; will <emphasis>not</emphasis> accept the small letter <quote>a</quote> rule, you have to add a <quote>-Shift</quote> to that rule to make it work.</para>
+<para>&koncrepe; will <emphasis>not</emphasis> accept the small letter <quote>a</quote> rule, you have to add a <quote>-Shift</quote> to that rule to make it work.</para>
 </sect2>
 
 <sect2 id="output-field">
 <title>The Output Field</title>
 
-<para>In the Output field you can add the escape sequences or control characters that you want &konsole; to send to the terminal when the associated key combination is pressed.</para>
+<para>In the Output field you can add the escape sequences or control characters that you want &koncrepe; to send to the terminal when the associated key combination is pressed.</para>
 
-<para>You can also use any of the following keywords, each of which has a special meaning in &konsole;:</para>
+<para>You can also use any of the following keywords, each of which has a special meaning in &koncrepe;:</para>
 
 <itemizedlist>
 <listitem><para>scrollUpLine       : scroll up one line in the shell history scrollback buffer</para></listitem>
@@ -1937,7 +1938,7 @@ Space+Ctrl
 <title>Using Style Sheet for the Tab Bar</title>
 <para>
 The default style sheet for the tab bar sets the minimum and maximum tab
-widths.  The user can create a <filename role="extension">.css</filename> file and have &konsole; use that as the
+widths.  The user can create a <filename role="extension">.css</filename> file and have &koncrepe; use that as the
 style sheet for the tab bar.  In the <filename role="extension">.css</filename> file, the widget to use is
 <userinput>QTabBar::tab</userinput>.
 </para>
@@ -2052,7 +2053,7 @@ Triple-clicking will select a whole line. Continuing to hold the mouse button an
 </para></listitem>
 
 <listitem><para>
-There is a hidden feature for the "%d" formatter in tab title. You can tell &konsole; to abbreviate a directory name into its first character. For example, "/path/to/konsole/src" can be abbreviated into "konsole/s". If you want to enable and control this hidden feature, open <filename>konsolerc</filename>
+There is a hidden feature for the "%d" formatter in tab title. You can tell &koncrepe; to abbreviate a directory name into its first character. For example, "/path/to/koncrepe/src" can be abbreviated into "koncrepe/s". If you want to enable and control this hidden feature, open <filename>koncreperc</filename>
 in <userinput><command>qtpaths</command> <option>--paths GenericConfigLocation</option></userinput> and add following lines:</para>
 
 <para><programlisting>
@@ -2075,9 +2076,9 @@ in <userinput><command>qtpaths</command> <option>--paths GenericConfigLocation</
 <itemizedlist>
 
 <listitem>
-<para>Some fonts might be unavailable for usage in &konsole;, although they are available in other applications. That doesn't mean there is a bug in &konsole;. &konsole; requires monospaced fonts to provide the best visual result, so it asks &Qt; to only list monospaced fonts.</para>
+<para>Some fonts might be unavailable for usage in &koncrepe;, although they are available in other applications. That doesn't mean there is a bug in &koncrepe;. &koncrepe; requires monospaced fonts to provide the best visual result, so it asks &Qt; to only list monospaced fonts.</para>
 
-<para>Starting with version 16.08 (August 2016), &konsole; can be configured to allow selecting any font with the caveat that the display may not be correct.</para>
+<para>Starting with version 16.08 (August 2016), &koncrepe; can be configured to allow selecting any font with the caveat that the display may not be correct.</para>
 </listitem>
 
 <listitem><para>
@@ -2088,18 +2089,18 @@ This is most noticeable when a command that connects to an external device or sy
 </para></listitem>
 
 <listitem><para>
-&konsole; treats arguments after the <option>-e</option> option as one command and runs it directly, instead  of parsing it and possibly dividing it into sub-commands for execution. This is different from xterm.
+&koncrepe; treats arguments after the <option>-e</option> option as one command and runs it directly, instead  of parsing it and possibly dividing it into sub-commands for execution. This is different from xterm.
 </para>
 
 <para>
     <itemizedlist mark='opencircle'>
 
     <listitem><para>
-<command>konsole -e "command1 ; command2"</command> does not work
+<command>koncrepe -e "command1 ; command2"</command> does not work
     </para></listitem>
 
     <listitem><para>
-<command>konsole -e $SHELL -c "command1 ; command2"</command> works
+<command>koncrepe -e $SHELL -c "command1 ; command2"</command> works
     </para></listitem>
 
     </itemizedlist>
@@ -2107,18 +2108,18 @@ This is most noticeable when a command that connects to an external device or sy
 </listitem>
 
 <listitem><para>
-&konsole; doesn't provide convenience for running login shell, because developers don't like the idea of running login shell in a terminal emulator.
+&koncrepe; doesn't provide convenience for running login shell, because developers don't like the idea of running login shell in a terminal emulator.
 </para>
 <para>
-Of course, users still can run login shell in &konsole; if they really need to. Edit the profile in use and modify its command to the form of starting a login shell explicitly, such as "<command>bash -l</command>" and "<command>zsh -l</command>".
+Of course, users still can run login shell in &koncrepe; if they really need to. Edit the profile in use and modify its command to the form of starting a login shell explicitly, such as "<command>bash -l</command>" and "<command>zsh -l</command>".
 </para>
 </listitem>
 
 <listitem><para>
-The <option>--new-tab</option> option sometimes behaves strangely. It may create new window, or it may create new tab in another existing &konsole; window instead of the current &konsole; window.
+The <option>--new-tab</option> option sometimes behaves strangely. It may create new window, or it may create new tab in another existing &koncrepe; window instead of the current &koncrepe; window.
 </para>
 <para>
-Those behaviors feel strange, but they are not necessarily bugs. The <option>--new-tab</option> option tries to reuse existing &konsole; windows, but not all &konsole; windows are reusable. All &konsole; windows opened through &krunner; are reusable, while most &konsole; windows opened from command line are not.
+Those behaviors feel strange, but they are not necessarily bugs. The <option>--new-tab</option> option tries to reuse existing &koncrepe; windows, but not all &koncrepe; windows are reusable. All &koncrepe; windows opened through &krunner; are reusable, while most &koncrepe; windows opened from command line are not.
 </para>
 </listitem>
 
@@ -2131,9 +2132,9 @@ Those behaviors feel strange, but they are not necessarily bugs. The <option>--n
 <chapter id="credits">
 <title>Credits and Copyright</title>
 
-<para>&konsole; is currently maintained by &Kurt.Hindenburg;  &Kurt.Hindenburg.mail;</para>
+<para>&koncrepe; is currently maintained by &Kurt.Hindenburg;  &Kurt.Hindenburg.mail;</para>
 
-<para>Previous &konsole; maintainers include: &Robert.Knight; &Robert.Knight.mail; and &Waldo.Bastian; &Waldo.Bastian.mail;</para>
+<para>Previous &koncrepe; maintainers include: &Robert.Knight; &Robert.Knight.mail; and &Waldo.Bastian; &Waldo.Bastian.mail;</para>
 
 <para>The application &konsole; Copyright &copy; 1997-2008
 &Lars.Doelle; &Lars.Doelle.mail;</para>
@@ -2161,9 +2162,9 @@ Those behaviors feel strange, but they are not necessarily bugs. The <option>--n
 
 <para>For more information please visit these websites:</para>
 <itemizedlist>
-<listitem><para><ulink url="https://userbase.kde.org/Konsole">&konsole;'s homepage on &kde;'s UserBase</ulink>&nbsp;</para></listitem>
-<listitem><para><ulink url="https://konsole.kde.org/">&konsole;'s homepage</ulink></para></listitem>
-<listitem><para><ulink url="https://mail.kde.org/mailman/listinfo/konsole-devel">&konsole;'s mailing list</ulink></para></listitem>
+<listitem><para><ulink url="https://userbase.kde.org/Konsole">&koncrepe;'s homepage on &kde;'s UserBase</ulink>&nbsp;</para></listitem>
+<listitem><para><ulink url="https://konsole.kde.org/">&koncrepe;'s homepage</ulink></para></listitem>
+<listitem><para><ulink url="https://mail.kde.org/mailman/listinfo/konsole-devel">&koncrepe;'s mailing list</ulink></para></listitem>
 <listitem><para><ulink url="https://freebsd.kde.org/">&kde; on
 FreeBSD</ulink></para></listitem>
 <listitem><para><ulink url="https://solaris.kde.org/">&kde; on &Solaris;</ulink></para></listitem>

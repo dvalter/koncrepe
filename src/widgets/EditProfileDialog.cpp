@@ -37,7 +37,7 @@
 #include <KNSCore/Entry>
 #include <KNSWidgets/Button>
 
-// Konsole
+// Koncrepe
 #include "ui_EditProfileAdvancedPage.h"
 #include "ui_EditProfileAppearancePage.h"
 #include "ui_EditProfileGeneralPage.h"
@@ -62,7 +62,7 @@
 #include <unistd.h>
 #endif
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 EditProfileDialog::EditProfileDialog(QWidget *parent)
     : KPageDialog(parent)
@@ -208,7 +208,7 @@ EditProfileDialog::EditProfileDialog(QWidget *parent)
     // the _pageNeedsUpdate vector keeps track of the pages that have
     // not been updated since the last profile change and will need
     // to be refreshed when the user switches to them
-    connect(this, &KPageDialog::currentPageChanged, this, &Konsole::EditProfileDialog::preparePage);
+    connect(this, &KPageDialog::currentPageChanged, this, &Koncrepe::EditProfileDialog::preparePage);
 }
 
 EditProfileDialog::~EditProfileDialog()
@@ -329,7 +329,7 @@ bool EditProfileDialog::isProfileNameValid()
         return false;
     }
 
-    const QString profileStoragePath(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QDir::separator() + QStringLiteral("konsole"));
+    const QString profileStoragePath(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QDir::separator() + QStringLiteral("koncrepe"));
     int nameLenMax = 256;
 
 #if defined(Q_OS_LINUX) | defined(Q_OS_OPENBSD) | defined(Q_OS_FREEBSD) | defined(Q_OS_MACOS) | defined(Q_OS_SOLARIS)
@@ -439,7 +439,7 @@ void EditProfileDialog::updateCaption(const Profile::Ptr &profile)
     }
 }
 
-void EditProfileDialog::setProfile(const Konsole::Profile::Ptr &profile, EditProfileDialog::InitialProfileState state)
+void EditProfileDialog::setProfile(const Koncrepe::Profile::Ptr &profile, EditProfileDialog::InitialProfileState state)
 {
     Q_ASSERT(profile);
 
@@ -485,7 +485,7 @@ void EditProfileDialog::preparePage(KPageWidgetItem *current, KPageWidgetItem *b
     }
 }
 
-void Konsole::EditProfileDialog::selectProfileName()
+void Koncrepe::EditProfileDialog::selectProfileName()
 {
     _generalUi->profileNameEdit->setFocus();
     _generalUi->profileNameEdit->selectAll();
@@ -574,7 +574,7 @@ void EditProfileDialog::setupGeneralPage(const Profile::Ptr &profile)
     _isDefault = profile == ProfileManager::instance()->defaultProfile();
     _generalUi->setAsDefaultButton->setChecked(_isDefault);
     QString appName = QCoreApplication::applicationName();
-    if (!appName.isEmpty() && appName != QLatin1String("konsole")) {
+    if (!appName.isEmpty() && appName != QLatin1String("koncrepe")) {
         appName[0] = appName.at(0).toUpper();
         _generalUi->setAsDefaultButton->setText(i18n("Default profile for new terminal sessions in %1", appName));
     } else {
@@ -584,26 +584,26 @@ void EditProfileDialog::setupGeneralPage(const Profile::Ptr &profile)
     _generalUi->semanticInputClick->setChecked(profile->semanticInputClick());
 
     // signals and slots
-    connect(_generalUi->dirSelectButton, &QToolButton::clicked, this, &Konsole::EditProfileDialog::selectInitialDir);
-    connect(_generalUi->iconSelectButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::selectIcon);
-    connect(_generalUi->startInSameDirButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::startInSameDir);
-    connect(_generalUi->inheritContainerButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::inheritContainerContext);
-    connect(_generalUi->containerCombo, &QComboBox::currentIndexChanged, this, &Konsole::EditProfileDialog::containerComboChanged);
-    connect(_generalUi->profileNameEdit, &QLineEdit::textChanged, this, &Konsole::EditProfileDialog::profileNameChanged);
-    connect(_generalUi->initialDirEdit, &QLineEdit::textChanged, this, &Konsole::EditProfileDialog::initialDirChanged);
-    connect(_generalUi->commandEdit, &QLineEdit::textChanged, this, &Konsole::EditProfileDialog::commandChanged);
-    connect(_generalUi->environmentEditButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::showEnvironmentEditor);
-    connect(_generalUi->semanticUpDown, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::semanticUpDown);
-    connect(_generalUi->semanticInputClick, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::semanticInputClick);
+    connect(_generalUi->dirSelectButton, &QToolButton::clicked, this, &Koncrepe::EditProfileDialog::selectInitialDir);
+    connect(_generalUi->iconSelectButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::selectIcon);
+    connect(_generalUi->startInSameDirButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::startInSameDir);
+    connect(_generalUi->inheritContainerButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::inheritContainerContext);
+    connect(_generalUi->containerCombo, &QComboBox::currentIndexChanged, this, &Koncrepe::EditProfileDialog::containerComboChanged);
+    connect(_generalUi->profileNameEdit, &QLineEdit::textChanged, this, &Koncrepe::EditProfileDialog::profileNameChanged);
+    connect(_generalUi->initialDirEdit, &QLineEdit::textChanged, this, &Koncrepe::EditProfileDialog::initialDirChanged);
+    connect(_generalUi->commandEdit, &QLineEdit::textChanged, this, &Koncrepe::EditProfileDialog::commandChanged);
+    connect(_generalUi->environmentEditButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::showEnvironmentEditor);
+    connect(_generalUi->semanticUpDown, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::semanticUpDown);
+    connect(_generalUi->semanticInputClick, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::semanticInputClick);
 
-    connect(_generalUi->terminalColumnsEntry, &QSpinBox::valueChanged, this, &Konsole::EditProfileDialog::terminalColumnsEntryChanged);
-    connect(_generalUi->terminalRowsEntry, &QSpinBox::valueChanged, this, &Konsole::EditProfileDialog::terminalRowsEntryChanged);
+    connect(_generalUi->terminalColumnsEntry, &QSpinBox::valueChanged, this, &Koncrepe::EditProfileDialog::terminalColumnsEntryChanged);
+    connect(_generalUi->terminalRowsEntry, &QSpinBox::valueChanged, this, &Koncrepe::EditProfileDialog::terminalRowsEntryChanged);
 
     connect(_generalUi->terminalBellCombo, &QComboBox::currentIndexChanged, this, [this](const int index) {
         updateTempProfileProperty(Profile::BellMode, index);
     });
 
-    connect(_generalUi->setAsDefaultButton, &QAbstractButton::toggled, this, &Konsole::EditProfileDialog::updateButtonApply);
+    connect(_generalUi->setAsDefaultButton, &QAbstractButton::toggled, this, &Koncrepe::EditProfileDialog::updateButtonApply);
     const ButtonGroupOptions semanticHints = {
         _generalUi->semanticHints, // group
         Profile::SemanticHints, // profileProperty
@@ -709,10 +709,10 @@ void EditProfileDialog::setupTabsPage(const Profile::Ptr &profile)
     _tabsUi->renameTabWidget->setColor(profile->tabColor());
     _tabsUi->renameTabWidget->setActivityColor(profile->tabActivityColor());
 
-    connect(_tabsUi->renameTabWidget, &Konsole::RenameTabWidget::tabTitleFormatChanged, this, &Konsole::EditProfileDialog::tabTitleFormatChanged);
-    connect(_tabsUi->renameTabWidget, &Konsole::RenameTabWidget::remoteTabTitleFormatChanged, this, &Konsole::EditProfileDialog::remoteTabTitleFormatChanged);
-    connect(_tabsUi->renameTabWidget, &Konsole::RenameTabWidget::tabColorChanged, this, &Konsole::EditProfileDialog::tabColorChanged);
-    connect(_tabsUi->renameTabWidget, &Konsole::RenameTabWidget::tabActivityColorChanged, this, &Konsole::EditProfileDialog::tabActivityColorChanged);
+    connect(_tabsUi->renameTabWidget, &Koncrepe::RenameTabWidget::tabTitleFormatChanged, this, &Koncrepe::EditProfileDialog::tabTitleFormatChanged);
+    connect(_tabsUi->renameTabWidget, &Koncrepe::RenameTabWidget::remoteTabTitleFormatChanged, this, &Koncrepe::EditProfileDialog::remoteTabTitleFormatChanged);
+    connect(_tabsUi->renameTabWidget, &Koncrepe::RenameTabWidget::tabColorChanged, this, &Koncrepe::EditProfileDialog::tabColorChanged);
+    connect(_tabsUi->renameTabWidget, &Koncrepe::RenameTabWidget::tabActivityColorChanged, this, &Koncrepe::EditProfileDialog::tabActivityColorChanged);
 
     // tab monitoring
     const int silenceSeconds = profile->silenceSeconds();
@@ -722,7 +722,7 @@ void EditProfileDialog::setupTabsPage(const Profile::Ptr &profile)
     const int silenceCheckBoxWidth = maxSpinBoxWidth(_generalUi->terminalColumnsEntry, formatString);
     _tabsUi->silenceSecondsSpinner->setFixedWidth(silenceCheckBoxWidth);
 
-    connect(_tabsUi->silenceSecondsSpinner, &QSpinBox::valueChanged, this, &Konsole::EditProfileDialog::silenceSecondsChanged);
+    connect(_tabsUi->silenceSecondsSpinner, &QSpinBox::valueChanged, this, &Koncrepe::EditProfileDialog::silenceSecondsChanged);
 }
 
 void EditProfileDialog::terminalColumnsEntryChanged(int value)
@@ -889,16 +889,16 @@ void EditProfileDialog::setupAppearancePage(const Profile::Ptr &profile)
     _appearanceUi->colorSchemeList->setMouseTracking(true);
     _appearanceUi->colorSchemeList->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
-    connect(_appearanceUi->colorSchemeList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Konsole::EditProfileDialog::colorSchemeSelected);
-    connect(_appearanceUi->colorSchemeList, &QListView::activated, this, &Konsole::EditProfileDialog::previewColorScheme);
+    connect(_appearanceUi->colorSchemeList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Koncrepe::EditProfileDialog::colorSchemeSelected);
+    connect(_appearanceUi->colorSchemeList, &QListView::activated, this, &Koncrepe::EditProfileDialog::previewColorScheme);
 
     updateColorSchemeButtons();
 
-    connect(_appearanceUi->editColorSchemeButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::editColorScheme);
-    connect(_appearanceUi->removeColorSchemeButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::removeColorScheme);
-    connect(_appearanceUi->newColorSchemeButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::newColorScheme);
+    connect(_appearanceUi->editColorSchemeButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::editColorScheme);
+    connect(_appearanceUi->removeColorSchemeButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::removeColorScheme);
+    connect(_appearanceUi->newColorSchemeButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::newColorScheme);
 
-    connect(_appearanceUi->resetColorSchemeButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::resetColorScheme);
+    connect(_appearanceUi->resetColorSchemeButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::resetColorScheme);
 
     connect(_appearanceUi->chooseFontButton, &QAbstractButton::clicked, this, &EditProfileDialog::showFontDialog);
 
@@ -919,20 +919,20 @@ void EditProfileDialog::setupAppearancePage(const Profile::Ptr &profile)
 
     // setup font smoothing
     _appearanceUi->antialiasTextButton->setChecked(antialias);
-    connect(_appearanceUi->antialiasTextButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::setAntialiasText);
+    connect(_appearanceUi->antialiasTextButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::setAntialiasText);
 
     _appearanceUi->boldIntenseButton->setChecked(profile->boldIntense());
-    connect(_appearanceUi->boldIntenseButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::setBoldIntense);
+    connect(_appearanceUi->boldIntenseButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::setBoldIntense);
 
     _appearanceUi->useFontLineCharactersButton->setChecked(profile->useFontLineCharacters());
-    connect(_appearanceUi->useFontLineCharactersButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::useFontLineCharacters);
+    connect(_appearanceUi->useFontLineCharactersButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::useFontLineCharacters);
 
     _appearanceUi->useFontBrailleCharactersButton->setEnabled(!profile->property<bool>(Profile::UseFontLineCharacters));
     _appearanceUi->useFontBrailleCharactersButton->setChecked(profile->property<bool>(Profile::UseFontBrailleCharacters));
-    connect(_appearanceUi->useFontBrailleCharactersButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::useFontBrailleCharacters);
+    connect(_appearanceUi->useFontBrailleCharactersButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::useFontBrailleCharacters);
 
     _mouseUi->enableMouseWheelZoomButton->setChecked(profile->mouseWheelZoomEnabled());
-    connect(_mouseUi->enableMouseWheelZoomButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::toggleMouseWheelZoom);
+    connect(_mouseUi->enableMouseWheelZoomButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::toggleMouseWheelZoom);
 
     // cursor options
     _appearanceUi->enableBlinkingCursorButton->setChecked(profile->property<bool>(Profile::BlinkingCursorEnabled));
@@ -949,10 +949,10 @@ void EditProfileDialog::setupAppearancePage(const Profile::Ptr &profile)
     _appearanceUi->customColorSelectButton->setColor(profile->customCursorColor());
     _appearanceUi->customTextColorSelectButton->setColor(profile->customCursorTextColor());
 
-    connect(_appearanceUi->customCursorColorButton, &QRadioButton::clicked, this, &Konsole::EditProfileDialog::customCursorColor);
-    connect(_appearanceUi->autoCursorColorButton, &QRadioButton::clicked, this, &Konsole::EditProfileDialog::autoCursorColor);
-    connect(_appearanceUi->customColorSelectButton, &KColorButton::changed, this, &Konsole::EditProfileDialog::customCursorColorChanged);
-    connect(_appearanceUi->customTextColorSelectButton, &KColorButton::changed, this, &Konsole::EditProfileDialog::customCursorTextColorChanged);
+    connect(_appearanceUi->customCursorColorButton, &QRadioButton::clicked, this, &Koncrepe::EditProfileDialog::customCursorColor);
+    connect(_appearanceUi->autoCursorColorButton, &QRadioButton::clicked, this, &Koncrepe::EditProfileDialog::autoCursorColor);
+    connect(_appearanceUi->customColorSelectButton, &KColorButton::changed, this, &Koncrepe::EditProfileDialog::customCursorColorChanged);
+    connect(_appearanceUi->customTextColorSelectButton, &KColorButton::changed, this, &Koncrepe::EditProfileDialog::customCursorTextColorChanged);
 
     const ButtonGroupOptions cursorShapeOptions = {
         _appearanceUi->cursorShape, // group
@@ -968,32 +968,32 @@ void EditProfileDialog::setupAppearancePage(const Profile::Ptr &profile)
     setupButtonGroup(cursorShapeOptions, profile);
 
     _appearanceUi->marginsSpinner->setValue(profile->terminalMargin());
-    connect(_appearanceUi->marginsSpinner, &QSpinBox::valueChanged, this, &Konsole::EditProfileDialog::terminalMarginChanged);
+    connect(_appearanceUi->marginsSpinner, &QSpinBox::valueChanged, this, &Koncrepe::EditProfileDialog::terminalMarginChanged);
 
     _appearanceUi->lineSpacingSpinner->setValue(profile->lineSpacing());
-    connect(_appearanceUi->lineSpacingSpinner, &QSpinBox::valueChanged, this, &Konsole::EditProfileDialog::lineSpacingChanged);
+    connect(_appearanceUi->lineSpacingSpinner, &QSpinBox::valueChanged, this, &Koncrepe::EditProfileDialog::lineSpacingChanged);
 
     _appearanceUi->alignToCenterButton->setChecked(profile->terminalCenter());
-    connect(_appearanceUi->alignToCenterButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::setTerminalCenter);
+    connect(_appearanceUi->alignToCenterButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::setTerminalCenter);
 
     _appearanceUi->showTerminalSizeHintButton->setChecked(profile->showTerminalSizeHint());
-    connect(_appearanceUi->showTerminalSizeHintButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::showTerminalSizeHint);
+    connect(_appearanceUi->showTerminalSizeHintButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::showTerminalSizeHint);
 
     _appearanceUi->dimWhenInactiveCheckbox->setChecked(profile->dimWhenInactive());
-    connect(_appearanceUi->dimWhenInactiveCheckbox, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::setDimWhenInactive);
+    connect(_appearanceUi->dimWhenInactiveCheckbox, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::setDimWhenInactive);
 
     _appearanceUi->dimValue->setValue(profile->dimValue());
     _appearanceUi->dimValue->setEnabled(profile->dimWhenInactive());
     _appearanceUi->dimLabel->setEnabled(profile->dimWhenInactive());
-    connect(_appearanceUi->dimValue, &QSlider::valueChanged, this, &Konsole::EditProfileDialog::setDimValue);
+    connect(_appearanceUi->dimValue, &QSlider::valueChanged, this, &Koncrepe::EditProfileDialog::setDimValue);
 
     _appearanceUi->borderWhenActiveCheckbox->setChecked(profile->borderWhenActive());
-    connect(_appearanceUi->borderWhenActiveCheckbox, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::setBorderWhenActive);
+    connect(_appearanceUi->borderWhenActiveCheckbox, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::setBorderWhenActive);
 
     _appearanceUi->focusBorderColor->setColor(profile->focusBorderColor());
     _appearanceUi->focusBorderColor->setEnabled(profile->borderWhenActive());
     _appearanceUi->borderLabel->setEnabled(profile->borderWhenActive());
-    connect(_appearanceUi->focusBorderColor, &KColorButton::changed, this, &Konsole::EditProfileDialog::focusBorderColorChanged);
+    connect(_appearanceUi->focusBorderColor, &KColorButton::changed, this, &Koncrepe::EditProfileDialog::focusBorderColorChanged);
 
     _appearanceUi->invertSelectionColorsCheckbox->setChecked(profile->property<bool>(Profile::InvertSelectionColors));
     connect(_appearanceUi->invertSelectionColorsCheckbox, &QCheckBox::toggled, this, [this](bool checked) {
@@ -1007,10 +1007,10 @@ void EditProfileDialog::setupAppearancePage(const Profile::Ptr &profile)
     connect(_appearanceUi->displayVerticalLineAtColumn, &QSpinBox::valueChanged, this, &EditProfileDialog::setVerticalLineColumn);
 
     auto *getNewButton = new KNSWidgets::Button(this);
-    connect(getNewButton, &KNSWidgets::Button::dialogFinished, this, &Konsole::EditProfileDialog::gotNewColorSchemes);
+    connect(getNewButton, &KNSWidgets::Button::dialogFinished, this, &Koncrepe::EditProfileDialog::gotNewColorSchemes);
 
     getNewButton->setText(i18n("Get New..."));
-    getNewButton->setConfigFile(QStringLiteral(":/konsole/konsole.knsrc"));
+    getNewButton->setConfigFile(QStringLiteral(":/koncrepe/koncrepe.knsrc"));
     _appearanceUi->colorSchemesBtnLayout->addWidget(getNewButton);
 
     _appearanceUi->enableBidiRenderingButton->setChecked(profile->bidiRenderingEnabled());
@@ -1523,7 +1523,7 @@ void EditProfileDialog::showColorSchemeEditor(bool isNewScheme)
     }
     _colorDialog = new ColorSchemeEditor(WindowSystemInfo::compositingActive(), this);
 
-    connect(_colorDialog, &Konsole::ColorSchemeEditor::colorSchemeSaveRequested, this, &Konsole::EditProfileDialog::saveColorScheme);
+    connect(_colorDialog, &Koncrepe::ColorSchemeEditor::colorSchemeSaveRequested, this, &Koncrepe::EditProfileDialog::saveColorScheme);
     _colorDialog->setup(colors, isNewScheme);
 
     _colorDialog->show();
@@ -1646,8 +1646,8 @@ void EditProfileDialog::updateTransparencyWarning()
             _appearanceUi->transparencyWarningWidget->setHidden(false);
         } else if (!WindowSystemInfo::HAVE_TRANSPARENCY) {
             _appearanceUi->transparencyWarningWidget->setText(
-                i18n("Konsole was started before desktop effects were enabled."
-                     " You need to restart Konsole to see transparent background."));
+                i18n("Koncrepe was started before desktop effects were enabled."
+                     " You need to restart Koncrepe to see transparent background."));
             _appearanceUi->transparencyWarningWidget->setHidden(false);
         }
     }
@@ -1703,8 +1703,8 @@ void EditProfileDialog::setupKeyboardPage(const Profile::Ptr & /* profile */)
     // setup translator list
     updateKeyBindingsList(_profile->keyBindings());
 
-    connect(_keyboardUi->keyBindingList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Konsole::EditProfileDialog::keyBindingSelected);
-    connect(_keyboardUi->newKeyBindingsButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::newKeyBinding);
+    connect(_keyboardUi->keyBindingList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &Koncrepe::EditProfileDialog::keyBindingSelected);
+    connect(_keyboardUi->newKeyBindingsButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::newKeyBinding);
 
     _keyboardUi->editKeyBindingsButton->setIcon(QIcon::fromTheme(QStringLiteral("document-edit")));
     _keyboardUi->removeKeyBindingsButton->setIcon(QIcon::fromTheme(QStringLiteral("edit-delete")));
@@ -1717,9 +1717,9 @@ void EditProfileDialog::setupKeyboardPage(const Profile::Ptr & /* profile */)
 
     updateKeyBindingsButtons();
 
-    connect(_keyboardUi->editKeyBindingsButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::editKeyBinding);
-    connect(_keyboardUi->removeKeyBindingsButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::removeKeyBinding);
-    connect(_keyboardUi->resetKeyBindingsButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::resetKeyBindings);
+    connect(_keyboardUi->editKeyBindingsButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::editKeyBinding);
+    connect(_keyboardUi->removeKeyBindingsButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::removeKeyBinding);
+    connect(_keyboardUi->resetKeyBindingsButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::resetKeyBindings);
 }
 
 void EditProfileDialog::keyBindingSelected()
@@ -1769,8 +1769,8 @@ void EditProfileDialog::showKeyBindingEditor(bool isNewTranslator)
         editor->setup(translator, _profile->keyBindings(), isNewTranslator);
     }
 
-    connect(editor, &Konsole::KeyBindingEditor::updateKeyBindingsListRequest, this, &Konsole::EditProfileDialog::updateKeyBindingsList);
-    connect(editor, &Konsole::KeyBindingEditor::updateTempProfileKeyBindingsRequest, this, &Konsole::EditProfileDialog::updateTempProfileProperty);
+    connect(editor, &Koncrepe::KeyBindingEditor::updateKeyBindingsListRequest, this, &Koncrepe::EditProfileDialog::updateKeyBindingsList);
+    connect(editor, &Koncrepe::KeyBindingEditor::updateTempProfileKeyBindingsRequest, this, &Koncrepe::EditProfileDialog::updateTempProfileProperty);
 
     editor->show();
 }
@@ -1841,7 +1841,7 @@ void EditProfileDialog::setupScrollingPage(const Profile::Ptr &profile)
     // setup scrollback type radio
     auto scrollBackType = profile->property<int>(Profile::HistoryMode);
     _scrollingUi->historySizeWidget->setMode(Enum::HistoryModeEnum(scrollBackType));
-    connect(_scrollingUi->historySizeWidget, &Konsole::HistorySizeWidget::historyModeChanged, this, &Konsole::EditProfileDialog::historyModeChanged);
+    connect(_scrollingUi->historySizeWidget, &Koncrepe::HistorySizeWidget::historyModeChanged, this, &Koncrepe::EditProfileDialog::historyModeChanged);
 
     // setup scrollback line count spinner
     const int historySize = profile->historySize();
@@ -1864,21 +1864,21 @@ void EditProfileDialog::setupScrollingPage(const Profile::Ptr &profile)
 
     // setup marker color button
     _scrollingUi->markerColorButton->setColor(profile->property<QColor>(Profile::MarkerColor));
-    connect(_scrollingUi->markerColorButton, &KColorButton::changed, this, &Konsole::EditProfileDialog::toggleScrollbarMarkerColor);
+    connect(_scrollingUi->markerColorButton, &KColorButton::changed, this, &Koncrepe::EditProfileDialog::toggleScrollbarMarkerColor);
 
     // setup marker size widget
     _scrollingUi->markerSizeWidget->setValue(profile->property<double>(Profile::MarkerSize));
-    connect(_scrollingUi->markerSizeWidget, &QDoubleSpinBox::valueChanged, this, &Konsole::EditProfileDialog::toggleScrollbarMarkerSize);
+    connect(_scrollingUi->markerSizeWidget, &QDoubleSpinBox::valueChanged, this, &Koncrepe::EditProfileDialog::toggleScrollbarMarkerSize);
 
     // setup search highlighter color button
     _scrollingUi->searchHighligheterColorButton->setColor(profile->property<QColor>(Profile::SearchLineColor));
-    connect(_scrollingUi->searchHighligheterColorButton, &KColorButton::changed, this, &Konsole::EditProfileDialog::toggleScrollbarSearchLineColor);
+    connect(_scrollingUi->searchHighligheterColorButton, &KColorButton::changed, this, &Koncrepe::EditProfileDialog::toggleScrollbarSearchLineColor);
 
     // setup search highlighter opacity widget
     _scrollingUi->labelSearchHighlighterOpacitySlider->setValue(profile->property<int>(Profile::SearchLineOpacity));
-    connect(_scrollingUi->labelSearchHighlighterOpacitySlider, &QSlider::valueChanged, this, &Konsole::EditProfileDialog::toggleScrollbarSearchLineOpacity);
+    connect(_scrollingUi->labelSearchHighlighterOpacitySlider, &QSlider::valueChanged, this, &Koncrepe::EditProfileDialog::toggleScrollbarSearchLineOpacity);
     // signals and slots
-    connect(_scrollingUi->historySizeWidget, &Konsole::HistorySizeWidget::historySizeChanged, this, &Konsole::EditProfileDialog::historySizeChanged);
+    connect(_scrollingUi->historySizeWidget, &Koncrepe::HistorySizeWidget::historySizeChanged, this, &Koncrepe::EditProfileDialog::historySizeChanged);
 }
 
 void EditProfileDialog::historySizeChanged(int lineCount)
@@ -1979,7 +1979,7 @@ void EditProfileDialog::setupMousePage(const Profile::Ptr &profile)
     // interaction options
     _mouseUi->wordCharacterEdit->setText(profile->wordCharacters());
 
-    connect(_mouseUi->wordCharacterEdit, &QLineEdit::textChanged, this, &Konsole::EditProfileDialog::wordCharactersChanged);
+    connect(_mouseUi->wordCharacterEdit, &QLineEdit::textChanged, this, &Koncrepe::EditProfileDialog::wordCharactersChanged);
 
     const ButtonGroupOptions tripleClickModeOptions = {
         _mouseUi->tripleClickMode, // group
@@ -1996,14 +1996,14 @@ void EditProfileDialog::setupMousePage(const Profile::Ptr &profile)
     _mouseUi->openLinksByDirectClickButton->setEnabled(_mouseUi->underlineLinksButton->isChecked() || _mouseUi->underlineFilesButton->isChecked());
 
     _mouseUi->enableMouseWheelZoomButton->setChecked(profile->mouseWheelZoomEnabled());
-    connect(_mouseUi->enableMouseWheelZoomButton, &QCheckBox::toggled, this, &Konsole::EditProfileDialog::toggleMouseWheelZoom);
+    connect(_mouseUi->enableMouseWheelZoomButton, &QCheckBox::toggled, this, &Koncrepe::EditProfileDialog::toggleMouseWheelZoom);
 
     _mouseUi->allowLinkEscapeSequenceButton->setChecked(profile->allowEscapedLinks());
-    connect(_mouseUi->allowLinkEscapeSequenceButton, &QPushButton::clicked, this, &Konsole::EditProfileDialog::toggleAllowLinkEscapeSequence);
+    connect(_mouseUi->allowLinkEscapeSequenceButton, &QPushButton::clicked, this, &Koncrepe::EditProfileDialog::toggleAllowLinkEscapeSequence);
 
     _mouseUi->linkEscapeSequenceTexts->setEnabled(profile->allowEscapedLinks());
     _mouseUi->linkEscapeSequenceTexts->setText(profile->escapedLinksSchema().join(QLatin1Char(';')));
-    connect(_mouseUi->linkEscapeSequenceTexts, &QLineEdit::textChanged, this, &Konsole::EditProfileDialog::linkEscapeSequenceTextsChanged);
+    connect(_mouseUi->linkEscapeSequenceTexts, &QLineEdit::textChanged, this, &Koncrepe::EditProfileDialog::linkEscapeSequenceTextsChanged);
 
     setTextEditorCombo(profile);
 }

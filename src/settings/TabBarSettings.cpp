@@ -9,7 +9,7 @@
 
 #include <QTabBar>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 TabBarSettings::TabBarSettings(QWidget *parent)
     : QWidget(parent)

@@ -166,7 +166,7 @@ bool SSHManagerModel::hasHost(const QString &host) const
     return false;
 }
 
-void SSHManagerModel::setSessionController(Konsole::SessionController *controller)
+void SSHManagerModel::setSessionController(Koncrepe::SessionController *controller)
 {
     if (m_session) {
         disconnect(m_session, nullptr, this, nullptr);
@@ -178,7 +178,7 @@ void SSHManagerModel::setSessionController(Konsole::SessionController *controlle
         m_session = nullptr;
     });
 
-    connect(m_session, &Konsole::Session::hostnameChanged, this, &SSHManagerModel::triggerProfileChange);
+    connect(m_session, &Koncrepe::Session::hostnameChanged, this, &SSHManagerModel::triggerProfileChange);
 }
 
 void SSHManagerModel::triggerProfileChange(const QString &sshHost)
@@ -187,7 +187,7 @@ void SSHManagerModel::triggerProfileChange(const QString &sshHost)
         return;
     }
 
-    auto *sm = Konsole::SessionManager::instance();
+    auto *sm = Koncrepe::SessionManager::instance();
     QString profileToLoad;
 
     // This code is messy, Let's see if this can explain a bit.
@@ -229,9 +229,9 @@ void SSHManagerModel::triggerProfileChange(const QString &sshHost)
         }
     }
 
-    auto profiles = Konsole::ProfileManager::instance()->allProfiles();
+    auto profiles = Koncrepe::ProfileManager::instance()->allProfiles();
 
-    auto findIt = std::find_if(std::begin(profiles), std::end(profiles), [&profileToLoad](const Konsole::Profile::Ptr &pr) {
+    auto findIt = std::find_if(std::begin(profiles), std::end(profiles), [&profileToLoad](const Koncrepe::Profile::Ptr &pr) {
         if (pr) {
             return pr->name() == profileToLoad;
         }
@@ -247,7 +247,7 @@ void SSHManagerModel::triggerProfileChange(const QString &sshHost)
 
 void SSHManagerModel::load()
 {
-    auto config = KConfig(QStringLiteral("konsolesshconfig"), KConfig::OpenFlag::SimpleConfig);
+    auto config = KConfig(QStringLiteral("koncrepesshconfig"), KConfig::OpenFlag::SimpleConfig);
 
     const auto groupList = config.groupList();
     for (const QString &groupName : groupList) {
@@ -276,7 +276,7 @@ void SSHManagerModel::load()
 
 void SSHManagerModel::save()
 {
-    auto config = KConfig(QStringLiteral("konsolesshconfig"), KConfig::OpenFlag::SimpleConfig);
+    auto config = KConfig(QStringLiteral("koncrepesshconfig"), KConfig::OpenFlag::SimpleConfig);
     const auto groupList = config.groupList();
     for (const QString &groupName : groupList) {
         config.deleteGroup(groupName);
@@ -386,7 +386,7 @@ void SSHManagerModel::importFromSshConfigFile(const QString &file)
                 }
                 data.useSshConfig = true;
                 data.importedFromSshConfig = true;
-                data.profileName = Konsole::ProfileManager::instance()->defaultProfile()->name();
+                data.profileName = Koncrepe::ProfileManager::instance()->defaultProfile()->name();
                 addChildItem(data, i18n("SSH Config"));
             }
 

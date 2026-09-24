@@ -9,7 +9,7 @@
 
 #include "ui_PartInfo.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class PartInfoSettings : public QWidget, private Ui::PartInfoSettings
 {

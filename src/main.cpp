@@ -10,10 +10,10 @@
 
 // Own
 #include "Application.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "MainWindow.h"
 #include "ViewManager.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 #include "widgets/ViewContainer.h"
 
 // OS specific
@@ -38,7 +38,7 @@
 #include <QDBusMessage>
 #endif
 
-using Konsole::Application;
+using Koncrepe::Application;
 
 #ifdef PROFILE_STARTUP
 #include <QDebug>
@@ -46,11 +46,11 @@ using Konsole::Application;
 #include <QTimer>
 #endif
 
-// fill the KAboutData structure with information about contributors to Konsole.
+// fill the KAboutData structure with information about contributors to Koncrepe.
 void fillAboutData(KAboutData &aboutData);
 
-// check and report whether this konsole instance should use a new konsole
-// process, or reuse an existing konsole process.
+// check and report whether this koncrepe instance should use a new koncrepe
+// process, or reuse an existing koncrepe process.
 bool shouldUseNewProcess(int argc, char *argv[]);
 
 // restore sessions saved by KDE.
@@ -93,8 +93,8 @@ static int CurrentConfigVersion = 1;
 
 static void migrateRenamedConfigKeys()
 {
-    KSharedConfigPtr konsoleConfig = KSharedConfig::openConfig(QStringLiteral("konsolerc"));
-    KConfigGroup verGroup = konsoleConfig->group(QStringLiteral("General"));
+    KSharedConfigPtr koncrepeConfig = KSharedConfig::openConfig(QStringLiteral("koncreperc"));
+    KConfigGroup verGroup = koncrepeConfig->group(QStringLiteral("General"));
     const int savedVersion = verGroup.readEntry<int>("ConfigVersion", 0);
     if (savedVersion < CurrentConfigVersion) {
         struct KeyInfo {
@@ -103,11 +103,11 @@ static void migrateRenamedConfigKeys()
             const char *newKeyName;
         };
 
-        static const KeyInfo keys[] = {{"KonsoleWindow", "SaveGeometryOnExit", "RememberWindowSize"}};
+        static const KeyInfo keys[] = {{"KoncrepeWindow", "SaveGeometryOnExit", "RememberWindowSize"}};
 
         // Migrate renamed config keys
         for (const auto &[group, oldName, newName] : keys) {
-            KConfigGroup cg = konsoleConfig->group(QLatin1String(group));
+            KConfigGroup cg = koncrepeConfig->group(QLatin1String(group));
             if (cg.exists() && cg.hasKey(oldName)) {
                 const bool value = cg.readEntry(oldName, false);
                 cg.deleteEntry(oldName);
@@ -118,18 +118,18 @@ static void migrateRenamedConfigKeys()
         // With 5.93 KColorSchemeManager from KConfigWidgets, handles the loading
         // and saving of the widget color scheme, and uses "ColorScheme" as the
         // entry name, so clean-up here
-        KConfigGroup cg(konsoleConfig, QStringLiteral("UiSettings"));
+        KConfigGroup cg(koncrepeConfig, QStringLiteral("UiSettings"));
         const QString schemeName = cg.readEntry("WindowColorScheme");
         cg.deleteEntry("WindowColorScheme");
         cg.writeEntry("ColorScheme", schemeName);
 
         verGroup.writeEntry("ConfigVersion", CurrentConfigVersion);
-        konsoleConfig->sync();
+        koncrepeConfig->sync();
     }
 }
 
 // ***
-// Entry point into the Konsole terminal application.
+// Entry point into the Koncrepe terminal application.
 // ***
 int main(int argc, char *argv[])
 {
@@ -167,11 +167,11 @@ int main(int argc, char *argv[])
 
     app->setWindowIcon(QIcon::fromTheme(QStringLiteral("utilities-terminal")));
 
-    KLocalizedString::setApplicationDomain("konsole");
+    KLocalizedString::setApplicationDomain("koncrepe");
 
-    KAboutData about(QStringLiteral("konsole"),
-                     i18nc("@title", "Konsole"),
-                     QStringLiteral(KONSOLE_VERSION),
+    KAboutData about(QStringLiteral("koncrepe"),
+                     i18nc("@title", "Koncrepe"),
+                     QStringLiteral(KONCREPE_VERSION),
                      i18nc("@title", "Terminal emulator"),
                      KAboutLicense::GPL_V2,
                      i18nc("@info:credit", "© 1997–%1, The Konsole Developers", QStringLiteral("2026")), // years term not localized, pass as string, not int
@@ -196,19 +196,19 @@ int main(int argc, char *argv[])
     about.processCommandLine(parser.data());
 
 #if HAVE_DBUS
-    // on wayland: init token if we are launched by Konsole and have none
+    // on wayland: init token if we are launched by Koncrepe and have none
     if (KWindowSystem::isPlatformWayland() && qEnvironmentVariable("XDG_ACTIVATION_TOKEN").isEmpty() && QDBusConnection::sessionBus().interface()) {
-        // can we ask Konsole for a token?
-        const auto konsoleService = qEnvironmentVariable("KONSOLE_DBUS_SERVICE");
-        const auto konsoleSession = qEnvironmentVariable("KONSOLE_DBUS_SESSION");
-        const auto konsoleActivationCookie = qEnvironmentVariable("KONSOLE_DBUS_ACTIVATION_COOKIE");
-        if (!konsoleService.isEmpty() && !konsoleSession.isEmpty() && !konsoleActivationCookie.isEmpty()) {
+        // can we ask Koncrepe for a token?
+        const auto koncrepeService = qEnvironmentVariable("KONCREPE_DBUS_SERVICE");
+        const auto koncrepeSession = qEnvironmentVariable("KONCREPE_DBUS_SESSION");
+        const auto koncrepeActivationCookie = qEnvironmentVariable("KONCREPE_DBUS_ACTIVATION_COOKIE");
+        if (!koncrepeService.isEmpty() && !koncrepeSession.isEmpty() && !koncrepeActivationCookie.isEmpty()) {
             // we ask the current shell session
             QDBusMessage m =
-                QDBusMessage::createMethodCall(konsoleService, konsoleSession, QStringLiteral("org.kde.konsole.Session"), QStringLiteral("activationToken"));
+                QDBusMessage::createMethodCall(koncrepeService, koncrepeSession, QStringLiteral("org.kde.koncrepe.Session"), QStringLiteral("activationToken"));
 
             // use the cookie from the environment
-            m.setArguments({konsoleActivationCookie});
+            m.setArguments({koncrepeActivationCookie});
 
             // get the token, if possible and export it to environment for later use
             const auto tokenAnswer = QDBusConnection::sessionBus().call(m);
@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
 
     /// ! DON'T TOUCH THIS ! ///
     const KDBusService::StartupOption startupOption =
-        Konsole::KonsoleSettings::useSingleInstance() && !needNewProcess ? KDBusService::Unique : KDBusService::Multiple;
+        Koncrepe::KoncrepeSettings::useSingleInstance() && !needNewProcess ? KDBusService::Unique : KDBusService::Multiple;
     /// ! DON'T TOUCH THIS ! ///
     // If you need to change something here, add your logic _at the bottom_ of
     // shouldUseNewProcess(), after reading the explanations there for why you
@@ -237,23 +237,23 @@ int main(int argc, char *argv[])
     needToDeleteQApplication = false;
 #endif
 
-    // If we reach this location, there was no existing copy of Konsole
+    // If we reach this location, there was no existing copy of Koncrepe
     // running, so create a new instance.
-    Application konsoleApp(parser, customCommand);
+    Application koncrepeApp(parser, customCommand);
 
 #if HAVE_DBUS
     // The activateRequested() signal is emitted when a second instance
-    // of Konsole is started.
-    QObject::connect(&dbusService, &KDBusService::activateRequested, &konsoleApp, &Application::slotActivateRequested);
+    // of Koncrepe is started.
+    QObject::connect(&dbusService, &KDBusService::activateRequested, &koncrepeApp, &Application::slotActivateRequested);
 #endif
 
     if (app->isSessionRestored()) {
-        restoreSession(konsoleApp);
+        restoreSession(koncrepeApp);
     } else {
-        // Do not finish starting Konsole due to:
+        // Do not finish starting Koncrepe due to:
         // 1. An argument was given to just printed info
         // 2. An invalid situation occurred
-        const bool continueStarting = (konsoleApp.newInstance() != 0);
+        const bool continueStarting = (koncrepeApp.newInstance() != 0);
         if (!continueStarting) {
             delete app;
             return 0;
@@ -276,8 +276,8 @@ int main(int argc, char *argv[])
 
 bool shouldUseNewProcess(int argc, char *argv[])
 {
-    // The "unique process" model of konsole is incompatible with some or all
-    // Qt/KDE options. When those incompatible options are given, konsole must
+    // The "unique process" model of koncrepe is incompatible with some or all
+    // Qt/KDE options. When those incompatible options are given, koncrepe must
     // use new process
     //
     // TODO: make sure the existing list is OK and add more incompatible options.
@@ -327,14 +327,14 @@ bool shouldUseNewProcess(int argc, char *argv[])
         return true;
     }
 
-    // the only way to create new tab is to reuse existing Konsole process.
-    if (Konsole::KonsoleSettings::forceNewTabs() || arguments.contains(QStringLiteral("--new-tab"))) {
+    // the only way to create new tab is to reuse existing Koncrepe process.
+    if (Koncrepe::KoncrepeSettings::forceNewTabs() || arguments.contains(QStringLiteral("--new-tab"))) {
         return false;
     }
 
-    // when starting Konsole from a terminal, a new process must be used
+    // when starting Koncrepe from a terminal, a new process must be used
     // so that the current environment is propagated into the shells of the new
-    // Konsole and any debug output or warnings from Konsole are written to
+    // Koncrepe and any debug output or warnings from Koncrepe are written to
     // the current terminal
     bool hasControllingTTY = false;
     const int fd = QT_OPEN("/dev/tty", O_RDONLY);
@@ -349,6 +349,7 @@ bool shouldUseNewProcess(int argc, char *argv[])
 void fillAboutData(KAboutData &aboutData)
 {
     aboutData.setOrganizationDomain("kde.org");
+    aboutData.setOtherText(i18nc("@info", "Koncrepe is a fork of KDE's Konsole."));
 
     aboutData.addAuthor(i18nc("@info:credit", "Kurt Hindenburg"),
                         i18nc("@info:credit",
@@ -397,12 +398,12 @@ void fillAboutData(KAboutData &aboutData)
     aboutData.addCredit(i18nc("@info:credit", "Peter Silva"), i18nc("@info:credit", "Marking improvements"), QStringLiteral("Peter.A.Silva@gmail.com"));
     aboutData.addCredit(i18nc("@info:credit", "Lotzi Boloni"),
                         i18nc("@info:credit",
-                              "Embedded Konsole\n"
+                              "Embedded Koncrepe\n"
                               "Toolbar and session names"),
                         QStringLiteral("boloni@cs.purdue.edu"));
     aboutData.addCredit(i18nc("@info:credit", "David Faure"),
                         i18nc("@info:credit",
-                              "Embedded Konsole\n"
+                              "Embedded Koncrepe\n"
                               "General improvements"),
                         QStringLiteral("faure@kde.org"));
     aboutData.addCredit(i18nc("@info:credit", "Antonio Larrosa"), i18nc("@info:credit", "Visual effects"), QStringLiteral("larrosa@kde.org"));
@@ -435,7 +436,7 @@ void restoreSession(Application &app)
 
         // TODO: HACK without the code below the sessions would be `uninitialized`
         // and the tabs wouldn't display the correct information.
-        auto tabbedContainer = qobject_cast<Konsole::TabbedViewContainer *>(mainWindow->centralWidget());
+        auto tabbedContainer = qobject_cast<Koncrepe::TabbedViewContainer *>(mainWindow->centralWidget());
         for (int i = 0; i < tabbedContainer->count(); i++) {
             tabbedContainer->setCurrentIndex(i);
         }

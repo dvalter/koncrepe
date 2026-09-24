@@ -12,7 +12,7 @@
 
 #include <QObject>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 class ProcessInfo;

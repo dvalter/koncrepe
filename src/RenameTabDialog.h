@@ -8,7 +8,7 @@
 #define RENAMETABDIALOG_H
 
 // Own
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 // Qt
 #include <QDialog>
@@ -18,9 +18,9 @@ namespace Ui
 class RenameTabDialog;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT RenameTabDialog : public QDialog
+class KONCREPEPRIVATE_EXPORT RenameTabDialog : public QDialog
 {
     Q_OBJECT
 

@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -13,12 +13,12 @@
 #include <QHash>
 #include <QStringList>
 
-// Konsole
+// Koncrepe
 #include "KeyboardTranslator.h"
 
 class QIODevice;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Manages the keyboard translations available for use by terminal sessions,
@@ -68,9 +68,9 @@ public:
      * This is only applicable for translators that exist in two different
      * locations:
      *  - system-wide location which is read-only for the user (typically
-     *    /usr/share/konsole/ on Linux)
+     *    /usr/share/koncrepe/ on Linux)
      *  - writable user-specific location under the user's home directory
-     *    (typically ~/.local/share/konsole on Linux)
+     *    (typically ~/.local/share/koncrepe on Linux)
      *
      * Resetting here basically means it deletes the translator from the
      * location under the user's home directory, then "reloads" it from
@@ -78,7 +78,7 @@ public:
      */
     bool isTranslatorResettable(const QString &name) const;
 
-    /** Returns the default translator for Konsole. */
+    /** Returns the default translator for Koncrepe. */
     const KeyboardTranslator *defaultTranslator();
 
     /**

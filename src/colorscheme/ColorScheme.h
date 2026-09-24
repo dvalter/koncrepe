@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -16,7 +16,7 @@
 // C++
 #include <memory>
 
-// Konsole
+// Koncrepe
 #include "ColorSchemeWallpaper.h"
 
 class KConfig;
@@ -24,7 +24,7 @@ class KLazyLocalizedString;
 class QPixmap;
 class QPainter;
 
-namespace Konsole
+namespace Koncrepe
 {
 class RandomizationRange;
 /**
@@ -38,7 +38,7 @@ class ColorScheme
 public:
     /**
      * Constructs a new color scheme which is initialized to the default color set
-     * for Konsole.
+     * for Koncrepe.
      */
     ColorScheme();
     ColorScheme(const ColorScheme &other);
@@ -194,6 +194,6 @@ private:
 };
 }
 
-Q_DECLARE_METATYPE(std::shared_ptr<const Konsole::ColorScheme>)
+Q_DECLARE_METATYPE(std::shared_ptr<const Koncrepe::ColorScheme>)
 
 #endif // COLORSCHEME_H

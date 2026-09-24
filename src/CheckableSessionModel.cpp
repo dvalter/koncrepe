@@ -6,7 +6,7 @@
 
 #include "CheckableSessionModel.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 CheckableSessionModel::CheckableSessionModel(QObject *parent)
     : SessionListModel(parent)

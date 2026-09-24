@@ -14,13 +14,13 @@
 // Qt
 #include <QVariantList>
 
-// Konsole
-#include "config-konsole.h"
+// Koncrepe
+#include "config-koncrepe.h"
 #include "session/Session.h"
 
 class QKeyEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 class SessionController;
@@ -36,7 +36,7 @@ class Part : public KParts::ReadOnlyPart, public TerminalInterface
     Q_OBJECT
     Q_INTERFACES(TerminalInterface)
 public:
-    /** Constructs a new Konsole part with the specified parent. */
+    /** Constructs a new Koncrepe part with the specified parent. */
     explicit Part(QObject *parent, const QVariantList &);
     ~Part() override;
 
@@ -98,10 +98,10 @@ public Q_SLOTS:
     void showEditCurrentProfileDialog(QWidget *parent);
     /**
      * Sends a profile change command to the active session.  This is equivalent to using
-     * the konsoleprofile tool within the session to change its settings.  The @p text string
+     * the koncrepeprofile tool within the session to change its settings.  The @p text string
      * is a semi-colon separated list of property=value pairs, eg. "colors=Linux Colors"
      *
-     * See the documentation for konsoleprofile for information on the format of @p text
+     * See the documentation for koncrepeprofile for information on the format of @p text
      *
      * This is experimental API and not guaranteed to be present in later KDE 4 releases.
      */
@@ -138,7 +138,7 @@ public Q_SLOTS:
     /**
      * Returns the status of the blur of the current profile.
      *
-     * @return True if blur is enabled for the current active Konsole color profile.
+     * @return True if blur is enabled for the current active Koncrepe color profile.
      * */
     bool isBlurEnabled();
 

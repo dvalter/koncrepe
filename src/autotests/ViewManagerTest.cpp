@@ -8,7 +8,7 @@
 #include <QFile>
 #include <QTest>
 
-#include "../KonsoleSettings.h"
+#include "../KoncrepeSettings.h"
 #include "../MainWindow.h"
 #include "../ViewManager.h"
 #include "../containers/ContainerSessionState.h"
@@ -21,7 +21,7 @@
 #include <QSignalSpy>
 #include <QStandardPaths>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 namespace
 {
@@ -103,14 +103,14 @@ QString containerKey(const ContainerInfo &container)
 void ViewManagerTest::initTestCase()
 {
     QStandardPaths::setTestModeEnabled(true);
-    m_testDir = std::make_unique<QTemporaryDir>(QDir::tempPath() + QDir::separator() + QStringLiteral("konsoleviewmanagertest-XXXXXX"));
+    m_testDir = std::make_unique<QTemporaryDir>(QDir::tempPath() + QDir::separator() + QStringLiteral("koncrepeviewmanagertest-XXXXXX"));
     QVERIFY(m_testDir->isValid());
 }
 
 void ViewManagerTest::cleanup()
 {
-    KonsoleSettings::setShowContainerTabColor(true);
-    KonsoleSettings::setShowContainerStatusBar(true);
+    KoncrepeSettings::setShowContainerTabColor(true);
+    KoncrepeSettings::setShowContainerStatusBar(true);
 }
 
 void ViewManagerTest::testSaveLayout()
@@ -211,7 +211,7 @@ void ViewManagerTest::testExplicitContainerOverridesAutomaticContext()
     const ContainerInfo explicitContainer = containerInfo(&distroboxDetector, QStringLiteral("explicit"));
     const QList<Session *> previousSessionList = manager->sessions();
     const QSet<Session *> previousSessions(previousSessionList.cbegin(), previousSessionList.cend());
-    QVERIFY(QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Konsole::ContainerInfo, explicitContainer)));
+    QVERIFY(QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Koncrepe::ContainerInfo, explicitContainer)));
     const QList<Session *> newSessionList = manager->sessions();
     const QSet<Session *> newSessions(newSessionList.cbegin(), newSessionList.cend());
     const QSet<Session *> addedSessions = newSessions - previousSessions;
@@ -236,7 +236,7 @@ void ViewManagerTest::testExplicitHostOverridesAutomaticContext()
 
     const QList<Session *> previousSessionList = manager->sessions();
     const QSet<Session *> previousSessions(previousSessionList.cbegin(), previousSessionList.cend());
-    QVERIFY(QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Konsole::ContainerInfo, ContainerInfo{})));
+    QVERIFY(QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Koncrepe::ContainerInfo, ContainerInfo{})));
     const QList<Session *> newSessionList = manager->sessions();
     const QSet<Session *> newSessions(newSessionList.cbegin(), newSessionList.cend());
     const QSet<Session *> addedSessions = newSessions - previousSessions;
@@ -255,7 +255,7 @@ void ViewManagerTest::testContainerMenuLaunchKeepsPendingColor()
     container.displayName = QStringLiteral("codex");
     container.iconName = QStringLiteral("distrobox");
 
-    const bool invoked = QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Konsole::ContainerInfo, container));
+    const bool invoked = QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Koncrepe::ContainerInfo, container));
     QVERIFY(invoked);
 
     auto *controller = mw.viewManager()->activeViewController();
@@ -289,7 +289,7 @@ void ViewManagerTest::testContainerTabColorSettingHidesAutoColor()
     container.displayName = QStringLiteral("fedora-41");
     container.iconName = QStringLiteral("distrobox");
 
-    const bool invoked = QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Konsole::ContainerInfo, container));
+    const bool invoked = QMetaObject::invokeMethod(&mw, "newInContainer", Qt::DirectConnection, Q_ARG(Koncrepe::ContainerInfo, container));
     QVERIFY(invoked);
 
     Session *session = mw.viewManager()->activeViewController()->session();
@@ -301,20 +301,20 @@ void ViewManagerTest::testContainerTabColorSettingHidesAutoColor()
     QSignalSpy colorSpy(viewContainer, &TabbedViewContainer::setColor);
 
     // Setting ON: config refresh must emit the container color
-    KonsoleSettings::setShowContainerTabColor(true);
-    Q_EMIT KonsoleSettings::self()->configChanged();
+    KoncrepeSettings::setShowContainerTabColor(true);
+    Q_EMIT KoncrepeSettings::self()->configChanged();
     QVERIFY(!colorSpy.isEmpty());
     QVERIFY(colorSpy.last().at(1).value<QColor>().isValid());
 
     colorSpy.clear();
 
     // Setting OFF: config refresh must suppress the auto color
-    KonsoleSettings::setShowContainerTabColor(false);
-    Q_EMIT KonsoleSettings::self()->configChanged();
+    KoncrepeSettings::setShowContainerTabColor(false);
+    Q_EMIT KoncrepeSettings::self()->configChanged();
     QVERIFY(!colorSpy.isEmpty());
     QVERIFY(!colorSpy.last().at(1).value<QColor>().isValid());
 
-    KonsoleSettings::setShowContainerTabColor(true);
+    KoncrepeSettings::setShowContainerTabColor(true);
 }
 
 void ViewManagerTest::testContainerTabColorSettingPreservesUserColor()
@@ -331,12 +331,12 @@ void ViewManagerTest::testContainerTabColorSettingPreservesUserColor()
     QSignalSpy colorSpy(viewContainer, &TabbedViewContainer::setColor);
 
     // Setting OFF must NOT suppress a user-explicitly-set color
-    KonsoleSettings::setShowContainerTabColor(false);
-    Q_EMIT KonsoleSettings::self()->configChanged();
+    KoncrepeSettings::setShowContainerTabColor(false);
+    Q_EMIT KoncrepeSettings::self()->configChanged();
     QVERIFY(!colorSpy.isEmpty());
     QCOMPARE(colorSpy.last().at(1).value<QColor>(), QColor(Qt::red));
 
-    KonsoleSettings::setShowContainerTabColor(true);
+    KoncrepeSettings::setShowContainerTabColor(true);
     session->tabColorSetByUser(false);
 }
 

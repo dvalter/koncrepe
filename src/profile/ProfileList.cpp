@@ -14,13 +14,13 @@
 // KF
 #include <KLocalizedString>
 
-// Konsole
+// Koncrepe
 #include "ProfileManager.h"
 
 #include <algorithm>
 
-using Konsole::Profile;
-using Konsole::ProfileList;
+using Koncrepe::Profile;
+using Koncrepe::ProfileList;
 
 ProfileList::ProfileList(bool addShortcuts, QObject *parent)
     : QObject(parent)

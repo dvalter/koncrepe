@@ -17,11 +17,11 @@
 // STL
 #include <optional>
 
-// Konsole
-#include "konsoleprivate_export.h"
+// Koncrepe
+#include "koncrepeprivate_export.h"
 #include "session/Session.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Encapsulates user-visible information about the terminal session currently being displayed in a view,
@@ -30,7 +30,7 @@ namespace Konsole
  * This can be used by navigation widgets in a ViewContainer sub-class to provide a tab, label or other
  * item for switching between views.
  */
-class KONSOLEPRIVATE_EXPORT ViewProperties : public QObject
+class KONCREPEPRIVATE_EXPORT ViewProperties : public QObject
 {
     Q_OBJECT
 

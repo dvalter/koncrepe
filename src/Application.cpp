@@ -23,8 +23,8 @@
 #endif
 #include <KLocalizedString>
 
-// Konsole
-#include "KonsoleSettings.h"
+// Koncrepe
+#include "KoncrepeSettings.h"
 #include "MainWindow.h"
 #include "ShellCommand.h"
 #include "ViewManager.h"
@@ -35,9 +35,9 @@
 #include "session/SessionManager.h"
 #include "widgets/ViewContainer.h"
 
-#include "pluginsystem/IKonsolePlugin.h"
+#include "pluginsystem/IKoncrepePlugin.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 Application::Application(QSharedPointer<QCommandLineParser> parser, const QStringList &customCommand)
     : _backgroundInstance(nullptr)
@@ -50,18 +50,18 @@ Application::Application(QSharedPointer<QCommandLineParser> parser, const QStrin
 void Application::populateCommandLineParser(QCommandLineParser *parser)
 {
     const auto options = QVector<QCommandLineOption>{
-        {{QStringLiteral("profile")}, i18nc("@info:shell", "Name of profile to use for new Konsole instance"), QStringLiteral("name")},
-        {{QStringLiteral("layout")}, i18nc("@info:shell", "json layoutfile to be loaded to use for new Konsole instance"), QStringLiteral("file")},
+        {{QStringLiteral("profile")}, i18nc("@info:shell", "Name of profile to use for new Koncrepe instance"), QStringLiteral("name")},
+        {{QStringLiteral("layout")}, i18nc("@info:shell", "json layoutfile to be loaded to use for new Koncrepe instance"), QStringLiteral("file")},
         {{QStringLiteral("builtin-profile")}, i18nc("@info:shell", "Use the built-in profile instead of the default profile")},
         {{QStringLiteral("workdir")}, i18nc("@info:shell", "Set the initial working directory of the new tab or window to 'dir'"), QStringLiteral("dir")},
         {{QStringLiteral("hold"), QStringLiteral("noclose")}, i18nc("@info:shell", "Do not close the initial session automatically when it ends.")},
         // BR: 373440
         {{QStringLiteral("new-tab")},
          i18nc("@info:shell",
-               "Create a new tab in an existing window rather than creating a new window ('Run all Konsole windows in a single process' must be enabled)")},
+               "Create a new tab in an existing window rather than creating a new window ('Run all Koncrepe windows in a single process' must be enabled)")},
         {{QStringLiteral("tabs-from-file")}, i18nc("@info:shell", "Create tabs as specified in given tabs configuration file"), QStringLiteral("file")},
         {{QStringLiteral("background-mode")},
-         i18nc("@info:shell", "Start Konsole in the background and bring to the front when Ctrl+Shift+F12 (by default) is pressed")},
+         i18nc("@info:shell", "Start Koncrepe in the background and bring to the front when Ctrl+Shift+F12 (by default) is pressed")},
         {{QStringLiteral("separate"), QStringLiteral("nofork")}, i18nc("@info:shell", "Run in a separate process")},
         {{QStringLiteral("show-menubar")}, i18nc("@info:shell", "Show the menubar, overriding the default setting")},
         {{QStringLiteral("hide-menubar")}, i18nc("@info:shell", "Hide the menubar, overriding the default setting")},
@@ -69,7 +69,7 @@ void Application::populateCommandLineParser(QCommandLineParser *parser)
         {{QStringLiteral("hide-toolbars")}, i18nc("@info:shell", "Hide all the toolbars, overriding the default setting")},
         {{QStringLiteral("show-tabbar")}, i18nc("@info:shell", "Show the tabbar, overriding the default setting")},
         {{QStringLiteral("hide-tabbar")}, i18nc("@info:shell", "Hide the tabbar, overriding the default setting")},
-        {{QStringLiteral("fullscreen")}, i18nc("@info:shell", "Start Konsole in fullscreen mode")},
+        {{QStringLiteral("fullscreen")}, i18nc("@info:shell", "Start Koncrepe in fullscreen mode")},
         {{QStringLiteral("notransparency")}, i18nc("@info:shell", "Disable transparent backgrounds, even if the system supports them.")},
         {{QStringLiteral("list-profiles")}, i18nc("@info:shell", "List the available profiles")},
         {{QStringLiteral("list-profile-properties")}, i18nc("@info:shell", "List all the profile properties names and their type (for use with -p)")},
@@ -87,10 +87,10 @@ void Application::populateCommandLineParser(QCommandLineParser *parser)
 
     parser->addPositionalArgument(QStringLiteral("[args]"), i18nc("@info:shell", "Arguments passed to command"));
 
-    // Add a no-op compatibility option to make Konsole compatible with
+    // Add a no-op compatibility option to make Koncrepe compatible with
     // Debian's policy on X terminal emulators.
     // -T is technically meant to set a title, that is not really meaningful
-    // for Konsole as we have multiple user-facing options controlling
+    // for Koncrepe as we have multiple user-facing options controlling
     // the title and overriding whatever is set elsewhere.
     // https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=532029
     // https://www.debian.org/doc/debian-policy/ch-customized-programs.html#s11.8.3
@@ -128,10 +128,10 @@ MainWindow *Application::newMainWindow()
 
     auto window = new MainWindow();
 
-    connect(window, &Konsole::MainWindow::newWindowRequest, this, &Konsole::Application::createWindow);
+    connect(window, &Koncrepe::MainWindow::newWindowRequest, this, &Koncrepe::Application::createWindow);
 
     connect(window,
-            &Konsole::MainWindow::terminalsDetached,
+            &Koncrepe::MainWindow::terminalsDetached,
             this,
             [this, window](ViewSplitter *splitter, const QHash<TerminalDisplay *, Session *> &sessionsMap) {
                 detachTerminals(window, splitter, sessionsMap);
@@ -391,13 +391,13 @@ void Application::createTabFromArgs(MainWindow *window, const QHash<QString, QSt
     window->hide();
 }
 
-// Creates a new Konsole window.
+// Creates a new Koncrepe window.
 // If --new-tab is given, use existing window.
 MainWindow *Application::processWindowArgs(bool &createdNewMainWindow)
 {
     MainWindow *window = nullptr;
 
-    if (Konsole::KonsoleSettings::forceNewTabs() || m_parser->isSet(QStringLiteral("new-tab"))) {
+    if (Koncrepe::KoncrepeSettings::forceNewTabs() || m_parser->isSet(QStringLiteral("new-tab"))) {
         const QList<QWidget *> list = QApplication::topLevelWidgets();
         for (auto it = list.crbegin(), endIt = list.crend(); it != endIt; ++it) {
             window = qobject_cast<MainWindow *>(*it);
@@ -507,11 +507,11 @@ Profile::Ptr Application::processProfileChangeArgs(Profile::Ptr baseProfile)
 
     // run a custom command
     if (!m_customCommand.isEmpty()) {
-        // Example: konsole -e man ls
+        // Example: koncrepe -e man ls
         QString commandExec = m_customCommand[0];
         QStringList commandArguments(m_customCommand);
         if ((m_customCommand.size() == 1) && (QStandardPaths::findExecutable(commandExec).isEmpty())) {
-            // Example: konsole -e "man ls"
+            // Example: koncrepe -e "man ls"
             ShellCommand shellCommand(commandExec);
             commandExec = shellCommand.command();
             commandArguments = shellCommand.arguments();
@@ -542,9 +542,9 @@ void Application::startBackgroundMode(MainWindow *window)
 #if HAVE_DBUS
     KActionCollection *collection = window->actionCollection();
     QAction *action = collection->addAction(QStringLiteral("toggle-background-window"));
-    action->setObjectName(QStringLiteral("Konsole Background Mode"));
+    action->setObjectName(QStringLiteral("Koncrepe Background Mode"));
     action->setText(i18nc("@item", "Toggle Background Window"));
-    KGlobalAccel::self()->setGlobalShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_F12);
+    KGlobalAccel::self()->setGlobalShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_F12);
     connect(action, &QAction::triggered, this, &Application::toggleBackgroundInstance);
 #endif
     _backgroundInstance = window;

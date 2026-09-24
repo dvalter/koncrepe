@@ -6,13 +6,13 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-// Konsole
+// Koncrepe
 // TODO: Own header should be first, but this breaks compiling.
 #include "SessionGroup.h"
 #include "Emulation.h"
 #include "Session.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 SessionGroup::SessionGroup(QObject *parent)
     : QObject(parent)
@@ -28,13 +28,13 @@ QList<Session *> SessionGroup::sessions() const
 
 void SessionGroup::addSession(Session *session)
 {
-    connect(session, &Konsole::Session::finished, this, &Konsole::SessionGroup::sessionFinished);
+    connect(session, &Koncrepe::Session::finished, this, &Koncrepe::SessionGroup::sessionFinished);
     _sessions.insert(session, false);
 }
 
 void SessionGroup::removeSession(Session *session)
 {
-    disconnect(session, &Konsole::Session::finished, this, &Konsole::SessionGroup::sessionFinished);
+    disconnect(session, &Koncrepe::Session::finished, this, &Koncrepe::SessionGroup::sessionFinished);
     setMasterStatus(session, false);
     _sessions.remove(session);
 }
@@ -61,9 +61,9 @@ void SessionGroup::setMasterStatus(Session *session, bool master)
     _sessions[session] = master;
 
     if (master) {
-        connect(session->emulation(), &Konsole::Emulation::sendData, this, &Konsole::SessionGroup::forwardData);
+        connect(session->emulation(), &Koncrepe::Emulation::sendData, this, &Koncrepe::SessionGroup::forwardData);
     } else {
-        disconnect(session->emulation(), &Konsole::Emulation::sendData, this, &Konsole::SessionGroup::forwardData);
+        disconnect(session->emulation(), &Koncrepe::Emulation::sendData, this, &Koncrepe::SessionGroup::forwardData);
     }
 }
 
@@ -88,6 +88,6 @@ void SessionGroup::forwardData(const QByteArray &data)
     _inForwardData = false;
 }
 
-} // namespace konsole
+} // namespace koncrepe
 
 #include "moc_SessionGroup.cpp"

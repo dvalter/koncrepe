@@ -10,22 +10,22 @@
 // Qt
 #include <QCommandLineParser>
 
-// Konsole
+// Koncrepe
 #include "containers/ContainerInfo.h"
-#include "konsoleapp_export.h"
+#include "koncrepeapp_export.h"
 #include "pluginsystem/PluginManager.h"
 #include "profile/Profile.h"
 #include "terminalDisplay/TerminalDisplay.h"
 #include "widgets/ViewSplitter.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class MainWindow;
 class Session;
 class Profile;
 
 /**
- * The Konsole Application.
+ * The Koncrepe Application.
  *
  * The application consists of one or more main windows and a set of
  * factories to create new sessions and views.
@@ -36,12 +36,12 @@ class Profile;
  * The factory used to create new terminal sessions can be retrieved using
  * the sessionManager() accessor.
  */
-class KONSOLEAPP_EXPORT Application : public QObject
+class KONCREPEAPP_EXPORT Application : public QObject
 {
     Q_OBJECT
 
 public:
-    /** Constructs a new Konsole application. */
+    /** Constructs a new Koncrepe application. */
     explicit Application(QSharedPointer<QCommandLineParser> parser, const QStringList &customCommand);
 
     static void populateCommandLineParser(QCommandLineParser *parser);

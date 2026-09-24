@@ -12,14 +12,14 @@
 // Qt
 #include <QKeyEvent>
 
-// Konsole
-#include "KonsoleSettings.h"
+// Koncrepe
+#include "KoncrepeSettings.h"
 #include "Screen.h"
 #include "ScreenWindow.h"
 #include "keyboardtranslator/KeyboardTranslator.h"
 #include "keyboardtranslator/KeyboardTranslatorManager.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 Emulation::Emulation()
 {
@@ -28,13 +28,13 @@ Emulation::Emulation()
     _screen[1] = new Screen(40, 80);
     _currentScreen = _screen[0];
 
-    QObject::connect(&_bulkTimer1, &QTimer::timeout, this, &Konsole::Emulation::showBulk);
-    QObject::connect(&_bulkTimer2, &QTimer::timeout, this, &Konsole::Emulation::showBulk);
+    QObject::connect(&_bulkTimer1, &QTimer::timeout, this, &Koncrepe::Emulation::showBulk);
+    QObject::connect(&_bulkTimer2, &QTimer::timeout, this, &Koncrepe::Emulation::showBulk);
 
     // listen for mouse status changes
-    connect(this, &Konsole::Emulation::programRequestsMouseTracking, this, &Konsole::Emulation::setUsesMouseTracking);
-    connect(this, &Konsole::Emulation::programBracketedPasteModeChanged, this, &Konsole::Emulation::bracketedPasteModeChanged);
-    connect(this, &Konsole::Emulation::programRequestedSynchronizedUpdate, this, &Konsole::Emulation::synchronizedUpdateChanged);
+    connect(this, &Koncrepe::Emulation::programRequestsMouseTracking, this, &Koncrepe::Emulation::setUsesMouseTracking);
+    connect(this, &Koncrepe::Emulation::programBracketedPasteModeChanged, this, &Koncrepe::Emulation::bracketedPasteModeChanged);
+    connect(this, &Koncrepe::Emulation::programRequestedSynchronizedUpdate, this, &Koncrepe::Emulation::synchronizedUpdateChanged);
 }
 
 bool Emulation::programUsesMouseTracking() const
@@ -79,10 +79,10 @@ ScreenWindow *Emulation::createWindow()
     auto window = new ScreenWindow(_currentScreen);
     _windows << window;
 
-    connect(window, &Konsole::ScreenWindow::selectionChanged, this, &Konsole::Emulation::bufferedUpdate);
-    connect(window, &Konsole::ScreenWindow::selectionChanged, this, &Konsole::Emulation::checkSelectedText);
+    connect(window, &Koncrepe::ScreenWindow::selectionChanged, this, &Koncrepe::Emulation::bufferedUpdate);
+    connect(window, &Koncrepe::ScreenWindow::selectionChanged, this, &Koncrepe::Emulation::checkSelectedText);
 
-    connect(this, &Konsole::Emulation::outputChanged, window, &Konsole::ScreenWindow::notifyOutputChanged);
+    connect(this, &Koncrepe::Emulation::outputChanged, window, &Koncrepe::ScreenWindow::notifyOutputChanged);
 
     return window;
 }
@@ -265,7 +265,7 @@ void Emulation::receiveData(const char *text, int length)
     const QVector<uint> chars = readString.toUcs4();
     receiveChars(chars);
 
-    if (KonsoleSettings::listenForZModemTerminalCodes() == false) {
+    if (KoncrepeSettings::listenForZModemTerminalCodes() == false) {
         return;
     }
 

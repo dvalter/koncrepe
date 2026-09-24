@@ -2,10 +2,10 @@
 
 The keytabs shown in the Edit Profile dialog -> Keyboard tab are taken from
 *.keytab configuration files located in the system-wide location (typically
-/usr/share/applications/konsole on Linux) or the writable location in the
-user's home directory (typically ~/.local/share/applications/konsole on Linux).
+/usr/share/applications/koncrepe on Linux) or the writable location in the
+user's home directory (typically ~/.local/share/applications/koncrepe on Linux).
 
-Keytabs allow users to configure the behavior of konsole on keyboard events,
+Keytabs allow users to configure the behavior of koncrepe on keyboard events,
 especially functions keys. Have a look at doc/user/README.keyboard.
 
 The syntax of each entry/rule follows the pattern:
@@ -52,7 +52,7 @@ Mode names are:
 
   will not accept the small letter "a" rule as you'd exepct, you'll have
   to add a "- Shift" to the latter rule to make it work.
-  Use the stdout/stderr dianostics of konsole when modifying keytabs to
+  Use the stdout/stderr dianostics of koncrepe when modifying keytabs to
   find problems like these.
 
 Supported operations are

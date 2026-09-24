@@ -9,9 +9,9 @@
 
 #include "RegExpFilter.h"
 
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT ColorFilter : public RegExpFilter
+class KONCREPEPRIVATE_EXPORT ColorFilter : public RegExpFilter
 {
 public:
     ColorFilter();

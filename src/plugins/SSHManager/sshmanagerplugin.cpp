@@ -33,18 +33,18 @@
 #include "MainWindow.h"
 #include "terminalDisplay/TerminalDisplay.h"
 
-K_PLUGIN_CLASS_WITH_JSON(SSHManagerPlugin, "konsole_sshmanager.json")
+K_PLUGIN_CLASS_WITH_JSON(SSHManagerPlugin, "koncrepe_sshmanager.json")
 
 struct SSHManagerPluginPrivate {
     SSHManagerModel model;
 
-    QMap<Konsole::MainWindow *, SSHManagerTreeWidget *> widgetForWindow;
-    QMap<Konsole::MainWindow *, QDockWidget *> dockForWindow;
+    QMap<Koncrepe::MainWindow *, SSHManagerTreeWidget *> widgetForWindow;
+    QMap<Koncrepe::MainWindow *, QDockWidget *> dockForWindow;
     std::unique_ptr<QAction> showQuickAccess = nullptr;
 };
 
 SSHManagerPlugin::SSHManagerPlugin(QObject *object, const QVariantList &args)
-    : Konsole::IKonsolePlugin(object, args)
+    : Koncrepe::IKoncrepePlugin(object, args)
     , d(std::make_unique<SSHManagerPluginPrivate>())
 {
     d->showQuickAccess = std::make_unique<QAction>();
@@ -57,7 +57,7 @@ SSHManagerPlugin::~SSHManagerPlugin()
 {
 }
 
-void SSHManagerPlugin::createWidgetsForMainWindow(Konsole::MainWindow *mainWindow)
+void SSHManagerPlugin::createWidgetsForMainWindow(Koncrepe::MainWindow *mainWindow)
 {
     auto *sshDockWidget = new QDockWidget(mainWindow);
     auto *managerWidget = new SSHManagerTreeWidget();
@@ -89,7 +89,7 @@ void SSHManagerPlugin::createWidgetsForMainWindow(Konsole::MainWindow *mainWindo
     });
 }
 
-QList<QAction *> SSHManagerPlugin::menuBarActions(Konsole::MainWindow *mainWindow) const
+QList<QAction *> SSHManagerPlugin::menuBarActions(Koncrepe::MainWindow *mainWindow) const
 {
     Q_UNUSED(mainWindow)
 
@@ -104,7 +104,7 @@ QList<QAction *> SSHManagerPlugin::menuBarActions(Konsole::MainWindow *mainWindo
 
 #include <iostream>
 
-void SSHManagerPlugin::activeViewChanged(Konsole::SessionController *controller, Konsole::MainWindow *mainWindow)
+void SSHManagerPlugin::activeViewChanged(Koncrepe::SessionController *controller, Koncrepe::MainWindow *mainWindow)
 {
     Q_ASSERT(controller);
     Q_ASSERT(mainWindow);
@@ -161,7 +161,7 @@ void SSHManagerPlugin::activeViewChanged(Konsole::SessionController *controller,
 
 void SSHManagerPlugin::requestConnection(QSortFilterProxyModel *filterModel,
                                          QStandardItemModel *model,
-                                         Konsole::SessionController *controller,
+                                         Koncrepe::SessionController *controller,
                                          const QModelIndex &idx)
 {
     if (!controller) {
@@ -174,7 +174,7 @@ void SSHManagerPlugin::requestConnection(QSortFilterProxyModel *filterModel,
     }
 
 #ifndef Q_OS_WIN
-    Konsole::ProcessInfo *info = controller->session()->getProcessInfo();
+    Koncrepe::ProcessInfo *info = controller->session()->getProcessInfo();
     bool ok = false;
     QString processName = info->name(&ok);
     if (!ok) {

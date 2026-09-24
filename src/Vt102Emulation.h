@@ -17,7 +17,7 @@
 #include <QList>
 
 
-// Konsole
+// Koncrepe
 #include "Emulation.h"
 #include "Screen.h"
 #include "keyboardtranslator/KeyboardTranslator.h"
@@ -49,7 +49,7 @@ class QKeyEvent;
 #define MODE_Win32Input (MODES_SCREEN + 17)
 #define MODE_total (MODES_SCREEN + 18)
 
-namespace Konsole
+namespace Koncrepe
 {
 struct CharCodes {
     // coding info
@@ -71,7 +71,7 @@ struct CharCodes {
  * sequences.
  *
  */
-class KONSOLEPRIVATE_EXPORT Vt102Emulation : public Emulation
+class KONCREPEPRIVATE_EXPORT Vt102Emulation : public Emulation
 {
     Q_OBJECT
 

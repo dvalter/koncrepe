@@ -6,7 +6,7 @@
 
 // Own
 #include "MainWindow.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Qt
 #include <QColor>
@@ -48,9 +48,9 @@
 #include <KX11Extras>
 #endif
 
-// Konsole
+// Koncrepe
 #include "BookmarkHandler.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "ViewManager.h"
 #include "WindowSystemInfo.h"
 
@@ -76,11 +76,11 @@
 #include "terminalDisplay/TerminalDisplay.h"
 #include "widgets/ViewContainer.h"
 
-#include "pluginsystem/IKonsolePlugin.h"
+#include "pluginsystem/IKoncrepePlugin.h"
 
-#include <konsoledebug.h>
+#include <koncrepedebug.h>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 namespace
 {
@@ -130,18 +130,18 @@ MainWindow::MainWindow()
 
     // create view manager
     _viewManager = new ViewManager(this, actionCollection());
-    connect(_viewManager, &Konsole::ViewManager::empty, this, &QWidget::close);
-    connect(_viewManager, &Konsole::ViewManager::activeViewChanged, this, &Konsole::MainWindow::activeViewChanged);
-    connect(_viewManager, &Konsole::ViewManager::unplugController, this, &Konsole::MainWindow::disconnectController);
-    connect(_viewManager, &Konsole::ViewManager::viewPropertiesChanged, bookmarkHandler(), &Konsole::BookmarkHandler::setViews);
-    connect(_viewManager, &Konsole::ViewManager::blurSettingChanged, this, &Konsole::MainWindow::setBlur);
+    connect(_viewManager, &Koncrepe::ViewManager::empty, this, &QWidget::close);
+    connect(_viewManager, &Koncrepe::ViewManager::activeViewChanged, this, &Koncrepe::MainWindow::activeViewChanged);
+    connect(_viewManager, &Koncrepe::ViewManager::unplugController, this, &Koncrepe::MainWindow::disconnectController);
+    connect(_viewManager, &Koncrepe::ViewManager::viewPropertiesChanged, bookmarkHandler(), &Koncrepe::BookmarkHandler::setViews);
+    connect(_viewManager, &Koncrepe::ViewManager::blurSettingChanged, this, &Koncrepe::MainWindow::setBlur);
 
-    connect(_viewManager, &Konsole::ViewManager::updateWindowIcon, this, &Konsole::MainWindow::updateWindowIcon);
-    connect(_viewManager, &Konsole::ViewManager::newViewWithProfileRequest, this, &Konsole::MainWindow::newFromProfile);
-    connect(_viewManager, &Konsole::ViewManager::newViewInContainerRequest, this, &Konsole::MainWindow::newInContainer);
-    connect(_viewManager, &Konsole::ViewManager::newViewRequest, this, &Konsole::MainWindow::newTab);
-    connect(_viewManager, &Konsole::ViewManager::terminalsDetached, this, &Konsole::MainWindow::terminalsDetached);
-    connect(_viewManager, &Konsole::ViewManager::activationRequest, this, &Konsole::MainWindow::activationRequest);
+    connect(_viewManager, &Koncrepe::ViewManager::updateWindowIcon, this, &Koncrepe::MainWindow::updateWindowIcon);
+    connect(_viewManager, &Koncrepe::ViewManager::newViewWithProfileRequest, this, &Koncrepe::MainWindow::newFromProfile);
+    connect(_viewManager, &Koncrepe::ViewManager::newViewInContainerRequest, this, &Koncrepe::MainWindow::newInContainer);
+    connect(_viewManager, &Koncrepe::ViewManager::newViewRequest, this, &Koncrepe::MainWindow::newTab);
+    connect(_viewManager, &Koncrepe::ViewManager::terminalsDetached, this, &Koncrepe::MainWindow::terminalsDetached);
+    connect(_viewManager, &Koncrepe::ViewManager::activationRequest, this, &Koncrepe::MainWindow::activationRequest);
 
     setCentralWidget(_viewManager->widget());
 
@@ -151,7 +151,7 @@ MainWindow::MainWindow()
     KAcceleratorManager::setNoAccel(menuBar());
 
     constexpr KXmlGuiWindow::StandardWindowOptions guiOpts = ToolBar | Keys | Save | Create;
-    const QString xmlFile = componentName() + QLatin1String("ui.rc"); // Typically "konsoleui.rc"
+    const QString xmlFile = componentName() + QLatin1String("ui.rc"); // Typically "koncrepeui.rc"
     // The "Create" flag will make it call createGUI()
     setupGUI(guiOpts, xmlFile);
 
@@ -172,17 +172,17 @@ MainWindow::MainWindow()
     setContainerList(new ContainerList(this));
 
     // this must come at the end
-    applyKonsoleSettings();
-    connect(KonsoleSettings::self(), &Konsole::KonsoleSettings::configChanged, this, &Konsole::MainWindow::applyKonsoleSettings);
+    applyKoncrepeSettings();
+    connect(KoncrepeSettings::self(), &Koncrepe::KoncrepeSettings::configChanged, this, &Koncrepe::MainWindow::applyKoncrepeSettings);
 
     KCrash::initialize();
 }
 
 bool MainWindow::wasWindowGeometrySaved() const
 {
-    KSharedConfigPtr konsoleConfig = KSharedConfig::openStateConfig();
-    KConfigGroup cg = konsoleConfig->group(QStringLiteral("MainWindow"));
-    if (!cg.exists()) { // First run, no existing konsolerc?
+    KSharedConfigPtr koncrepeConfig = KSharedConfig::openStateConfig();
+    KConfigGroup cg = koncrepeConfig->group(QStringLiteral("MainWindow"));
+    if (!cg.exists()) { // First run, no existing koncreperc?
         return false;
     }
 
@@ -230,7 +230,7 @@ void MainWindow::rememberMenuAccelerators()
 //
 // TODO - Modify XMLGUI so that it allows the text for standard actions
 // defined in ui_standards.rc to be re-defined in the local application
-// XMLGUI file (konsoleui.rc in this case) - the text for standard items
+// XMLGUI file (koncrepeui.rc in this case) - the text for standard items
 // can then be redefined there to exclude the standard accelerators
 void MainWindow::removeMenuAccelerators()
 {
@@ -271,10 +271,10 @@ ViewManager *MainWindow::viewManager() const
 
 void MainWindow::disconnectController(SessionController *controller)
 {
-    disconnect(controller, &Konsole::SessionController::titleChanged, this, &Konsole::MainWindow::activeViewTitleChanged);
-    disconnect(controller, &Konsole::SessionController::rawTitleChanged, this, &Konsole::MainWindow::updateWindowCaption);
-    disconnect(controller, &Konsole::SessionController::iconChanged, this, &Konsole::MainWindow::updateWindowIcon);
-    disconnect(controller, &Konsole::SessionController::progressChanged, this, &Konsole::MainWindow::updateProgress);
+    disconnect(controller, &Koncrepe::SessionController::titleChanged, this, &Koncrepe::MainWindow::activeViewTitleChanged);
+    disconnect(controller, &Koncrepe::SessionController::rawTitleChanged, this, &Koncrepe::MainWindow::updateWindowCaption);
+    disconnect(controller, &Koncrepe::SessionController::iconChanged, this, &Koncrepe::MainWindow::updateWindowIcon);
+    disconnect(controller, &Koncrepe::SessionController::progressChanged, this, &Koncrepe::MainWindow::updateProgress);
 
     if (auto view = controller->view()) {
         view->removeEventFilter(this);
@@ -304,8 +304,8 @@ void MainWindow::activeViewChanged(SessionController *controller)
 
     // associate bookmark menu with current session
     bookmarkHandler()->setActiveView(controller);
-    disconnect(bookmarkHandler(), &Konsole::BookmarkHandler::openUrl, nullptr, nullptr);
-    connect(bookmarkHandler(), &Konsole::BookmarkHandler::openUrl, controller, &Konsole::SessionController::openUrl);
+    disconnect(bookmarkHandler(), &Koncrepe::BookmarkHandler::openUrl, nullptr, nullptr);
+    connect(bookmarkHandler(), &Koncrepe::BookmarkHandler::openUrl, controller, &Koncrepe::SessionController::openUrl);
 
     if (!_pluggedController.isNull()) {
         disconnectController(_pluggedController);
@@ -318,10 +318,10 @@ void MainWindow::activeViewChanged(SessionController *controller)
     setBlur(ViewManager::profileHasBlurEnabled(SessionManager::instance()->sessionProfile(_pluggedController->session())));
 
     // listen for title changes from the current session
-    connect(controller, &Konsole::SessionController::titleChanged, this, &Konsole::MainWindow::activeViewTitleChanged);
-    connect(controller, &Konsole::SessionController::rawTitleChanged, this, &Konsole::MainWindow::updateWindowCaption);
-    connect(controller, &Konsole::SessionController::iconChanged, this, &Konsole::MainWindow::updateWindowIcon);
-    connect(controller, &Konsole::SessionController::progressChanged, this, &Konsole::MainWindow::updateProgress);
+    connect(controller, &Koncrepe::SessionController::titleChanged, this, &Koncrepe::MainWindow::activeViewTitleChanged);
+    connect(controller, &Koncrepe::SessionController::rawTitleChanged, this, &Koncrepe::MainWindow::updateWindowCaption);
+    connect(controller, &Koncrepe::SessionController::iconChanged, this, &Koncrepe::MainWindow::updateWindowIcon);
+    connect(controller, &Koncrepe::SessionController::progressChanged, this, &Koncrepe::MainWindow::updateProgress);
 
     // to prevent shortcuts conflict
     if (auto hamburgerMenu = _hamburgerMenu->menu()) {
@@ -338,7 +338,7 @@ void MainWindow::activeViewChanged(SessionController *controller)
     updateWindowIcon();
     updateProgress();
 
-    for (IKonsolePlugin *plugin : _plugins) {
+    for (IKoncrepePlugin *plugin : _plugins) {
         plugin->activeViewChanged(controller, this);
     }
 }
@@ -365,7 +365,7 @@ void MainWindow::updateWindowCaption()
     // if the userTitle is empty, use a blank space (using an empty string
     // removes the dash — before the application name; leaving the dash
     // looks better)
-    if (KonsoleSettings::showWindowTitleOnTitleBar()) {
+    if (KoncrepeSettings::showWindowTitleOnTitleBar()) {
         !userTitle.isEmpty() ? caption = userTitle : caption = QStringLiteral(" ");
     }
 
@@ -392,7 +392,7 @@ void MainWindow::updateProgress()
 {
 #if HAVE_DBUS
     std::optional<int> progress;
-    if (KonsoleSettings::showProgressInTaskBar() && _pluggedController) {
+    if (KoncrepeSettings::showProgressInTaskBar() && _pluggedController) {
         progress = _pluggedController->progress();
     }
 
@@ -417,7 +417,7 @@ void MainWindow::updateProgress()
         properties.insert(QStringLiteral("progress-visible"), false);
     }
 
-    QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/org/kde/konsole/UnityLauncher"),
+    QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/org/kde/koncrepe/UnityLauncher"),
                                                       QStringLiteral("com.canonical.Unity.LauncherEntry"),
                                                       QStringLiteral("Update"));
     message.setArguments({launcherId, properties});
@@ -431,7 +431,7 @@ void MainWindow::setupActions()
 
     // File Menu
     _newTabMenuAction = new KActionMenu(QIcon::fromTheme(QStringLiteral("tab-new")), i18nc("@action:inmenu", "&New Tab"), collection);
-    collection->setDefaultShortcut(_newTabMenuAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_T);
+    collection->setDefaultShortcut(_newTabMenuAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_T);
     collection->setShortcutsConfigurable(_newTabMenuAction, true);
     _newTabMenuAction->setAutoRepeat(false);
     connect(_newTabMenuAction, &KActionMenu::triggered, this, &MainWindow::newTab);
@@ -443,31 +443,31 @@ void MainWindow::setupActions()
     menuAction->setText(i18nc("@action:inmenu", "&Clone Tab"));
     collection->setDefaultShortcut(menuAction, QKeySequence());
     menuAction->setAutoRepeat(false);
-    connect(menuAction, &QAction::triggered, this, &Konsole::MainWindow::cloneTab);
+    connect(menuAction, &QAction::triggered, this, &Koncrepe::MainWindow::cloneTab);
 
     menuAction = collection->addAction(QStringLiteral("new-window"));
     menuAction->setIcon(QIcon::fromTheme(QStringLiteral("window-new")));
     menuAction->setText(i18nc("@action:inmenu", "New &Window"));
-    collection->setDefaultShortcut(menuAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_N);
+    collection->setDefaultShortcut(menuAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_N);
     menuAction->setAutoRepeat(false);
-    connect(menuAction, &QAction::triggered, this, &Konsole::MainWindow::newWindow);
+    connect(menuAction, &QAction::triggered, this, &Koncrepe::MainWindow::newWindow);
 
     menuAction = collection->addAction(QStringLiteral("close-window"));
     menuAction->setIcon(QIcon::fromTheme(QStringLiteral("window-close")));
     menuAction->setText(i18nc("@action:inmenu", "Close Window"));
-    collection->setDefaultShortcut(menuAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_Q);
-    connect(menuAction, &QAction::triggered, this, &Konsole::MainWindow::close);
+    collection->setDefaultShortcut(menuAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_Q);
+    connect(menuAction, &QAction::triggered, this, &Koncrepe::MainWindow::close);
 
     // Bookmark Menu
     KActionMenu *bookmarkMenu = new KActionMenu(i18nc("@title:menu", "&Bookmarks"), collection);
     bookmarkMenu->setPopupMode(QToolButton::InstantPopup); // Don't require press+hold
     _bookmarkHandler = new BookmarkHandler(collection, bookmarkMenu->menu(), true, this);
     collection->addAction(QStringLiteral("bookmark"), bookmarkMenu);
-    connect(_bookmarkHandler, &Konsole::BookmarkHandler::openUrls, this, &Konsole::MainWindow::openUrls);
+    connect(_bookmarkHandler, &Koncrepe::BookmarkHandler::openUrls, this, &Koncrepe::MainWindow::openUrls);
 
     // Settings Menu
     _toggleMenuBarAction = KStandardAction::showMenubar(menuBar(), &QMenuBar::setVisible, collection);
-    collection->setDefaultShortcut(_toggleMenuBarAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_M);
+    collection->setDefaultShortcut(_toggleMenuBarAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_M);
     connect(_toggleMenuBarAction, &QAction::triggered, [this, collection] {
         // Remove menubar icons set for the hamburger menu, so they don't override
         // the text when they appear in the in-window menubar
@@ -496,13 +496,13 @@ void MainWindow::setupActions()
     menuAction = collection->addAction(QStringLiteral("manage-profiles"));
     menuAction->setText(i18nc("@action:inmenu", "Manage Profiles..."));
     menuAction->setIcon(QIcon::fromTheme(QStringLiteral("settings-configure"), QIcon::fromTheme(QStringLiteral("configure"))));
-    connect(menuAction, &QAction::triggered, this, &Konsole::MainWindow::showManageProfilesDialog);
+    connect(menuAction, &QAction::triggered, this, &Koncrepe::MainWindow::showManageProfilesDialog);
 
     // Set up an shortcut-only action for activating menu bar.
     menuAction = collection->addAction(QStringLiteral("activate-menu"));
     menuAction->setText(i18nc("@item", "Activate Menu"));
-    collection->setDefaultShortcut(menuAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_F10);
-    connect(menuAction, &QAction::triggered, this, &Konsole::MainWindow::activateMenuBar);
+    collection->setDefaultShortcut(menuAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_F10);
+    connect(menuAction, &QAction::triggered, this, &Koncrepe::MainWindow::activateMenuBar);
 
     auto action = collection->addAction(QStringLiteral("save-layout"));
     action->setEnabled(true);
@@ -631,8 +631,8 @@ BookmarkHandler *MainWindow::bookmarkHandler() const
 void MainWindow::setProfileList(ProfileList *list)
 {
     _profileList = list;
-    connect(list, &Konsole::ProfileList::profileSelected, this, &MainWindow::newFromProfile);
-    connect(list, &Konsole::ProfileList::actionsChanged, this, &Konsole::MainWindow::rebuildNewTabMenu);
+    connect(list, &Koncrepe::ProfileList::profileSelected, this, &MainWindow::newFromProfile);
+    connect(list, &Koncrepe::ProfileList::actionsChanged, this, &Koncrepe::MainWindow::rebuildNewTabMenu);
     rebuildNewTabMenu();
 }
 
@@ -713,7 +713,7 @@ void MainWindow::setPluginsActions(const QList<QAction *> &actions)
     plugActionList(QStringLiteral("plugin-submenu"), _pluginsActions);
 }
 
-void MainWindow::addPlugin(IKonsolePlugin *plugin)
+void MainWindow::addPlugin(IKoncrepePlugin *plugin)
 {
     Q_ASSERT(std::find(_plugins.cbegin(), _plugins.cend(), plugin) == _plugins.cend());
     _plugins.push_back(plugin);
@@ -973,7 +973,7 @@ void MainWindow::showShortcutsDialog()
     }
 
     if (dialog.configure()) {
-        // sync shortcuts for non-session actions (defined in "konsoleui.rc") in other main windows
+        // sync shortcuts for non-session actions (defined in "koncrepeui.rc") in other main windows
         const QList<QWidget *> widgets = QApplication::topLevelWidgets();
         for (QWidget *mainWindowWidget : widgets) {
             auto *mainWindow = qobject_cast<MainWindow *>(mainWindowWidget);
@@ -1071,7 +1071,7 @@ void MainWindow::showSettingsDialog(const bool showProfilePage)
         return;
     }
 
-    confDialog = new ConfigurationDialog(this, KonsoleSettings::self());
+    confDialog = new ConfigurationDialog(this, KoncrepeSettings::self());
 
     const QString generalPageName = i18nc("@title Preferences page name", "General");
     auto *generalPage = new KPageWidgetItem(new GeneralSettings(confDialog), generalPageName);
@@ -1113,18 +1113,18 @@ void MainWindow::showSettingsDialog(const bool showProfilePage)
     confDialog->show();
 }
 
-void MainWindow::applyKonsoleSettings()
+void MainWindow::applyKoncrepeSettings()
 {
-    setRemoveWindowTitleBarAndFrame(KonsoleSettings::removeWindowTitleBarAndFrame());
-    if (KonsoleSettings::allowMenuAccelerators()) {
+    setRemoveWindowTitleBarAndFrame(KoncrepeSettings::removeWindowTitleBarAndFrame());
+    if (KoncrepeSettings::allowMenuAccelerators()) {
         restoreMenuAccelerators();
     } else {
         removeMenuAccelerators();
     }
 
-    _viewManager->activeContainer()->setNavigationBehavior(KonsoleSettings::newTabBehavior());
+    _viewManager->activeContainer()->setNavigationBehavior(KoncrepeSettings::newTabBehavior());
 
-    if (KonsoleSettings::syncProfileWithSystemTheme()) {
+    if (KoncrepeSettings::syncProfileWithSystemTheme()) {
         connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged, this, &MainWindow::applyThemeProfile, Qt::UniqueConnection);
         applyThemeProfile();
     } else {
@@ -1140,7 +1140,7 @@ void MainWindow::applyKonsoleSettings()
 
 void MainWindow::applyThemeProfile()
 {
-    if (!KonsoleSettings::syncProfileWithSystemTheme()) {
+    if (!KoncrepeSettings::syncProfileWithSystemTheme()) {
         return;
     }
 
@@ -1191,11 +1191,11 @@ void MainWindow::setBlur(bool blur)
     }
     _blurEnabled = blur;
 
-    if (!_pluggedController->isKonsolePart()) {
+    if (!_pluggedController->isKoncrepePart()) {
         if (QWindow *window = windowHandle()) {
             KWindowEffects::enableBlurBehind(window, blur);
         } else {
-            qCWarning(KonsoleDebug) << "Blur effect couldn't be enabled.";
+            qCWarning(KoncrepeDebug) << "Blur effect couldn't be enabled.";
         }
     }
 }
@@ -1243,7 +1243,7 @@ void MainWindow::setRemoveWindowTitleBarAndFrame(bool frameless)
         if (KWindowSystem::isPlatformX11()) {
 #if WITH_X11
             const auto oldGeometry = saveGeometry();
-            // This happens for every Konsole window. It depends on
+            // This happens for every Koncrepe window. It depends on
             // the fact that every window is processed in single thread
             const auto oldActiveWindow = KX11Extras::activeWindow();
 
@@ -1275,7 +1275,7 @@ void MainWindow::showEvent(QShowEvent *event)
     if (_firstShowEvent) {
         _firstShowEvent = false;
 
-        if (!KonsoleSettings::rememberWindowSize() || !wasWindowGeometrySaved()) {
+        if (!KoncrepeSettings::rememberWindowSize() || !wasWindowGeometrySaved()) {
             // Delay resizing to here, so that the other parts of the UI
             // (ViewManager, TabbedViewContainer, TerminalDisplay ... etc)
             // have been created and TabbedViewContainer::sizeHint() returns

@@ -13,7 +13,7 @@
 
 #include "RegExpFilter.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 class HotSpot;
@@ -23,7 +23,7 @@ class HotSpot;
  * https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_267
  */
 
-class KONSOLEPRIVATE_EXPORT FileFilter : public RegExpFilter
+class KONCREPEPRIVATE_EXPORT FileFilter : public RegExpFilter
 {
 public:
     explicit FileFilter(Session *session, const QString &wordCharacters);

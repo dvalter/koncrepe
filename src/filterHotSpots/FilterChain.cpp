@@ -20,7 +20,7 @@
 
 #include <algorithm>
 
-using namespace Konsole;
+using namespace Koncrepe;
 FilterChain::FilterChain(TerminalDisplay *terminalDisplay)
     : _terminalDisplay(terminalDisplay)
     , _showUrlHint(false)

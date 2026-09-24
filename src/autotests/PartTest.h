@@ -9,7 +9,7 @@
 
 #include <KParts/Part>
 
-namespace Konsole
+namespace Koncrepe
 {
 class PartTest : public QObject
 {

@@ -16,7 +16,7 @@ class QToolButton;
 class QBoxLayout;
 class QSplitter;
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalDisplay;
 class ViewProperties;
@@ -36,7 +36,7 @@ public:
 public Q_SLOTS:
     void setFocusIndicatorState(bool focused);
     /** Shows/hide notification status icon */
-    void updateNotification(ViewProperties *item, Konsole::Session::Notification notification, bool enabled);
+    void updateNotification(ViewProperties *item, Koncrepe::Session::Notification notification, bool enabled);
     /** Shows/hide special state status icon (copy input or read-only) */
     void updateSpecialState(ViewProperties *item);
 
@@ -67,6 +67,6 @@ private:
     QPoint m_startDrag;
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif

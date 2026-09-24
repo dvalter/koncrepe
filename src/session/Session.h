@@ -9,7 +9,7 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 // Qt
 #include <QHash>
@@ -24,11 +24,11 @@
 #include <QDBusContext>
 #endif
 
-// Konsole
+// Koncrepe
 #include "Shortcut_p.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 #include "containers/ContainerInfo.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class QColor;
 class QTextCodec;
@@ -36,7 +36,7 @@ class QTextCodec;
 class KConfigGroup;
 class KProcess;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Emulation;
 class Pty;
@@ -48,7 +48,7 @@ class SessionController;
 
 /**
  * Represents a terminal session consisting of a pseudo-teletype and a terminal emulation.
- * The pseudo-teletype (or PTY) handles I/O between the terminal process and Konsole.
+ * The pseudo-teletype (or PTY) handles I/O between the terminal process and Koncrepe.
  * The terminal emulation ( Emulation and subclasses ) processes the output stream from the
  * PTY and produces a character image which is then shown on views connected to the session.
  *
@@ -58,13 +58,13 @@ class SessionController;
  * activity.
  */
 #if HAVE_DBUS
-class KONSOLEPRIVATE_EXPORT Session : public QObject, protected QDBusContext
+class KONCREPEPRIVATE_EXPORT Session : public QObject, protected QDBusContext
 #else
-class KONSOLEPRIVATE_EXPORT Session : public QObject
+class KONCREPEPRIVATE_EXPORT Session : public QObject
 #endif
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.konsole.Session")
+    Q_CLASSINFO("D-Bus Interface", "org.kde.koncrepe.Session")
 
 public:
     using Ptr = QPointer<Session>;
@@ -120,7 +120,7 @@ public:
 
     /**
      * Returns true if the tab holding this session is currently selected
-     * and Konsole is the foreground window.
+     * and Koncrepe is the foreground window.
      */
     bool hasFocus() const;
 
@@ -563,7 +563,7 @@ public Q_SLOTS:
      * Kill the terminal process in normal way. This sends a hangup signal
      * (SIGHUP) to the terminal process and causes the finished() signal to
      * be emitted. If the process does not respond to the SIGHUP signal then
-     * the terminal connection (the pty) is closed and Konsole waits for the
+     * the terminal connection (the pty) is closed and Koncrepe waits for the
      * process to exit. This method works most of the time, but fails with some
      * programs which respond to SIGHUP signal in special way, such as autossh
      * and irssi.
@@ -1117,7 +1117,7 @@ private:
 
     /**
      * secret cookie for activationToken, shall be only exposed to shell
-     * environment as KONSOLE_DBUS_ACTIVATION_COOKIE
+     * environment as KONCREPE_DBUS_ACTIVATION_COOKIE
      */
     const QString m_activationCookie;
 };

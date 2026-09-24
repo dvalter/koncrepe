@@ -10,7 +10,7 @@
 // Qt
 #include <QDialog>
 
-// Konsole
+// Koncrepe
 // TODO: Move away Profile::Property from the profile header.
 #include "profile/Profile.h"
 
@@ -21,7 +21,7 @@ namespace Ui
 class KeyBindingEditor;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 class KeyboardTranslator;
 

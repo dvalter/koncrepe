@@ -15,15 +15,15 @@
 
 #include <memory>
 
-// Konsole
+// Koncrepe
 #include "../characters/Character.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class QAction;
 class QMenu;
 class QMouseEvent;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Session;
 class HotSpot;
@@ -46,7 +46,7 @@ class HotSpot;
  * When processing the text they should create instances of Filter::HotSpot subclasses for sections of interest
  * and add them to the filter's list of hotspots using addHotSpot()
  */
-class KONSOLEPRIVATE_EXPORT Filter
+class KONCREPEPRIVATE_EXPORT Filter
 {
 public:
     /** Constructs a new filter. */
@@ -93,5 +93,5 @@ private:
     const QString *_buffer;
 };
 
-} // namespace Konsole
+} // namespace Koncrepe
 #endif

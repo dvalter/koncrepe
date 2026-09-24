@@ -9,7 +9,7 @@
 
 #include <QFocusEvent>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 CompositeWidgetFocusWatcher::CompositeWidgetFocusWatcher(QWidget *compositeWidget)
     : QObject(compositeWidget)

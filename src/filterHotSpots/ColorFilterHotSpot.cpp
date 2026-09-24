@@ -19,9 +19,9 @@
 
 #include <KLocalizedString>
 
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 bool ColorFilterHotSpot::_canGenerateTooltip = false;
 

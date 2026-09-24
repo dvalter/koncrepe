@@ -12,7 +12,7 @@
 
 #include "../ShellCommand.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class ShellCommandTest : public QObject
 {

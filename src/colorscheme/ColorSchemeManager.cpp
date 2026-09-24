@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
     SPDX-FileCopyrightText: 2018 Harald Sitter <sitter@kde.org>
@@ -20,7 +20,7 @@
 // KF
 #include <KConfig>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ColorSchemeManager::ColorSchemeManager()
 {
@@ -104,8 +104,8 @@ QString ColorSchemeManager::colorSchemeNameFromPath(const QString &path)
 
 QStringList ColorSchemeManager::listColorSchemes()
 {
-    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("konsole"), QStandardPaths::LocateDirectory);
-    dirs.append(QStringLiteral(":/konsole/color-schemes")); // fallback to bundled ones
+    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("koncrepe"), QStandardPaths::LocateDirectory);
+    dirs.append(QStringLiteral(":/koncrepe/color-schemes")); // fallback to bundled ones
 
     QStringList colorschemes;
     for (const QString &dir : std::as_const(dirs)) {
@@ -129,7 +129,7 @@ void ColorSchemeManager::addColorScheme(const std::shared_ptr<ColorScheme> &sche
 
     // save changes to disk
 
-    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/konsole/");
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/koncrepe/");
     QDir().mkpath(dir);
     const QString path = dir + scheme->name() + QStringLiteral(".colorscheme");
     KConfig config(path, KConfig::NoGlobals);
@@ -158,7 +158,7 @@ std::shared_ptr<const ColorScheme> ColorSchemeManager::findColorScheme(const QSt
     }
 
     // A fix to prevent infinite loops if users puts / in ColorScheme name
-    // Konsole will create a sub-folder in that case (bko 315086)
+    // Koncrepe will create a sub-folder in that case (bko 315086)
     // More code will have to go in to prevent the users from doing that.
     if (name.contains(QLatin1String("/"))) {
         qCDebug(ColorSchemeDebug) << name << " has an invalid character / in the name ... skipping";
@@ -185,12 +185,12 @@ std::shared_ptr<const ColorScheme> ColorSchemeManager::findColorScheme(const QSt
 
 QString ColorSchemeManager::findColorSchemePath(const QString &name) const
 {
-    QString path = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("konsole/") + name + QStringLiteral(".colorscheme"));
+    QString path = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("koncrepe/") + name + QStringLiteral(".colorscheme"));
     if (path.isEmpty()) {
-        path = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("konsole/") + name + QStringLiteral(".schema"));
+        path = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("koncrepe/") + name + QStringLiteral(".schema"));
     }
     if (path.isEmpty()) {
-        const QString resource = QStringLiteral(":/konsole/color-schemes/") + name + QStringLiteral(".colorscheme");
+        const QString resource = QStringLiteral(":/koncrepe/color-schemes/") + name + QStringLiteral(".colorscheme");
         if (QFile::exists(resource)) {
             path = resource;
         }
@@ -214,7 +214,7 @@ bool ColorSchemeManager::isColorSchemeDeletable(const QString &name)
 bool ColorSchemeManager::canResetColorScheme(const QString &name)
 {
     const QStringList paths =
-        QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("konsole/") + name + QStringLiteral(".colorscheme"));
+        QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("koncrepe/") + name + QStringLiteral(".colorscheme"));
 
     // if the colorscheme exists in both a writable location under the
     // user's home dir and a system-wide location, then it's possible

@@ -13,13 +13,13 @@
 #include <QObject>
 #include <QSet>
 
-// Konsole
+// Koncrepe
 #include "Profile.h"
 
 class QActionGroup;
 class QKeySequence;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * ProfileList provides a list of actions which represent session profiles
@@ -32,7 +32,7 @@ namespace Konsole
  * The user-data associated with each session can be passed to the createProfile() method of the
  * SessionManager to create a new terminal session.
  */
-class KONSOLEPRIVATE_EXPORT ProfileList : public QObject
+class KONCREPEPRIVATE_EXPORT ProfileList : public QObject
 {
     Q_OBJECT
 

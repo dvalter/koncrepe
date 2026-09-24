@@ -52,7 +52,7 @@
 #include <KFileItemActions>
 #include <KFileItemListProperties>
 
-// Konsole
+// Koncrepe
 #include "CopyInputDialog.h"
 #include "Emulation.h"
 #include "HistorySizeDialog.h"
@@ -61,7 +61,7 @@
 #include "SaveHistoryTask.h"
 #include "ScreenWindow.h"
 #include "SearchHistoryTask.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
 #include "filterHotSpots/ColorFilter.h"
 #include "filterHotSpots/EscapeSequenceUrlFilter.h"
@@ -93,7 +93,7 @@
 // For Unix signal names
 #include <csignal>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 QSet<SessionController *> SessionController::_allControllers;
 int SessionController::_lastControllerId;
@@ -140,8 +140,8 @@ SessionController::SessionController(Session *sessionParam, TerminalDisplay *vie
     viewParam->setSessionController(this);
 
     // handle user interface related to session (menus etc.)
-    if (isKonsolePart()) {
-        setComponentName(QStringLiteral("konsole"), i18n("Konsole"));
+    if (isKoncrepePart()) {
+        setComponentName(QStringLiteral("koncrepe"), i18n("Koncrepe"));
         setXMLFile(QStringLiteral("partui.rc"));
         setupCommonActions();
     } else {
@@ -170,45 +170,45 @@ SessionController::SessionController(Session *sessionParam, TerminalDisplay *vie
     updateFilterList(currentProfile);
 
     // listen for changes in session, we might need to change the enabled filters
-    connect(ProfileManager::instance(), &Konsole::ProfileManager::profileChanged, this, &Konsole::SessionController::updateFilterList);
+    connect(ProfileManager::instance(), &Koncrepe::ProfileManager::profileChanged, this, &Koncrepe::SessionController::updateFilterList);
 
     // listen for session resize requests
-    connect(session(), &Konsole::Session::resizeRequest, this, &Konsole::SessionController::sessionResizeRequest);
+    connect(session(), &Koncrepe::Session::resizeRequest, this, &Koncrepe::SessionController::sessionResizeRequest);
 
     // listen for popup menu requests
-    connect(view(), &Konsole::TerminalDisplay::configureRequest, this, &Konsole::SessionController::showDisplayContextMenu);
+    connect(view(), &Koncrepe::TerminalDisplay::configureRequest, this, &Koncrepe::SessionController::showDisplayContextMenu);
 
     // move view to newest output when keystrokes occur
-    connect(view(), &Konsole::TerminalDisplay::keyPressedSignal, this, &Konsole::SessionController::trackOutput);
+    connect(view(), &Koncrepe::TerminalDisplay::keyPressedSignal, this, &Koncrepe::SessionController::trackOutput);
 
     // listen to activity / silence notifications from session
-    connect(session(), &Konsole::Session::notificationsChanged, this, &Konsole::SessionController::sessionNotificationsChanged);
+    connect(session(), &Koncrepe::Session::notificationsChanged, this, &Koncrepe::SessionController::sessionNotificationsChanged);
     // listen to title and icon changes
-    connect(session(), &Konsole::Session::sessionAttributeChanged, this, &Konsole::SessionController::sessionAttributeChanged);
-    connect(session(), &Konsole::Session::readOnlyChanged, this, &Konsole::SessionController::sessionReadOnlyChanged);
+    connect(session(), &Koncrepe::Session::sessionAttributeChanged, this, &Koncrepe::SessionController::sessionAttributeChanged);
+    connect(session(), &Koncrepe::Session::readOnlyChanged, this, &Koncrepe::SessionController::sessionReadOnlyChanged);
 
-    connect(this, &Konsole::SessionController::tabRenamedByUser, session(), &Konsole::Session::tabTitleSetByUser);
-    connect(this, &Konsole::SessionController::tabColoredByUser, session(), &Konsole::Session::tabColorSetByUser);
-    connect(this, &Konsole::SessionController::tabActivityColoredByUser, session(), &Konsole::Session::tabActivityColorSetByUser);
+    connect(this, &Koncrepe::SessionController::tabRenamedByUser, session(), &Koncrepe::Session::tabTitleSetByUser);
+    connect(this, &Koncrepe::SessionController::tabColoredByUser, session(), &Koncrepe::Session::tabColorSetByUser);
+    connect(this, &Koncrepe::SessionController::tabActivityColoredByUser, session(), &Koncrepe::Session::tabActivityColorSetByUser);
 
-    connect(session(), &Konsole::Session::currentDirectoryChanged, this, &Konsole::SessionController::currentDirectoryChanged);
+    connect(session(), &Koncrepe::Session::currentDirectoryChanged, this, &Koncrepe::SessionController::currentDirectoryChanged);
 
     // listen for color changes
-    connect(session(), &Konsole::Session::changeBackgroundColorRequest, view()->terminalColor(), &TerminalColor::setBackgroundColor);
-    connect(session(), &Konsole::Session::changeForegroundColorRequest, view()->terminalColor(), &TerminalColor::setForegroundColor);
+    connect(session(), &Koncrepe::Session::changeBackgroundColorRequest, view()->terminalColor(), &TerminalColor::setBackgroundColor);
+    connect(session(), &Koncrepe::Session::changeForegroundColorRequest, view()->terminalColor(), &TerminalColor::setForegroundColor);
 
     // update the title when the session starts
-    connect(session(), &Konsole::Session::started, this, &Konsole::SessionController::snapshot);
+    connect(session(), &Koncrepe::Session::started, this, &Koncrepe::SessionController::snapshot);
 
     // listen for output changes to set activity flag
-    connect(session()->emulation(), &Konsole::Emulation::outputChanged, this, &Konsole::SessionController::fireActivity);
+    connect(session()->emulation(), &Koncrepe::Emulation::outputChanged, this, &Koncrepe::SessionController::fireActivity);
 
     // listen for detection of ZModem transfer
-    connect(session(), &Konsole::Session::zmodemDownloadDetected, this, &Konsole::SessionController::zmodemDownload);
-    connect(session(), &Konsole::Session::zmodemUploadDetected, this, &Konsole::SessionController::zmodemUpload);
+    connect(session(), &Koncrepe::Session::zmodemDownloadDetected, this, &Koncrepe::SessionController::zmodemDownload);
+    connect(session(), &Koncrepe::Session::zmodemUploadDetected, this, &Koncrepe::SessionController::zmodemUpload);
 
     // listen for flow control status changes
-    connect(session(), &Konsole::Session::flowControlEnabledChanged, view(), &Konsole::TerminalDisplay::setFlowControlWarningEnabled);
+    connect(session(), &Koncrepe::Session::flowControlEnabledChanged, view(), &Koncrepe::TerminalDisplay::setFlowControlWarningEnabled);
     view()->setFlowControlWarningEnabled(session()->flowControlEnabled());
 
     // take a snapshot of the session state every so often when
@@ -219,24 +219,24 @@ SessionController::SessionController(Session *sessionParam, TerminalDisplay *vie
     _interactionTimer = new QTimer(session());
     _interactionTimer->setSingleShot(true);
     _interactionTimer->setInterval(2000);
-    connect(_interactionTimer, &QTimer::timeout, this, &Konsole::SessionController::snapshot);
-    connect(view(), &Konsole::TerminalDisplay::compositeFocusChanged, this, [this](bool focused) {
+    connect(_interactionTimer, &QTimer::timeout, this, &Koncrepe::SessionController::snapshot);
+    connect(view(), &Koncrepe::TerminalDisplay::compositeFocusChanged, this, [this](bool focused) {
         if (focused) {
             interactionHandler();
         }
     });
-    connect(view(), &Konsole::TerminalDisplay::keyPressedSignal, this, &Konsole::SessionController::interactionHandler);
-    connect(session()->emulation(), &Konsole::Emulation::outputChanged, this, &Konsole::SessionController::interactionHandler);
+    connect(view(), &Koncrepe::TerminalDisplay::keyPressedSignal, this, &Koncrepe::SessionController::interactionHandler);
+    connect(session()->emulation(), &Koncrepe::Emulation::outputChanged, this, &Koncrepe::SessionController::interactionHandler);
 
     // xterm '10;?' request
-    connect(session(), &Konsole::Session::getForegroundColor, this, &Konsole::SessionController::sendForegroundColor);
+    connect(session(), &Koncrepe::Session::getForegroundColor, this, &Koncrepe::SessionController::sendForegroundColor);
     // xterm '11;?' request
-    connect(session(), &Konsole::Session::getBackgroundColor, this, &Konsole::SessionController::sendBackgroundColor);
+    connect(session(), &Koncrepe::Session::getBackgroundColor, this, &Koncrepe::SessionController::sendBackgroundColor);
 
-    connect(session()->emulation(), &Konsole::Emulation::progressChanged, this, [this](int progress) {
+    connect(session()->emulation(), &Koncrepe::Emulation::progressChanged, this, [this](int progress) {
         setProgress(progress);
     });
-    connect(session()->emulation(), &Konsole::Emulation::progressHidden, this, [this] {
+    connect(session()->emulation(), &Koncrepe::Emulation::progressHidden, this, [this] {
         setProgress(std::nullopt);
     });
 
@@ -313,9 +313,9 @@ void SessionController::viewFocusChangeHandler(bool focused)
         // by the focused view
 
         // first, disconnect any other views which are listening for bell signals from the session
-        disconnect(session(), &Konsole::Session::bellRequest, nullptr, nullptr);
+        disconnect(session(), &Koncrepe::Session::bellRequest, nullptr, nullptr);
         // second, connect the newly focused view to listen for the session's bell signal
-        connect(session(), &Konsole::Session::bellRequest, view(), &Konsole::TerminalDisplay::bell);
+        connect(session(), &Koncrepe::Session::bellRequest, view(), &Koncrepe::TerminalDisplay::bell);
 
         if ((_copyInputToAllTabsAction != nullptr) && _copyInputToAllTabsAction->isChecked()) {
             // A session with "Copy To All Tabs" has come into focus:
@@ -461,9 +461,9 @@ void SessionController::openUrl(const QUrl &url)
     } else {
         // TODO Implement handling for other Url types
 
-        KMessageBox::error(view()->window(), i18n("Konsole does not know how to open the bookmark: ") + url.toDisplayString());
+        KMessageBox::error(view()->window(), i18n("Koncrepe does not know how to open the bookmark: ") + url.toDisplayString());
 
-        qCDebug(KonsoleDebug) << "Unable to open bookmark at url" << url << ", I do not know"
+        qCDebug(KoncrepeDebug) << "Unable to open bookmark at url" << url << ", I do not know"
                               << " how to handle the protocol " << url.scheme();
     }
 }
@@ -557,7 +557,7 @@ void SessionController::updateWebSearchMenu()
 
             action = new QAction(i18n("Configure Web Shortcuts..."), _webSearchMenu);
             action->setIcon(QIcon::fromTheme(QStringLiteral("configure")));
-            connect(action, &QAction::triggered, this, &Konsole::SessionController::configureWebShortcuts);
+            connect(action, &QAction::triggered, this, &Koncrepe::SessionController::configureWebShortcuts);
             _webSearchMenu->addAction(action);
 
             _webSearchMenu->setVisible(true);
@@ -600,7 +600,7 @@ void SessionController::sendForegroundColor(uint terminator)
     session()->reportForegroundColor(c, terminator);
 }
 
-void Konsole::SessionController::sendBackgroundColor(uint terminator)
+void Koncrepe::SessionController::sendBackgroundColor(uint terminator)
 {
     const QColor c = view()->terminalColor()->backgroundColor();
     session()->reportBackgroundColor(c, terminator);
@@ -638,19 +638,19 @@ void SessionController::removeSearchFilter()
 
 void SessionController::setupSearchBar()
 {
-    connect(_searchBar, &Konsole::IncrementalSearchBar::unhandledMovementKeyPressed, this, &Konsole::SessionController::movementKeyFromSearchBarReceived);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::closeClicked, this, &Konsole::SessionController::searchClosed);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::closeClicked, view()->scrollBar(), &Konsole::TerminalScrollBar::clearSearchLines);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::searchFromClicked, this, &Konsole::SessionController::searchFrom);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::findNextClicked, this, &Konsole::SessionController::findNextInHistory);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::findPreviousClicked, this, &Konsole::SessionController::findPreviousInHistory);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::unhandledMovementKeyPressed, this, &Koncrepe::SessionController::movementKeyFromSearchBarReceived);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::closeClicked, this, &Koncrepe::SessionController::searchClosed);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::closeClicked, view()->scrollBar(), &Koncrepe::TerminalScrollBar::clearSearchLines);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::searchFromClicked, this, &Koncrepe::SessionController::searchFrom);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::findNextClicked, this, &Koncrepe::SessionController::findNextInHistory);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::findPreviousClicked, this, &Koncrepe::SessionController::findPreviousInHistory);
     connect(_searchBar,
-            &Konsole::IncrementalSearchBar::reverseSearchToggled,
+            &Koncrepe::IncrementalSearchBar::reverseSearchToggled,
             this,
-            &Konsole::SessionController::updateMenuIconsAccordingToReverseSearchSetting);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::highlightMatchesToggled, this, &Konsole::SessionController::highlightMatches);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::matchCaseToggled, this, &Konsole::SessionController::changeSearchMatch);
-    connect(_searchBar, &Konsole::IncrementalSearchBar::matchRegExpToggled, this, &Konsole::SessionController::changeSearchMatch);
+            &Koncrepe::SessionController::updateMenuIconsAccordingToReverseSearchSetting);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::highlightMatchesToggled, this, &Koncrepe::SessionController::highlightMatches);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::matchCaseToggled, this, &Koncrepe::SessionController::changeSearchMatch);
+    connect(_searchBar, &Koncrepe::IncrementalSearchBar::matchRegExpToggled, this, &Koncrepe::SessionController::changeSearchMatch);
 
     updateMenuIconsAccordingToReverseSearchSetting();
 }
@@ -669,7 +669,7 @@ void SessionController::setupCommonActions()
     action->setText(i18n("&Close Session"));
 
     action->setIcon(QIcon::fromTheme(QStringLiteral("tab-close")));
-    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_W);
+    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_W);
 
     // Open Browser
     action = collection->addAction(QStringLiteral("open-browser"), this, &SessionController::openBrowser);
@@ -679,7 +679,7 @@ void SessionController::setupCommonActions()
     // Copy and Paste
     action = KStandardAction::copy(this, &SessionController::copy, collection);
     QList<QKeySequence> copyShortcut;
-    copyShortcut.append(QKeySequence(static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_C));
+    copyShortcut.append(QKeySequence(static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_C));
     copyShortcut.append(QKeySequence(Qt::CTRL | Qt::Key_Insert));
     collection->setDefaultShortcuts(action, copyShortcut);
     // disabled at first, since nothing has been selected now
@@ -724,7 +724,7 @@ void SessionController::setupCommonActions()
 
     action = KStandardAction::paste(this, &SessionController::paste, collection);
     QList<QKeySequence> pasteShortcut;
-    pasteShortcut.append(QKeySequence(static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_V));
+    pasteShortcut.append(QKeySequence(static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_V));
 #ifndef Q_OS_MACOS
     // No Insert key on Mac keyboards
     pasteShortcut.append(QKeySequence(Qt::SHIFT | Qt::Key_Insert));
@@ -772,7 +772,7 @@ void SessionController::setupCommonActions()
 
     action = KStandardAction::print(this, &SessionController::requestPrint, collection);
     action->setText(i18n("&Print Screen..."));
-    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_P);
+    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_P);
 
     action = collection->addAction(QStringLiteral("adjust-history"), this, &SessionController::showHistoryOptions);
     action->setText(i18n("Adjust Scrollback..."));
@@ -785,7 +785,7 @@ void SessionController::setupCommonActions()
     action = collection->addAction(QStringLiteral("clear-history-and-reset"), this, &SessionController::clearHistoryAndReset);
     action->setText(i18n("Clear Scrollback and Reset"));
     action->setIcon(QIcon::fromTheme(QStringLiteral("edit-clear-history")));
-    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_K);
+    collection->setDefaultShortcut(action, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_K);
 
     // Profile Options
     action = collection->addAction(QStringLiteral("edit-current-profile"), this, &SessionController::editCurrentProfile);
@@ -804,7 +804,7 @@ void SessionController::setupCommonActions()
 
     _switchProfileMenu = new KActionMenu(QIcon::fromTheme(QStringLiteral("exchange-positions")), i18n("Switch Profile"), this);
     collection->addAction(QStringLiteral("switch-profile"), _switchProfileMenu);
-    connect(_switchProfileMenu->menu(), &QMenu::aboutToShow, this, &Konsole::SessionController::prepareSwitchProfileMenu);
+    connect(_switchProfileMenu->menu(), &QMenu::aboutToShow, this, &Koncrepe::SessionController::prepareSwitchProfileMenu);
     _switchProfileMenu->setPopupMode(QToolButton::MenuButtonPopup);
 
     // History
@@ -831,7 +831,7 @@ void SessionController::setupCommonActions()
     _codecAction->setIcon(QIcon::fromTheme(QStringLiteral("character-set")));
     collection->addAction(QStringLiteral("set-encoding"), _codecAction);
     _codecAction->setCurrentCodec(QString::fromUtf8(session()->codec()));
-    connect(session(), &Konsole::Session::sessionCodecChanged, this, &Konsole::SessionController::updateCodecAction);
+    connect(session(), &Koncrepe::Session::sessionCodecChanged, this, &Koncrepe::SessionController::updateCodecAction);
 
     connect(_codecAction, &KCodecAction::codecNameTriggered, this, [this](const QByteArray &codecName) {
         changeCodec(codecName);
@@ -881,13 +881,13 @@ void SessionController::setupExtraActions()
     // Copy input to ==> selected tabs
     auto *copyInputToSelectedTabsAction = collection->add<KToggleAction>(QStringLiteral("copy-input-to-selected-tabs"));
     copyInputToSelectedTabsAction->setText(i18n("&Select Tabs..."));
-    collection->setDefaultShortcut(copyInputToSelectedTabsAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_Period);
+    collection->setDefaultShortcut(copyInputToSelectedTabsAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_Period);
     copyInputToSelectedTabsAction->setData(CopyInputToSelectedTabsMode);
 
     // Copy input to ==> none
     auto *copyInputToNoneAction = collection->add<KToggleAction>(QStringLiteral("copy-input-to-none"));
     copyInputToNoneAction->setText(i18nc("@action:inmenu Do not select any tabs", "&None"));
-    collection->setDefaultShortcut(copyInputToNoneAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_Slash);
+    collection->setDefaultShortcut(copyInputToNoneAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_Slash);
     copyInputToNoneAction->setData(CopyInputToNoneMode);
     copyInputToNoneAction->setChecked(true); // the default state
 
@@ -898,7 +898,7 @@ void SessionController::setupExtraActions()
     copyInputActions->addAction(copyInputToAllTabsAction);
     copyInputActions->addAction(copyInputToSelectedTabsAction);
     copyInputActions->addAction(copyInputToNoneAction);
-    connect(copyInputActions, &KSelectAction::actionTriggered, this, &Konsole::SessionController::copyInputActionsTriggered);
+    connect(copyInputActions, &KSelectAction::actionTriggered, this, &Koncrepe::SessionController::copyInputActionsTriggered);
     _copyInputActions = copyInputActions;
 
     action = collection->addAction(QStringLiteral("zmodem-upload"), this, &SessionController::zmodemUpload);
@@ -909,31 +909,31 @@ void SessionController::setupExtraActions()
     // Monitor
     KToggleAction *toggleAction = new KToggleAction(i18n("One-Shot Monitors"), this);
     action = collection->addAction(QStringLiteral("monitor-once"), toggleAction);
-    connect(action, &QAction::toggled, this, &Konsole::SessionController::monitorOnce);
+    connect(action, &QAction::toggled, this, &Koncrepe::SessionController::monitorOnce);
     action->setIcon(QIcon::fromTheme(QStringLiteral("tools-media-optical-burn")));
 
     toggleAction = new KToggleAction(i18n("Monitor for &Prompt"), this);
-    collection->setDefaultShortcut(toggleAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_R);
+    collection->setDefaultShortcut(toggleAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_R);
     action = collection->addAction(QStringLiteral("monitor-prompt"), toggleAction);
-    connect(action, &QAction::toggled, this, &Konsole::SessionController::monitorPrompt);
+    connect(action, &QAction::toggled, this, &Koncrepe::SessionController::monitorPrompt);
     action->setIcon(QIcon::fromTheme(QStringLiteral("tools-media-optical-burn")));
     action->setVisible(false);
 
     toggleAction = new KToggleAction(i18n("Monitor for &Activity"), this);
-    collection->setDefaultShortcut(toggleAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_A);
+    collection->setDefaultShortcut(toggleAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_A);
     action = collection->addAction(QStringLiteral("monitor-activity"), toggleAction);
-    connect(action, &QAction::toggled, this, &Konsole::SessionController::monitorActivity);
+    connect(action, &QAction::toggled, this, &Koncrepe::SessionController::monitorActivity);
     action->setIcon(QIcon::fromTheme(QStringLiteral("tools-media-optical-burn")));
 
     toggleAction = new KToggleAction(i18n("Monitor for &Silence"), this);
-    collection->setDefaultShortcut(toggleAction, static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_I);
+    collection->setDefaultShortcut(toggleAction, static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_I);
     action = collection->addAction(QStringLiteral("monitor-silence"), toggleAction);
-    connect(action, &QAction::toggled, this, &Konsole::SessionController::monitorSilence);
+    connect(action, &QAction::toggled, this, &Koncrepe::SessionController::monitorSilence);
     action->setIcon(QIcon::fromTheme(QStringLiteral("tools-media-optical-copy")));
 
     toggleAction = new KToggleAction(i18n("Monitor for Process Finishing"), this);
     action = collection->addAction(QStringLiteral("monitor-process-finish"), toggleAction);
-    connect(action, &QAction::toggled, this, &Konsole::SessionController::monitorProcessFinish);
+    connect(action, &QAction::toggled, this, &Koncrepe::SessionController::monitorProcessFinish);
     action->setIcon(QIcon::fromTheme(QStringLiteral("tools-media-optical-burn-image")));
 
     // Text Size
@@ -958,7 +958,7 @@ void SessionController::setupExtraActions()
     // Send signal
     auto *sendSignalActions = collection->add<KSelectAction>(QStringLiteral("send-signal"));
     sendSignalActions->setText(i18n("Send Signal"));
-    connect(sendSignalActions, &KSelectAction::actionTriggered, this, &Konsole::SessionController::sendSignal);
+    connect(sendSignalActions, &KSelectAction::actionTriggered, this, &Koncrepe::SessionController::sendSignal);
 
     action = collection->addAction(QStringLiteral("sigstop-signal"));
     action->setText(i18n("&Suspend Task") + QStringLiteral(" (STOP)"));
@@ -1024,7 +1024,7 @@ void SessionController::prepareSwitchProfileMenu()
 {
     if (_switchProfileMenu->menu()->isEmpty()) {
         _profileList = new ProfileList(false, this);
-        connect(_profileList, &Konsole::ProfileList::profileSelected, this, &Konsole::SessionController::switchProfile);
+        connect(_profileList, &Koncrepe::ProfileList::profileSelected, this, &Koncrepe::SessionController::switchProfile);
     }
 
     _switchProfileMenu->menu()->clear();
@@ -1225,7 +1225,7 @@ void SessionController::closeSession()
         }
 
         if (!session()->closeInForceWay()) {
-            qCDebug(KonsoleDebug) << "Konsole failed to close a session in any way.";
+            qCDebug(KoncrepeDebug) << "Koncrepe failed to close a session in any way.";
             return;
         }
     }
@@ -1551,9 +1551,9 @@ void SessionController::listenForScreenWindowUpdates()
         return;
     }
 
-    connect(view()->screenWindow(), &Konsole::ScreenWindow::outputChanged, this, &Konsole::SessionController::updateSearchFilter);
-    connect(view()->screenWindow(), &Konsole::ScreenWindow::scrolled, this, &Konsole::SessionController::updateSearchFilter);
-    connect(view()->screenWindow(), &Konsole::ScreenWindow::currentResultLineChanged, view(), QOverload<>::of(&Konsole::TerminalDisplay::update));
+    connect(view()->screenWindow(), &Koncrepe::ScreenWindow::outputChanged, this, &Koncrepe::SessionController::updateSearchFilter);
+    connect(view()->screenWindow(), &Koncrepe::ScreenWindow::scrolled, this, &Koncrepe::SessionController::updateSearchFilter);
+    connect(view()->screenWindow(), &Koncrepe::ScreenWindow::currentResultLineChanged, view(), QOverload<>::of(&Koncrepe::TerminalDisplay::update));
 
     _listenForScreenWindowUpdates = true;
 }
@@ -1593,13 +1593,13 @@ void SessionController::enableSearchBar(bool showSearchBar)
 
     _searchBar->setVisible(showSearchBar);
     if (showSearchBar) {
-        connect(_searchBar, &Konsole::IncrementalSearchBar::searchChanged, this, &Konsole::SessionController::searchTextChanged);
-        connect(_searchBar, &Konsole::IncrementalSearchBar::searchReturnPressed, this, &Konsole::SessionController::findPreviousInHistory);
-        connect(_searchBar, &Konsole::IncrementalSearchBar::searchShiftPlusReturnPressed, this, &Konsole::SessionController::findNextInHistory);
+        connect(_searchBar, &Koncrepe::IncrementalSearchBar::searchChanged, this, &Koncrepe::SessionController::searchTextChanged);
+        connect(_searchBar, &Koncrepe::IncrementalSearchBar::searchReturnPressed, this, &Koncrepe::SessionController::findPreviousInHistory);
+        connect(_searchBar, &Koncrepe::IncrementalSearchBar::searchShiftPlusReturnPressed, this, &Koncrepe::SessionController::findNextInHistory);
     } else {
-        disconnect(_searchBar, &Konsole::IncrementalSearchBar::searchChanged, this, &Konsole::SessionController::searchTextChanged);
-        disconnect(_searchBar, &Konsole::IncrementalSearchBar::searchReturnPressed, this, &Konsole::SessionController::findPreviousInHistory);
-        disconnect(_searchBar, &Konsole::IncrementalSearchBar::searchShiftPlusReturnPressed, this, &Konsole::SessionController::findNextInHistory);
+        disconnect(_searchBar, &Koncrepe::IncrementalSearchBar::searchChanged, this, &Koncrepe::SessionController::searchTextChanged);
+        disconnect(_searchBar, &Koncrepe::IncrementalSearchBar::searchReturnPressed, this, &Koncrepe::SessionController::findPreviousInHistory);
+        disconnect(_searchBar, &Koncrepe::IncrementalSearchBar::searchShiftPlusReturnPressed, this, &Koncrepe::SessionController::findNextInHistory);
         if ((!view().isNull()) && (view()->screenWindow() != nullptr)) {
             view()->screenWindow()->setCurrentResultLine(-1);
         }
@@ -1724,8 +1724,8 @@ void SessionController::beginSearch(const QString &text, Enum::SearchDirection d
         view()->screenWindow()->setCurrentResultLine(-1);
         auto task = new SearchHistoryTask(this);
 
-        connect(task, &Konsole::SearchHistoryTask::completed, this, &Konsole::SessionController::searchCompleted);
-        connect(task, &Konsole::SearchHistoryTask::searchResults, view()->scrollBar(), &Konsole::TerminalScrollBar::searchLines);
+        connect(task, &Koncrepe::SearchHistoryTask::completed, this, &Koncrepe::SessionController::searchCompleted);
+        connect(task, &Koncrepe::SearchHistoryTask::searchResults, view()->scrollBar(), &Koncrepe::TerminalScrollBar::searchLines);
 
         task->setRegExp(regExp);
         task->setSearchDirection(direction);
@@ -2048,7 +2048,7 @@ bool SessionController::isCopyInputActive() const
 void SessionController::sessionAttributeChanged()
 {
     if (_sessionIconName != session()->iconName()) {
-        qCDebug(KonsoleDebug) << "sessionAttributeChanged: TP 1.1";
+        qCDebug(KoncrepeDebug) << "sessionAttributeChanged: TP 1.1";
         updateSessionIcon();
     }
 
@@ -2112,7 +2112,7 @@ void SessionController::showDisplayContextMenu(const QPoint &position)
 
         // We don't actually use this shortcut, but we need to display it for consistency :/
         QAction *copy = actionCollection()->action(QStringLiteral("edit_copy_contextmenu"));
-        copy->setShortcut(static_cast<Qt::Modifiers>(Konsole::ACCEL) | Qt::Key_C);
+        copy->setShortcut(static_cast<Qt::Modifiers>(Koncrepe::ACCEL) | Qt::Key_C);
 
         // Adds a "Open Folder With" action
         const QUrl currentUrl = url().isLocalFile() ? url() : QUrl::fromLocalFile(QDir::homePath());
@@ -2191,13 +2191,13 @@ void SessionController::showDisplayContextMenu(const QPoint &position)
         }
 
         // This should be at the end, to prevent crashes if the session
-        // is closed from the menu in e.g. konsole kpart
+        // is closed from the menu in e.g. koncrepe kpart
         _preventClose = false;
         if ((chosen != nullptr) && chosen->objectName() == QLatin1String("close-session")) {
             chosen->trigger();
         }
     } else {
-        qCDebug(KonsoleDebug) << "Unable to display popup menu for session" << session()->title(Session::NameRole)
+        qCDebug(KoncrepeDebug) << "Unable to display popup menu for session" << session()->title(Session::NameRole)
                               << ", no GUI factory available to build the popup.";
     }
 }
@@ -2268,10 +2268,10 @@ void SessionController::zmodemUpload()
     }
 }
 
-bool SessionController::isKonsolePart() const
+bool SessionController::isKoncrepePart() const
 {
-    // Check to see if we are being called from Konsole or a KPart
-    return !(qApp->applicationName() == QLatin1String("konsole"));
+    // Check to see if we are being called from Koncrepe or a KPart
+    return !(qApp->applicationName() == QLatin1String("koncrepe"));
 }
 
 QString SessionController::userTitle() const

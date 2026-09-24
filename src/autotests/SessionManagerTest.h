@@ -7,7 +7,7 @@
 #ifndef SESSIONMANAGERTEST_H
 #define SESSIONMANAGERTEST_H
 
-namespace Konsole
+namespace Koncrepe
 {
 class SessionManagerTest : public QObject
 {

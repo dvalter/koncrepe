@@ -7,7 +7,7 @@
 // Own
 #include "ViewProperties.h"
 
-using Konsole::ViewProperties;
+using Koncrepe::ViewProperties;
 
 QHash<int, ViewProperties *> ViewProperties::_viewProperties;
 

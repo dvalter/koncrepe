@@ -10,7 +10,7 @@
 // Qt
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 const QColor CharacterColorTest::DefaultColorTable[TABLE_COLORS] = {
     QColor(0x00, 0x00, 0x00), // Dfore

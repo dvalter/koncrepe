@@ -10,12 +10,12 @@
 // Qt
 #include <QExplicitlySharedDataPointer>
 
-// Konsole characters
+// Koncrepe characters
 #include <Character.h>
 
 class QTextStream;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Base class for terminal character decoders

@@ -9,7 +9,7 @@
 
 #include "ui_GeneralSettings.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class GeneralSettings : public QWidget, private Ui::GeneralSettings
 {

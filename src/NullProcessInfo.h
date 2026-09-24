@@ -9,7 +9,7 @@
 
 #include "ProcessInfo.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Implementation of ProcessInfo which does nothing.

@@ -10,7 +10,7 @@
 // Qt
 #include <QSizeGrip>
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A custom QSizeGrip widget used by IncrementalSearchBar which allows using a QSizeGrip

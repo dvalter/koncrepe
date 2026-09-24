@@ -7,13 +7,13 @@
 #ifndef HTMLDECODER_H
 #define HTMLDECODER_H
 
-// Konsole decoders
+// Koncrepe decoders
 #include "TerminalCharacterDecoder.h"
 
 #include <QFont>
 class QString;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A terminal character decoder which produces pretty HTML markup

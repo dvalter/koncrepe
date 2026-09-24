@@ -8,7 +8,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-// Konsole
+// Koncrepe
 #include "CharacterColor.h"
 #include "CharacterWidth.h"
 #include "ExtendedCharTable.h"
@@ -28,7 +28,7 @@ const int LINE_INPUT_START          = (1 << 5);
 const int LINE_OUTPUT_START         = (1 << 6);
 /* clang-format on */
 
-namespace Konsole
+namespace Koncrepe
 {
 #pragma pack(1)
 class LineProperty
@@ -442,6 +442,6 @@ constexpr bool Character::equalsFormat(const Character &other) const
     return backgroundColor == other.backgroundColor && foregroundColor == other.foregroundColor && rendition.all == other.rendition.all;
 }
 }
-Q_DECLARE_TYPEINFO(Konsole::Character, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(Koncrepe::Character, Q_MOVABLE_TYPE);
 
 #endif // CHARACTER_H

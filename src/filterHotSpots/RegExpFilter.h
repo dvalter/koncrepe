@@ -10,11 +10,11 @@
 
 #include "Filter.h"
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 #include <QRegularExpression>
 #include <QSharedPointer>
 
-namespace Konsole
+namespace Koncrepe
 {
 class HotSpot;
 /**
@@ -24,7 +24,7 @@ class HotSpot;
  * Subclasses can reimplement newHotSpot() to return custom hotspot types when matches for the regular expression
  * are found.
  */
-class KONSOLEPRIVATE_EXPORT RegExpFilter : public Filter
+class KONCREPEPRIVATE_EXPORT RegExpFilter : public Filter
 {
 public:
     /** Constructs a new regular expression filter */

@@ -14,12 +14,12 @@
 #include <QString>
 
 #include "HotSpot.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class QLeaveEvent;
 class QPainter;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Filter;
 class HotSpot;
@@ -42,7 +42,7 @@ class TerminalDisplay;
  * The hotSpots() method return all of the hotspots in the text and on
  * a given line respectively.
  */
-class KONSOLEPRIVATE_EXPORT FilterChain
+class KONCREPEPRIVATE_EXPORT FilterChain
 {
 public:
     explicit FilterChain(TerminalDisplay *terminalDisplay);

@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
     SPDX-FileCopyrightText: 2020-2020 Gustavo Carneiro <gcarneiroa@hotmail.com>
@@ -10,7 +10,7 @@
 #ifndef RANDOMIZATIONRANGE_H
 #define RANDOMIZATIONRANGE_H
 
-namespace Konsole
+namespace Koncrepe
 {
 // specifies how much a particular color can be randomized by
 class RandomizationRange

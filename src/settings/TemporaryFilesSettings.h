@@ -9,7 +9,7 @@
 
 #include "ui_TemporaryFilesSettings.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TemporaryFilesSettings : public QWidget, private Ui::TemporaryFilesSettings
 {

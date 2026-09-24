@@ -11,7 +11,7 @@ If you know how to use them please update this README.
 Text files
 ==========
 
-Just run `cat filename` in Konsole to verify that they are working. If
+Just run `cat filename` in Koncrepe to verify that they are working. If
 rendering related, open in a competent graphical text editor to compare and/or
 in other terminal emulators.
 
@@ -46,7 +46,7 @@ Running these might trigger hanging or crashing.
  - [Long lines](bugs/bulktest.sh): Prints an infinitely long line.
  - [Combining characters](bugs/combining.py): Prints infinitely long combining character.
  - [Reflow crash](bugs/resize-test.sh): Fills a single line exactly to width.
- - [Spam stderr](bugs/spam-stderr.c): Prints to stderr as fast as possible. Testcase for commit ac59cc7e, bug 230184, "konsole hangs for a long time when lots of stderr output is performed".
+ - [Spam stderr](bugs/spam-stderr.c): Prints to stderr as fast as possible. Testcase for commit ac59cc7e, bug 230184, "koncrepe hangs for a long time when lots of stderr output is performed".
  - [Problematic unicode characters](bugs/unicode.py): Testcase for bug 210329, "some unicode characters are displayed as whitespace".
 
 

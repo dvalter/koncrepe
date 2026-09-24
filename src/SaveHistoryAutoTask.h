@@ -12,16 +12,16 @@
 #include <QTimer>
 
 #include "../decoders/PlainTextDecoder.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 #include "session/SessionTask.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A task which prompts for a URL for each session and saves that session's output
  * to the given URL
  */
-class KONSOLEPRIVATE_EXPORT SaveHistoryAutoTask : public SessionTask
+class KONCREPEPRIVATE_EXPORT SaveHistoryAutoTask : public SessionTask
 {
     Q_OBJECT
 

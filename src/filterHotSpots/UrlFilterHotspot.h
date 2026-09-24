@@ -13,13 +13,13 @@
 #include <QList>
 class QAction;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * Hotspot type created by UrlFilter instances.  The activate() method opens a web browser
  * at the given URL when called.
  */
-class KONSOLEPRIVATE_EXPORT UrlFilterHotSpot : public RegExpFilterHotSpot
+class KONCREPEPRIVATE_EXPORT UrlFilterHotSpot : public RegExpFilterHotSpot
 {
 public:
     UrlFilterHotSpot(int startLine, int startColumn, int endLine, int endColumn, const QStringList &capturedTexts);

@@ -8,9 +8,9 @@
 #include "ContainerInfo.h"
 #include "DistroboxDetector.h"
 #include "ToolboxDetector.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
-#include "../config-konsole.h"
+#include "../config-koncrepe.h"
 
 #if HAVE_KAPSULE
 #include "KapsuleDetector.h"
@@ -21,7 +21,7 @@
 #include <optional>
 #include <qglobalstatic.h>
 
-namespace Konsole
+namespace Koncrepe
 {
 Q_GLOBAL_STATIC(ContainerRegistry, registry)
 
@@ -32,7 +32,7 @@ ContainerRegistry *ContainerRegistry::instance()
 
 ContainerRegistry::ContainerRegistry()
 {
-    qDebug(KonsoleDebug) << "ContainerRegistry created";
+    qDebug(KoncrepeDebug) << "ContainerRegistry created";
     // Check for Flatpak environment - disable container support if detected
     // Note: this can do a blocking operation that checks for a `/.flatpak-info`
     //       file, which is less than ideal to do in a constructor.
@@ -40,7 +40,7 @@ ContainerRegistry::ContainerRegistry()
     //       cached long before container detection is needed.
     if (KSandbox::isFlatpak()) {
         _enabled = false;
-        _disabledReason = i18n("Container support is not available when Konsole is running inside Flatpak.");
+        _disabledReason = i18n("Container support is not available when Koncrepe is running inside Flatpak.");
         return;
     }
 
@@ -67,7 +67,7 @@ ContainerRegistry::ContainerRegistry(std::vector<std::unique_ptr<IContainerDetec
 void ContainerRegistry::registerDetector(std::unique_ptr<IContainerDetector> detector)
 {
     if (detector) {
-        qDebug(KonsoleDebug) << "Registering container detector:" << detector->typeId();
+        qDebug(KoncrepeDebug) << "Registering container detector:" << detector->typeId();
         connect(detector.get(), &IContainerDetector::listContainersFinished, this, &ContainerRegistry::onDetectorFinished);
         connect(detector.get(), &IContainerDetector::containersChanged, this, &ContainerRegistry::refreshContainers);
         _detectors.push_back(std::move(detector));
@@ -150,7 +150,7 @@ std::optional<ContainerInfo> ContainerRegistry::containerInfoFromOsc777(const QS
     const QString &command = params[1];
 
     if (command == QLatin1String("pop")) {
-        qCDebug(KonsoleDebug) << "OSC 777 container pop";
+        qCDebug(KoncrepeDebug) << "OSC 777 container pop";
         return ContainerInfo{};
     }
 
@@ -162,7 +162,7 @@ std::optional<ContainerInfo> ContainerRegistry::containerInfoFromOsc777(const QS
     const QString &containerName = params[2];
     const QString &containerType = params[3];
 
-    qCDebug(KonsoleDebug) << "OSC 777 container push:" << containerName << "type:" << containerType;
+    qCDebug(KoncrepeDebug) << "OSC 777 container push:" << containerName << "type:" << containerType;
 
     // Find a detector with matching typeId to build a proper ContainerInfo
     for (const auto &detector : _detectors) {
@@ -214,6 +214,6 @@ ContainerInfo ContainerRegistry::containerInfoFromKey(const QString &key) const
     return ContainerInfo{};
 }
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #include "moc_ContainerRegistry.cpp"

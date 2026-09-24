@@ -10,7 +10,7 @@
 // Qt
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void SessionManagerTest::testWarnNotImplemented()
 {

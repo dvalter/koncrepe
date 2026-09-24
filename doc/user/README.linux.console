@@ -1,4 +1,4 @@
-Konsole and the Linux console
+Koncrepe and the Linux console
 
 
 From a technical point of view, the Linux console differs
@@ -7,7 +7,7 @@ to fully emulate it. This is because the Linux console lives
 in kernel space and interfaces by kernel means, which cannot
 be simulated by any user space application.
 
-Contrary to this fact, konsole can be configured to appear
+Contrary to this fact, koncrepe can be configured to appear
 and function console like to a degree that makes it virtually
 indistinguishable from the original. To do so, switch off the
 menubar, scrollbar and frame, select the Linux colors and font
@@ -44,7 +44,7 @@ Clearly, 1) and 2) make the Linux console so distinct that
 an explicit Linux console simulation cannot exist.
 
 
-* Running Konsole in true Linux console mode:
+* Running Koncrepe in true Linux console mode:
 
 To some degree, one can run application with Linux console
 emulation, too.
@@ -79,7 +79,7 @@ Some application will also assume that the default background
 is black, thereby producing random black background ranges.
 
 The linux console can some funny quirks with special graphic
-characters and i will not teach Konsole all of them. In rare
+characters and i will not teach Koncrepe all of them. In rare
 cases, they might display differently. Affected to my knowledge
 are especially non-VT100 extensions taken from the AT&T 4410v1,
 these are arrow symbols, a full block and a checker board. Most

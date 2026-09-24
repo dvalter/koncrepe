@@ -17,7 +17,7 @@ namespace Ui
 class RenameTabWidget;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 class RenameTabWidget : public QWidget
 {

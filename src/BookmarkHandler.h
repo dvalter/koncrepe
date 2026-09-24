@@ -15,15 +15,15 @@
 #include <KBookmarkManager>
 #include <KBookmarkOwner>
 
-// Konsole
+// Koncrepe
 #include "ViewProperties.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class QMenu;
 class QUrl;
 class KActionCollection;
 
-namespace Konsole
+namespace Koncrepe
 {
 
 /**
@@ -37,13 +37,13 @@ namespace Konsole
  *
  * When the user selects a bookmark, the openUrl() signal is emitted.
  */
-class KONSOLEPRIVATE_EXPORT BookmarkHandler : public QObject, public KBookmarkOwner
+class KONCREPEPRIVATE_EXPORT BookmarkHandler : public QObject, public KBookmarkOwner
 {
     Q_OBJECT
 
 public:
     /**
-     * Constructs a new bookmark handler for Konsole bookmarks.
+     * Constructs a new bookmark handler for Koncrepe bookmarks.
      *
      * @param collection The collection which the bookmark menu's actions should be added to
      * @param menu The menu which the bookmark actions should be added to

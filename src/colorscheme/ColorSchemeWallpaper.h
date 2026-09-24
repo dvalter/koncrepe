@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2007-2008 Robert Knight <robertknight@gmail.com>
 
@@ -17,13 +17,13 @@
 #include <QPointF>
 #include <QSharedData>
 
-// Konsole
+// Koncrepe
 #include "../characters/CharacterColor.h"
 
 class QPixmap;
 class QPainter;
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * This class holds the wallpaper pixmap associated with a color scheme.

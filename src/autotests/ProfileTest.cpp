@@ -17,7 +17,7 @@
 
 // KF
 
-// Konsole
+// Koncrepe
 #include "../profile/Profile.h"
 #include "../profile/ProfileGroup.h"
 #include "../profile/ProfileManager.cpp"
@@ -28,7 +28,7 @@
 
 #include <array>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void ProfileTest::initTestCase()
 {

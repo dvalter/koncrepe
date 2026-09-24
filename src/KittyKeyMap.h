@@ -9,7 +9,7 @@
 
 #include <Qt>
 
-namespace Konsole
+namespace Koncrepe
 {
 
 // How the key should be encoded in kitty keyboard protocol
@@ -48,6 +48,6 @@ KittyKeyInfo qtKeyToKittyKey(int qtKey);
 // When no modifiers are active, returns 1.
 int kittyModifierBits(Qt::KeyboardModifiers mods, bool capsLock, bool numLock);
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #endif // KITTYKEYMAP_H

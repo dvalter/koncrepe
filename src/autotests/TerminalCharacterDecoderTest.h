@@ -12,7 +12,7 @@
 
 #include "../characters/Character.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalCharacterDecoderTest : public QObject
 {

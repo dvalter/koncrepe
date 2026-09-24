@@ -14,10 +14,10 @@
 // KF
 #include <KLazyLocalizedString>
 
-// Konsole
+// Koncrepe
 #include "session/Session.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class TabTitleFormatButton : public QPushButton
 {

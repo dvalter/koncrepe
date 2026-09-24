@@ -27,7 +27,7 @@
 #define TY_CSI_PE(A)    TY_CONSTRUCT(10, A, 0)
 /* clang-format on */
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 constexpr int token_construct(int t, int a, int n)
 {

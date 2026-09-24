@@ -19,7 +19,7 @@ namespace Ui
 class SSHTreeWidget;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 class SessionController;
 }
@@ -61,7 +61,7 @@ public:
 
     void setModel(SSHManagerModel *model);
     void triggerDelete();
-    void setCurrentController(Konsole::SessionController *controller);
+    void setCurrentController(Koncrepe::SessionController *controller);
     void handleImportedData(bool isImported);
 
     Q_SIGNAL void quickAccessShortcutChanged(QKeySequence shortcut);

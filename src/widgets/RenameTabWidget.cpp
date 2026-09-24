@@ -7,7 +7,7 @@
 // Own
 #include "widgets/RenameTabWidget.h"
 
-// Konsole
+// Koncrepe
 #include "ui_RenameTabWidget.h"
 
 // KF
@@ -16,7 +16,7 @@
 // Qt
 #include <QColor>
 
-using Konsole::RenameTabWidget;
+using Koncrepe::RenameTabWidget;
 
 RenameTabWidget::RenameTabWidget(QWidget *parent)
     : QWidget(parent)
@@ -39,16 +39,16 @@ RenameTabWidget::RenameTabWidget(QWidget *parent)
     _ui->tabActivityColorCombo->setColors(listColors);
     _ui->tabActivityColorCombo->setItemText(1, i18nc("@label:listbox No color selected", "None"));
 
-    connect(_ui->tabTitleEdit, &QLineEdit::textChanged, this, &Konsole::RenameTabWidget::tabTitleFormatChanged);
-    connect(_ui->remoteTabTitleEdit, &QLineEdit::textChanged, this, &Konsole::RenameTabWidget::remoteTabTitleFormatChanged);
-    connect(_ui->tabColorCombo, &KColorCombo::activated, this, &Konsole::RenameTabWidget::tabColorChanged);
-    connect(_ui->tabActivityColorCombo, &KColorCombo::activated, this, &Konsole::RenameTabWidget::tabActivityColorChanged);
+    connect(_ui->tabTitleEdit, &QLineEdit::textChanged, this, &Koncrepe::RenameTabWidget::tabTitleFormatChanged);
+    connect(_ui->remoteTabTitleEdit, &QLineEdit::textChanged, this, &Koncrepe::RenameTabWidget::remoteTabTitleFormatChanged);
+    connect(_ui->tabColorCombo, &KColorCombo::activated, this, &Koncrepe::RenameTabWidget::tabColorChanged);
+    connect(_ui->tabActivityColorCombo, &KColorCombo::activated, this, &Koncrepe::RenameTabWidget::tabActivityColorChanged);
 
     _ui->tabTitleFormatButton->setContext(Session::LocalTabTitle);
-    connect(_ui->tabTitleFormatButton, &Konsole::TabTitleFormatButton::dynamicElementSelected, this, &Konsole::RenameTabWidget::insertTabTitleText);
+    connect(_ui->tabTitleFormatButton, &Koncrepe::TabTitleFormatButton::dynamicElementSelected, this, &Koncrepe::RenameTabWidget::insertTabTitleText);
 
     _ui->remoteTabTitleFormatButton->setContext(Session::RemoteTabTitle);
-    connect(_ui->remoteTabTitleFormatButton, &Konsole::TabTitleFormatButton::dynamicElementSelected, this, &Konsole::RenameTabWidget::insertRemoteTabTitleText);
+    connect(_ui->remoteTabTitleFormatButton, &Koncrepe::TabTitleFormatButton::dynamicElementSelected, this, &Koncrepe::RenameTabWidget::insertRemoteTabTitleText);
 }
 
 RenameTabWidget::~RenameTabWidget()

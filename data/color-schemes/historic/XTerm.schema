@@ -1,7 +1,7 @@
-# xterm color schema for konsole
+# xterm color schema for koncrepe
 
 # xterm colors can be configured (almost) like
-# konsole colors can. This is the uncustomized
+# koncrepe colors can. This is the uncustomized
 # xterm schema. 
 # Please refere to your local xterm setup files
 # if this schema differs.

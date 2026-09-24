@@ -16,7 +16,7 @@
 #include <QStandardPaths>
 #include <QTextStream>
 
-namespace Konsole
+namespace Koncrepe
 {
 static bool hasToolboxMarkers(const QHash<QByteArray, QByteArray> &env)
 {
@@ -173,6 +173,6 @@ void ToolboxDetector::startListContainers()
     KSandbox::startHostProcess(*process, QProcess::ReadOnly);
 }
 
-} // namespace Konsole
+} // namespace Koncrepe
 
 #include "moc_ToolboxDetector.cpp"

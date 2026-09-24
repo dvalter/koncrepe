@@ -11,7 +11,7 @@
 // Qt
 #include <QWidget>
 
-// Konsole
+// Koncrepe
 #include "Enumeration.h"
 
 class QAbstractButton;
@@ -21,7 +21,7 @@ namespace Ui
 class HistorySizeWidget;
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 /**
  * A widget for controlling history related options

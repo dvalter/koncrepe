@@ -19,8 +19,8 @@
 // KF
 #include <KXmlGuiWindow>
 
-// Konsole
-#include "konsoleapp_export.h"
+// Koncrepe
+#include "koncrepeapp_export.h"
 
 #include <optional>
 #include <vector>
@@ -29,7 +29,7 @@ class KActionMenu;
 class KHamburgerMenu;
 class KToggleAction;
 
-namespace Konsole
+namespace Koncrepe
 {
 class ViewManager;
 class ViewProperties;
@@ -40,7 +40,7 @@ class SessionController;
 class Profile;
 class ProfileList;
 class ContainerList;
-class IKonsolePlugin;
+class IKoncrepePlugin;
 class BookmarkHandler;
 struct ContainerInfo;
 
@@ -54,7 +54,7 @@ struct ContainerInfo;
  *
  * Do not construct new main windows directly, use Application's newMainWindow() method.
  */
-class KONSOLEAPP_EXPORT MainWindow : public KXmlGuiWindow
+class KONCREPEAPP_EXPORT MainWindow : public KXmlGuiWindow
 {
     Q_OBJECT
 
@@ -113,7 +113,7 @@ public:
     /**
      * A reference to a plugin on the system.
      */
-    void addPlugin(IKonsolePlugin *plugin);
+    void addPlugin(IKoncrepePlugin *plugin);
 
     /**
      * creates a new tab for the main window
@@ -194,7 +194,7 @@ private Q_SLOTS:
     // Sets up the container submenu in the "New Tab" dropdown
     void setContainerList(ContainerList *list);
 
-    void applyKonsoleSettings();
+    void applyKoncrepeSettings();
     void applyThemeProfile();
 
     // Ask the window manager to show this application window
@@ -242,7 +242,7 @@ private:
     ProfileList *_profileList = nullptr;
 
     QPointer<SessionController> _pluggedController;
-    std::vector<IKonsolePlugin *> _plugins;
+    std::vector<IKoncrepePlugin *> _plugins;
     QList<QAction *> _pluginsActions;
     std::optional<int> _progress;
     bool _blurEnabled = false;

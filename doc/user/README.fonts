@@ -1,12 +1,12 @@
 [README.fonts]
 
-Fonts need to suit the needs of X11, QT and konsole.
+Fonts need to suit the needs of X11, QT and koncrepe.
 
 
 * the font has to be fixed width.
 
   This requirement originate both from X11 and
-  the way QT and konsole uses it together with
+  the way QT and koncrepe uses it together with
   the very idea of what a terminal emulation is
   about.
 
@@ -31,7 +31,7 @@ Fonts need to suit the needs of X11, QT and konsole.
   performs very poor when one draws characters
   individually while additionally clearing
   background regions instead of drawing a complete
-  string (as konsole does). If one draws a string
+  string (as koncrepe does). If one draws a string
   with a variable width font, it is of course 
   typeset by X11 variable width, not longer
   conforming to the character cell model of a
@@ -94,7 +94,7 @@ Fonts need to suit the needs of X11, QT and konsole.
   - 0x09 U+240d : DIGRAPH NL
   - 0x0a U+240b : DIGRAPH VT
 
-  The mapping of non-iso10646 fonts is extended by konsole
+  The mapping of non-iso10646 fonts is extended by koncrepe
   with the regular xterm fixed font placement of these
   glyphs to 0x00-0x1f.
 

@@ -5,15 +5,15 @@
 #ifndef QUICKCOMMANDSPLUGIN_H
 #define QUICKCOMMANDSPLUGIN_H
 
-#include <pluginsystem/IKonsolePlugin.h>
+#include <pluginsystem/IKoncrepePlugin.h>
 
-namespace Konsole
+namespace Koncrepe
 {
 class SessionController;
 class MainWindow;
 }
 
-class QuickCommandsPlugin : public Konsole::IKonsolePlugin
+class QuickCommandsPlugin : public Koncrepe::IKoncrepePlugin
 {
     Q_OBJECT
 
@@ -21,9 +21,9 @@ public:
     QuickCommandsPlugin(QObject *object, const QVariantList &args);
     ~QuickCommandsPlugin() override;
 
-    void createWidgetsForMainWindow(Konsole::MainWindow *mainWindow) override;
-    void activeViewChanged(Konsole::SessionController *controller, Konsole::MainWindow *mainWindow) override;
-    QList<QAction *> menuBarActions(Konsole::MainWindow *mainWindow) const override;
+    void createWidgetsForMainWindow(Koncrepe::MainWindow *mainWindow) override;
+    void activeViewChanged(Koncrepe::SessionController *controller, Koncrepe::MainWindow *mainWindow) override;
+    QList<QAction *> menuBarActions(Koncrepe::MainWindow *mainWindow) const override;
 
 private:
     struct Private;

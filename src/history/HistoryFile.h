@@ -10,9 +10,9 @@
 // Qt
 #include <QTemporaryFile>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 /*
    An extendable tmpfile(1) based buffer.

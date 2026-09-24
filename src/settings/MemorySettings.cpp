@@ -11,7 +11,7 @@
 #include <QCheckBox>
 #include <QLabel>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 MemorySettings::MemorySettings(QWidget *parent)
     : QWidget(parent)

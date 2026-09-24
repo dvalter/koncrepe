@@ -9,13 +9,13 @@
 
 #include <QDialog>
 
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 
 class KTextEdit;
 class QDialogButtonBox;
-namespace Konsole
+namespace Koncrepe
 {
-class KONSOLEPRIVATE_EXPORT ZModemDialog : public QDialog
+class KONCREPEPRIVATE_EXPORT ZModemDialog : public QDialog
 {
     Q_OBJECT
 

@@ -15,13 +15,13 @@
 
 #include <memory>
 
-// Konsole
+// Koncrepe
 #include "../characters/Character.h"
 #include "Enumeration.h"
 #include "ScreenWindow.h"
 #include "ScrollState.h"
 #include "colorscheme/ColorScheme.h"
-#include "konsoleprivate_export.h"
+#include "koncrepeprivate_export.h"
 #include "widgets/TerminalHeaderBar.h"
 
 #include "TerminalBell.h"
@@ -45,14 +45,14 @@ class QMimeData;
 
 struct UBiDi;
 
-namespace Konsole
+namespace Koncrepe
 {
 class TerminalPainter;
 class TerminalScrollBar;
 class TerminalColor;
 class TerminalFont;
 
-class KonsolePrintManager;
+class KoncrepePrintManager;
 
 class FilterChain;
 class TerminalImageFilterChain;
@@ -80,7 +80,7 @@ inline QRect highdpi_adjust_rect(const QRect &rect)
  *
  * TODO More documentation
  */
-class KONSOLEPRIVATE_EXPORT TerminalDisplay : public QWidget
+class KONCREPEPRIVATE_EXPORT TerminalDisplay : public QWidget
 {
     Q_OBJECT
 
@@ -489,7 +489,7 @@ public Q_SLOTS:
      * Sets whether the program currently running in the terminal is interested
      * in Mouse Tracking events.
      *
-     * When set to true, Konsole will send Mouse Tracking events.
+     * When set to true, Koncrepe will send Mouse Tracking events.
      *
      * The user interaction needed to create text selections will change
      * also, and the user will be required to hold down the Shift key to
@@ -872,7 +872,7 @@ private: // data members
     std::unique_ptr<TerminalFont> _terminalFont;
     QLabel *_hoverLinkIndicator = nullptr;
 
-    std::unique_ptr<KonsolePrintManager> _printManager;
+    std::unique_ptr<KoncrepePrintManager> _printManager;
 
     bool _semanticUpDown = false;
     bool _semanticInputClick = false;

@@ -9,7 +9,7 @@
 
 #include "ui_ThumbnailsSettings.h"
 
-namespace Konsole
+namespace Koncrepe
 {
 class ThumbnailsSettings : public QWidget, private Ui::ThumbnailsSettings
 {

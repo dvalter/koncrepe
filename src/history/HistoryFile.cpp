@@ -7,10 +7,10 @@
 // Own
 #include "HistoryFile.h"
 
-// Konsole
-#include "KonsoleSettings.h"
+// Koncrepe
+#include "KoncrepeSettings.h"
 #include "characters/Character.h"
-#include "konsoledebug.h"
+#include "koncrepedebug.h"
 
 // System
 #include <cerrno>
@@ -26,7 +26,7 @@
 #include <KConfigGroup>
 #include <KSharedConfig>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 Q_GLOBAL_STATIC(QString, historyFileLocation)
 
@@ -43,12 +43,12 @@ HistoryFile::HistoryFile()
     if (!historyFileLocation.exists()) {
         QString fileLocation;
         KSharedConfigPtr appConfig = KSharedConfig::openConfig();
-        if (qApp->applicationName() != QLatin1String("konsole")) {
+        if (qApp->applicationName() != QLatin1String("koncrepe")) {
             // Check if "kpart"rc has "FileLocation" group; AFAIK
             // only possible if user manually added it. If not
-            // found, use konsole's config.
+            // found, use koncrepe's config.
             if (!appConfig->hasGroup(QStringLiteral("FileLocation"))) {
-                appConfig = KSharedConfig::openConfig(QStringLiteral("konsolerc"));
+                appConfig = KSharedConfig::openConfig(QStringLiteral("koncreperc"));
             }
         }
 
@@ -56,7 +56,7 @@ HistoryFile::HistoryFile()
         if (configGroup.readEntry("scrollbackUseCacheLocation", false)) {
             fileLocation = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
         } else if (configGroup.readEntry("scrollbackUseSpecifiedLocation", false)) {
-            const QUrl specifiedUrl = KonsoleSettings::scrollbackUseSpecifiedLocationDirectory();
+            const QUrl specifiedUrl = KoncrepeSettings::scrollbackUseSpecifiedLocationDirectory();
             fileLocation = specifiedUrl.path();
         } else {
             fileLocation = QDir::tempPath();
@@ -64,7 +64,7 @@ HistoryFile::HistoryFile()
         // Validate file location
         const QFileInfo fi(fileLocation);
         if (fileLocation.isEmpty() || !fi.exists() || !fi.isDir() || !fi.isWritable()) {
-            qCWarning(KonsoleDebug) << "Invalid scrollback folder " << fileLocation << "; using "
+            qCWarning(KoncrepeDebug) << "Invalid scrollback folder " << fileLocation << "; using "
                                     << QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
             // Per Qt docs, this path is never empty; not sure if that
             // means it always exists.
@@ -72,18 +72,18 @@ HistoryFile::HistoryFile()
             const QFileInfo fi2(fileLocation);
             if (!fi2.exists()) {
                 if (!QDir().mkpath(fileLocation)) {
-                    qCWarning(KonsoleDebug) << "Unable to create scrollback folder " << fileLocation;
+                    qCWarning(KoncrepeDebug) << "Unable to create scrollback folder " << fileLocation;
                 }
             }
         }
         *historyFileLocation() = fileLocation;
     }
     const QString tmpDir = *historyFileLocation();
-    const QString tmpFormat = tmpDir + QLatin1Char('/') + QLatin1String("konsole-XXXXXX.history");
+    const QString tmpFormat = tmpDir + QLatin1Char('/') + QLatin1String("koncrepe-XXXXXX.history");
     _tmpFile.setFileTemplate(tmpFormat);
     if (_tmpFile.open()) {
 #if defined(Q_OS_LINUX)
-        qCDebug(KonsoleDebug, "HistoryFile: /proc/%lld/fd/%d", qApp->applicationPid(), _tmpFile.handle());
+        qCDebug(KoncrepeDebug, "HistoryFile: /proc/%lld/fd/%d", qApp->applicationPid(), _tmpFile.handle());
 #endif
         // On some systems QTemporaryFile creates unnamed file.
         // Do not interfere in such cases.
@@ -124,7 +124,7 @@ void HistoryFile::map()
     // if mmap'ing fails, fall back to the read-lseek combination
     if (_fileMap == nullptr) {
         _readWriteBalance = 0;
-        qCDebug(KonsoleDebug) << "mmap'ing history failed.  errno = " << errno;
+        qCDebug(KoncrepeDebug) << "mmap'ing history failed.  errno = " << errno;
     }
 }
 

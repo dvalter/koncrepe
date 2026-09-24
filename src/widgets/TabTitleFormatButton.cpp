@@ -14,7 +14,7 @@
 // KF
 #include <KLocalizedString>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 const TabTitleFormatButton::Element TabTitleFormatButton::_localElements[] = {
 
@@ -47,7 +47,7 @@ TabTitleFormatButton::TabTitleFormatButton(QWidget *parent)
 {
     setText(i18n("Insert"));
     setMenu(new QMenu());
-    connect(menu(), &QMenu::triggered, this, &Konsole::TabTitleFormatButton::fireElementSelected);
+    connect(menu(), &QMenu::triggered, this, &Koncrepe::TabTitleFormatButton::fireElementSelected);
 }
 
 TabTitleFormatButton::~TabTitleFormatButton()

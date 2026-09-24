@@ -6,11 +6,11 @@
 
 // Own
 #include "GeneralSettings.h"
-#include "config-konsole.h"
+#include "config-koncrepe.h"
 
 #include <KMessageBox>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 GeneralSettings::GeneralSettings(QWidget *aParent)
     : QWidget(aParent)
@@ -20,7 +20,7 @@ GeneralSettings::GeneralSettings(QWidget *aParent)
     kcfg_ShowProgressInTaskBar->hide();
 #endif
 
-    connect(enableAllMessagesButton, &QPushButton::clicked, this, &Konsole::GeneralSettings::slotEnableAllMessages);
+    connect(enableAllMessagesButton, &QPushButton::clicked, this, &Koncrepe::GeneralSettings::slotEnableAllMessages);
 }
 
 GeneralSettings::~GeneralSettings() = default;

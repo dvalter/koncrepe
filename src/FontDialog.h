@@ -14,7 +14,7 @@
 #include <QDialogButtonBox>
 #include <QToolButton>
 
-namespace Konsole
+namespace Koncrepe
 {
 class FontDialog : public QDialog
 {

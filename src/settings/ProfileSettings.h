@@ -12,7 +12,7 @@
 
 // KF
 
-// Konsole
+// Koncrepe
 // TODO: Move this file to the profile folder?
 #include "ui_ProfileSettings.h"
 
@@ -20,7 +20,7 @@ class QItemSelection;
 class QStandardItem;
 class QStandardItemModel;
 
-namespace Konsole
+namespace Koncrepe
 {
 class Profile;
 

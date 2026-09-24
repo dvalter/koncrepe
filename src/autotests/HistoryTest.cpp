@@ -9,11 +9,11 @@
 
 #include <QTest>
 
-// Konsole
+// Koncrepe
 #include "../Emulation.h"
 #include "../session/Session.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void HistoryTest::initTestCase()
 {

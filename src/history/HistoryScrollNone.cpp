@@ -9,7 +9,7 @@
 
 #include "HistoryTypeNone.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 // History Scroll None //////////////////////////////////////
 
@@ -74,7 +74,7 @@ void HistoryScrollNone::removeCells()
 {
 }
 
-int Konsole::HistoryScrollNone::reflowLines(const int, std::map<int, int> *)
+int Koncrepe::HistoryScrollNone::reflowLines(const int, std::map<int, int> *)
 {
     return 0;
 }

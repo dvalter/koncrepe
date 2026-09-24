@@ -9,14 +9,14 @@
 
 #include <QTest>
 
-// Konsole
+// Koncrepe
 #include "../terminalDisplay/TerminalColor.h"
 #include "../terminalDisplay/TerminalDisplay.h"
 #include "../terminalDisplay/TerminalScrollBar.h"
 
 #include "../characters/CharacterColor.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void TerminalTest::testScrollBarPositions()
 {

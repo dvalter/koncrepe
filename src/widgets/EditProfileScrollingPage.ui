@@ -223,7 +223,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="Konsole::HistorySizeWidget" name="historySizeWidget" native="true">
+      <widget class="Koncrepe::HistorySizeWidget" name="historySizeWidget" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -325,7 +325,7 @@
    <header>kcolorbutton.h</header>
   </customwidget>
   <customwidget>
-   <class>Konsole::HistorySizeWidget</class>
+   <class>Koncrepe::HistorySizeWidget</class>
    <extends>QWidget</extends>
    <header>widgets/HistorySizeWidget.h</header>
   </customwidget>

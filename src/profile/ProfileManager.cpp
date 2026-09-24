@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -24,16 +24,16 @@
 #include <KLocalizedString>
 #include <KMessageBox>
 
-// Konsole
-#include "KonsoleSettings.h"
+// Koncrepe
+#include "KoncrepeSettings.h"
 #include "ProfileGroup.h"
 #include "ProfileModel.h"
 #include "ProfileReader.h"
 #include "ProfileWriter.h"
 
-Q_LOGGING_CATEGORY(KonsoleProfileDebug, "org.kde.konsole.profile", QtDebugMsg)
+Q_LOGGING_CATEGORY(KoncrepeProfileDebug, "org.kde.koncrepe.profile", QtDebugMsg)
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 static bool stringLessThan(const QString &p1, const QString &p2)
 {
@@ -60,16 +60,16 @@ ProfileManager::ProfileManager()
     _defaultProfile = _builtinProfile;
 
     // lookup the default profile specified in <App>rc
-    // For stand-alone Konsole, m_config is just "konsolerc"
-    // For konsolepart, m_config might be "yakuakerc", "dolphinrc", "katerc"...
+    // For stand-alone Koncrepe, m_config is just "koncreperc"
+    // For koncrepepart, m_config might be "yakuakerc", "dolphinrc", "katerc"...
     KConfigGroup group = m_config->group(QStringLiteral("Desktop Entry"));
     QString defaultProfileFileName = group.readEntry("DefaultProfile", "");
 
-    // if the hosting application of konsolepart does not specify its own
-    // default profile, use the default profile of stand-alone Konsole.
+    // if the hosting application of koncrepepart does not specify its own
+    // default profile, use the default profile of stand-alone Koncrepe.
     if (defaultProfileFileName.isEmpty()) {
-        KSharedConfigPtr konsoleConfig = KSharedConfig::openConfig(QStringLiteral("konsolerc"));
-        group = konsoleConfig->group(QStringLiteral("Desktop Entry"));
+        KSharedConfigPtr koncrepeConfig = KSharedConfig::openConfig(QStringLiteral("koncreperc"));
+        group = koncrepeConfig->group(QStringLiteral("Desktop Entry"));
         defaultProfileFileName = group.readEntry("DefaultProfile", "");
     }
 
@@ -144,7 +144,7 @@ Profile::Ptr ProfileManager::loadProfile(const QString &shortPath)
         path.append(QLatin1String(".profile"));
     }
     if (fileInfo.path().isEmpty() || fileInfo.path() == QLatin1String(".")) {
-        path.prepend(QLatin1String("konsole") + QDir::separator());
+        path.prepend(QLatin1String("koncrepe") + QDir::separator());
     }
 
     // if the file is not an absolute path, look it up
@@ -171,7 +171,7 @@ Profile::Ptr ProfileManager::loadProfile(const QString &shortPath)
     PopStackOnExit<QString> popGuardOnExit(recursionGuard);
 
     if (recursionGuard.contains(path)) {
-        qCDebug(KonsoleProfileDebug) << "Ignoring attempt to load profile recursively from" << path;
+        qCDebug(KoncrepeProfileDebug) << "Ignoring attempt to load profile recursively from" << path;
         return _builtinProfile;
     }
     recursionGuard.push(path);
@@ -189,17 +189,17 @@ Profile::Ptr ProfileManager::loadProfile(const QString &shortPath)
         Profile::Ptr parentProfile = loadProfile(parentProfilePath);
         // To avoid crashes make sure to NOT set an invalid parent
         if (parentProfile == nullptr) {
-            qCDebug(KonsoleProfileDebug) << "Profile " << newProfile->name() << " has an invalid parent " << parentProfilePath;
+            qCDebug(KoncrepeProfileDebug) << "Profile " << newProfile->name() << " has an invalid parent " << parentProfilePath;
         } else {
             newProfile->setParent(parentProfile);
         }
     }
 
     if (!result) {
-        qCDebug(KonsoleProfileDebug) << "Could not load profile from " << path;
+        qCDebug(KoncrepeProfileDebug) << "Could not load profile from " << path;
         return Profile::Ptr();
     } else if (newProfile->name().isEmpty()) {
-        qCWarning(KonsoleProfileDebug) << path << " does not have a valid name, ignoring.";
+        qCWarning(KoncrepeProfileDebug) << path << " does not have a valid name, ignoring.";
         return Profile::Ptr();
     } else {
         addProfile(newProfile);
@@ -262,8 +262,8 @@ void ProfileManager::setLightThemeProfile(const Profile::Ptr &profile)
     const auto oldLight = _lightProfile;
     _lightProfile = profile;
 
-    KonsoleSettings::setLightThemeProfile(profile->isBuiltin() ? QStringLiteral("_builtin_") : profile->name());
-    KonsoleSettings::self()->save();
+    KoncrepeSettings::setLightThemeProfile(profile->isBuiltin() ? QStringLiteral("_builtin_") : profile->name());
+    KoncrepeSettings::self()->save();
 
     if (oldLight && oldLight != profile) {
         Q_EMIT profileChanged(oldLight);
@@ -278,8 +278,8 @@ void ProfileManager::setDarkThemeProfile(const Profile::Ptr &profile)
     const auto oldDark = _darkProfile;
     _darkProfile = profile;
 
-    KonsoleSettings::setDarkThemeProfile(profile->isBuiltin() ? QStringLiteral("_builtin_") : profile->name());
-    KonsoleSettings::self()->save();
+    KoncrepeSettings::setDarkThemeProfile(profile->isBuiltin() ? QStringLiteral("_builtin_") : profile->name());
+    KoncrepeSettings::self()->save();
 
     if (oldDark && oldDark != profile) {
         Q_EMIT profileChanged(oldDark);
@@ -302,8 +302,8 @@ void ProfileManager::loadLightDarkProfiles()
         return it != _profiles.cend() ? *it : _builtinProfile;
     };
 
-    _lightProfile = findByName(KonsoleSettings::lightThemeProfile());
-    _darkProfile = findByName(KonsoleSettings::darkThemeProfile());
+    _lightProfile = findByName(KoncrepeSettings::lightThemeProfile());
+    _darkProfile = findByName(KoncrepeSettings::darkThemeProfile());
 }
 
 void ProfileManager::saveSettings()
@@ -329,7 +329,7 @@ QList<Profile::Ptr> ProfileManager::loadedProfiles() const
 
 Profile::Ptr ProfileManager::defaultProfile() const
 {
-    if (KonsoleSettings::syncProfileWithSystemTheme()) {
+    if (KoncrepeSettings::syncProfileWithSystemTheme()) {
         const Qt::ColorScheme scheme = QGuiApplication::styleHints()->colorScheme();
         return (scheme == Qt::ColorScheme::Dark) ? darkProfile() : lightProfile();
     }
@@ -360,7 +360,7 @@ QString ProfileManager::saveProfile(const Profile::Ptr &profile)
     QString newPath = writer.getPath(profile);
 
     if (!writer.writeProfile(newPath, profile)) {
-        KMessageBox::error(nullptr, i18n("Konsole does not have permission to save this profile to %1", newPath));
+        KMessageBox::error(nullptr, i18n("Koncrepe does not have permission to save this profile to %1", newPath));
     }
 
     return newPath;
@@ -452,7 +452,7 @@ bool ProfileManager::deleteProfile(Profile::Ptr profile)
         // try to delete the config file
         if (profile->isPropertySet(Profile::Path) && QFile::exists(profile->path())) {
             if (!QFile::remove(profile->path())) {
-                qCDebug(KonsoleProfileDebug) << "Could not delete profile: " << profile->path() << "The file is most likely in a directory which is read-only.";
+                qCDebug(KoncrepeProfileDebug) << "Could not delete profile: " << profile->path() << "The file is most likely in a directory which is read-only.";
 
                 return false;
             }

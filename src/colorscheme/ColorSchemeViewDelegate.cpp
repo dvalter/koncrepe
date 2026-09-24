@@ -8,8 +8,8 @@
 // Own
 #include "ColorSchemeViewDelegate.h"
 
-// Konsole
-#include "../config-konsole.h"
+// Koncrepe
+#include "../config-koncrepe.h"
 #include "ColorScheme.h"
 
 // KF
@@ -19,7 +19,7 @@
 #include <QApplication>
 #include <QPainter>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ColorSchemeViewDelegate::ColorSchemeViewDelegate(std::function<bool()> compositingActiveHelper, QObject *parent)
     : QAbstractItemDelegate(parent)

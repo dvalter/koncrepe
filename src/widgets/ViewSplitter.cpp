@@ -6,7 +6,7 @@
 
 // Own
 #include "widgets/ViewSplitter.h"
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 
 // Qt
 #include <QApplication>
@@ -18,14 +18,14 @@
 // C++
 #include <memory>
 
-// Konsole
+// Koncrepe
 #include "terminalDisplay/TerminalDisplay.h"
 #include "terminalDisplay/TerminalFonts.h"
 #include "terminalDisplay/TerminalScrollBar.h"
 #include "widgets/ViewContainer.h"
 
-using Konsole::TerminalDisplay;
-using Konsole::ViewSplitter;
+using Koncrepe::TerminalDisplay;
+using Koncrepe::ViewSplitter;
 
 bool ViewSplitter::m_drawTopLevelHandler;
 Qt::Orientation ViewSplitter::m_topLevelHandlerDrawnOrientation;
@@ -35,7 +35,7 @@ int ViewSplitter::lastSplitterId = -1;
 
 namespace
 {
-constexpr auto kTerminalContainerProperty = "_konsole_terminal_container";
+constexpr auto kTerminalContainerProperty = "_koncrepe_terminal_container";
 
 TerminalDisplay *terminalDisplayFromWidget(QWidget *widget)
 {
@@ -70,11 +70,11 @@ QWidget *ensureContainerWidget(TerminalDisplay *display)
 int calculateHandleWidth(int settingsEnum)
 {
     switch (settingsEnum) {
-    case Konsole::KonsoleSettings::SplitDragHandleLarge:
+    case Koncrepe::KoncrepeSettings::SplitDragHandleLarge:
         return 10;
-    case Konsole::KonsoleSettings::SplitDragHandleMedium:
+    case Koncrepe::KoncrepeSettings::SplitDragHandleMedium:
         return 5;
-    case Konsole::KonsoleSettings::SplitDragHandleSmall:
+    case Koncrepe::KoncrepeSettings::SplitDragHandleSmall:
         return 1;
     default:
         return 1;
@@ -87,9 +87,9 @@ ViewSplitter::ViewSplitter(QWidget *parent)
     , _id(++lastSplitterId)
 {
     setAcceptDrops(true);
-    setHandleWidth(calculateHandleWidth(KonsoleSettings::self()->splitDragHandleSize()));
-    connect(KonsoleSettings::self(), &KonsoleSettings::configChanged, this, [this] {
-        setHandleWidth(calculateHandleWidth(KonsoleSettings::self()->splitDragHandleSize()));
+    setHandleWidth(calculateHandleWidth(KoncrepeSettings::self()->splitDragHandleSize()));
+    connect(KoncrepeSettings::self(), &KoncrepeSettings::configChanged, this, [this] {
+        setHandleWidth(calculateHandleWidth(KoncrepeSettings::self()->splitDragHandleSize()));
     });
 }
 
@@ -576,12 +576,12 @@ namespace
 TerminalDisplay *currentDragTarget = nullptr;
 }
 
-void Konsole::ViewSplitter::dragEnterEvent(QDragEnterEvent *ev)
+void Koncrepe::ViewSplitter::dragEnterEvent(QDragEnterEvent *ev)
 {
-    const auto dragId = QStringLiteral("konsole/terminal_display");
+    const auto dragId = QStringLiteral("koncrepe/terminal_display");
     if (ev->mimeData()->hasFormat(dragId)) {
         auto other_pid = ev->mimeData()->data(dragId).toInt();
-        // don't accept the drop if it's another instance of konsole
+        // don't accept the drop if it's another instance of koncrepe
         if (qApp->applicationPid() != other_pid) {
             return;
         }
@@ -592,7 +592,7 @@ void Konsole::ViewSplitter::dragEnterEvent(QDragEnterEvent *ev)
     }
 }
 
-void Konsole::ViewSplitter::dragMoveEvent(QDragMoveEvent *ev)
+void Koncrepe::ViewSplitter::dragMoveEvent(QDragMoveEvent *ev)
 {
     auto currentWidget = childAt(ev->position().toPoint());
     if (auto terminal = terminalDisplayFromWidget(currentWidget)) {
@@ -608,7 +608,7 @@ void Konsole::ViewSplitter::dragMoveEvent(QDragMoveEvent *ev)
     }
 }
 
-void Konsole::ViewSplitter::dragLeaveEvent(QDragLeaveEvent *event)
+void Koncrepe::ViewSplitter::dragLeaveEvent(QDragLeaveEvent *event)
 {
     Q_UNUSED(event)
     if (currentDragTarget != nullptr) {
@@ -617,9 +617,9 @@ void Konsole::ViewSplitter::dragLeaveEvent(QDragLeaveEvent *event)
     }
 }
 
-void Konsole::ViewSplitter::dropEvent(QDropEvent *ev)
+void Koncrepe::ViewSplitter::dropEvent(QDropEvent *ev)
 {
-    if (ev->mimeData()->hasFormat(QStringLiteral("konsole/terminal_display"))) {
+    if (ev->mimeData()->hasFormat(QStringLiteral("koncrepe/terminal_display"))) {
         if (getToplevelSplitter()->terminalMaximized()) {
             return;
         }
@@ -655,13 +655,13 @@ void Konsole::ViewSplitter::dropEvent(QDropEvent *ev)
     }
 }
 
-void Konsole::ViewSplitter::showEvent(QShowEvent *)
+void Koncrepe::ViewSplitter::showEvent(QShowEvent *)
 {
     // Fixes lost focus in background mode.
     setFocusProxy(activeSplitter()->activeTerminalDisplay());
 }
 
-QPoint Konsole::ViewSplitter::mapToTopLevel(const QPoint &p)
+QPoint Koncrepe::ViewSplitter::mapToTopLevel(const QPoint &p)
 {
     auto parentSplitter = qobject_cast<ViewSplitter *>(parent());
     if (parentSplitter) {
@@ -671,7 +671,7 @@ QPoint Konsole::ViewSplitter::mapToTopLevel(const QPoint &p)
     return p;
 }
 
-QPoint Konsole::ViewSplitter::mapFromTopLevel(const QPoint &p)
+QPoint Koncrepe::ViewSplitter::mapFromTopLevel(const QPoint &p)
 {
     auto parentSplitter = qobject_cast<ViewSplitter *>(parent());
     if (parentSplitter) {
@@ -680,7 +680,7 @@ QPoint Konsole::ViewSplitter::mapFromTopLevel(const QPoint &p)
     return p;
 }
 
-Konsole::ViewSplitterHandle::ViewSplitterHandle(Qt::Orientation orientation, QSplitter *parent)
+Koncrepe::ViewSplitterHandle::ViewSplitterHandle(Qt::Orientation orientation, QSplitter *parent)
     : QSplitterHandle(orientation, parent)
     , mouseReleaseEventCounter(0)
 {
@@ -718,7 +718,7 @@ int search_closest(const QList<int> &sorted_array, int x)
 }
 }
 
-void Konsole::ViewSplitterHandle::mousePressEvent(QMouseEvent *ev)
+void Koncrepe::ViewSplitterHandle::mousePressEvent(QMouseEvent *ev)
 {
     auto parentSplitter = qobject_cast<ViewSplitter *>(parentWidget());
     auto topLevelSplitter = parentSplitter->getToplevelSplitter();
@@ -761,7 +761,7 @@ void Konsole::ViewSplitterHandle::mousePressEvent(QMouseEvent *ev)
     QSplitterHandle::mousePressEvent(ev);
 }
 
-void Konsole::ViewSplitterHandle::mouseReleaseEvent(QMouseEvent *ev)
+void Koncrepe::ViewSplitterHandle::mouseReleaseEvent(QMouseEvent *ev)
 {
     allSplitterSizes.clear();
     if (++mouseReleaseEventCounter > 1) {
@@ -770,7 +770,7 @@ void Konsole::ViewSplitterHandle::mouseReleaseEvent(QMouseEvent *ev)
     QSplitterHandle::mouseReleaseEvent(ev);
 }
 
-void Konsole::ViewSplitterHandle::mouseMoveEvent(QMouseEvent *ev)
+void Koncrepe::ViewSplitterHandle::mouseMoveEvent(QMouseEvent *ev)
 {
     ViewSplitter *parentSplitter = qobject_cast<ViewSplitter *>(parentWidget());
 
@@ -791,7 +791,7 @@ void Konsole::ViewSplitterHandle::mouseMoveEvent(QMouseEvent *ev)
     QSplitterHandle::mouseMoveEvent(ev);
 }
 
-void Konsole::ViewSplitterHandle::mouseDoubleClickEvent(QMouseEvent *ev)
+void Koncrepe::ViewSplitterHandle::mouseDoubleClickEvent(QMouseEvent *ev)
 {
     auto parentSplitter = qobject_cast<ViewSplitter *>(parentWidget());
 

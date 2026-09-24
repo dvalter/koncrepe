@@ -9,7 +9,7 @@
 #include <QSignalSpy>
 #include <QTest>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 namespace
 {
@@ -94,7 +94,7 @@ struct RegistryFixture {
 };
 }
 
-namespace Konsole
+namespace Koncrepe
 {
 class ContainerRegistryTest : public QObject
 {
@@ -271,6 +271,6 @@ void ContainerRegistryTest::detectorChangeStartsRefresh()
 
 }
 
-QTEST_GUILESS_MAIN(Konsole::ContainerRegistryTest)
+QTEST_GUILESS_MAIN(Koncrepe::ContainerRegistryTest)
 
 #include "ContainerRegistryTest.moc"

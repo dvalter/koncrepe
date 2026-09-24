@@ -9,7 +9,7 @@
 
 #include "HotSpot.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 Filter::Filter()
     : _linePositions(nullptr)

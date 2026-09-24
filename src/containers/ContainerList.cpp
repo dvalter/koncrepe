@@ -16,12 +16,12 @@
 // KF
 #include <KLocalizedString>
 
-// Konsole
+// Koncrepe
 #include "ContainerInfo.h"
 #include "ContainerRegistry.h"
 #include "IContainerDetector.h"
 
-using Konsole::ContainerList;
+using Koncrepe::ContainerList;
 
 ContainerList::ContainerList(QObject *parent)
     : QObject(parent)

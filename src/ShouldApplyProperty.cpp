@@ -1,5 +1,5 @@
 /*
-    This source file is part of Konsole, a terminal emulator.
+    This source file is part of Koncrepe, a terminal emulator.
 
     SPDX-FileCopyrightText: 2006-2008 Robert Knight <robertknight@gmail.com>
 
@@ -8,7 +8,7 @@
 
 #include "ShouldApplyProperty.h"
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 ShouldApplyProperty::ShouldApplyProperty(const Profile::Ptr &profile, bool modifiedOnly)
     : _profile(profile)

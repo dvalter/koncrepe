@@ -8,7 +8,7 @@
 // Own
 #include "TerminalCharacterDecoderTest.h"
 
-// Konsole
+// Koncrepe
 #include "../colorscheme/ColorScheme.h"
 #include "../decoders/HTMLDecoder.h"
 #include "../decoders/PlainTextDecoder.h"
@@ -17,7 +17,7 @@
 #include <QTest>
 #include <QTextStream>
 
-using namespace Konsole;
+using namespace Koncrepe;
 
 void TerminalCharacterDecoderTest::convertToCharacter(Character *charResult, const QString &text, QVector<RenditionFlags> renditions)
 {

@@ -6,7 +6,7 @@
 
 #include "TerminalHeaderBar.h"
 
-#include "KonsoleSettings.h"
+#include "KoncrepeSettings.h"
 #include "ViewProperties.h"
 #include "session/SessionController.h"
 #include "terminalDisplay/TerminalDisplay.h"
@@ -26,7 +26,7 @@
 #include <QTabBar>
 #include <QToolButton>
 
-namespace Konsole
+namespace Koncrepe
 {
 TerminalHeaderBar::TerminalHeaderBar(QWidget *parent)
     : QWidget(parent)
@@ -123,21 +123,21 @@ void TerminalHeaderBar::mouseDoubleClickEvent(QMouseEvent *ev)
 void TerminalHeaderBar::finishHeaderSetup(ViewProperties *properties)
 {
     auto controller = dynamic_cast<SessionController *>(properties);
-    connect(properties, &Konsole::ViewProperties::titleChanged, this, [this, properties] {
+    connect(properties, &Koncrepe::ViewProperties::titleChanged, this, [this, properties] {
         m_terminalTitle->setText(properties->title());
     });
     m_terminalTitle->setText(properties->title());
 
-    connect(properties, &Konsole::ViewProperties::iconChanged, this, [this, properties] {
+    connect(properties, &Koncrepe::ViewProperties::iconChanged, this, [this, properties] {
         m_terminalIcon->setPixmap(properties->icon().pixmap(QSize(22, 22)));
     });
     m_terminalIcon->setPixmap(properties->icon().pixmap(QSize(22, 22)));
 
-    connect(properties, &Konsole::ViewProperties::notificationChanged, this, &Konsole::TerminalHeaderBar::updateNotification);
+    connect(properties, &Koncrepe::ViewProperties::notificationChanged, this, &Koncrepe::TerminalHeaderBar::updateNotification);
 
-    connect(properties, &Konsole::ViewProperties::readOnlyChanged, this, &Konsole::TerminalHeaderBar::updateSpecialState);
+    connect(properties, &Koncrepe::ViewProperties::readOnlyChanged, this, &Koncrepe::TerminalHeaderBar::updateSpecialState);
 
-    connect(properties, &Konsole::ViewProperties::copyInputChanged, this, &Konsole::TerminalHeaderBar::updateSpecialState);
+    connect(properties, &Koncrepe::ViewProperties::copyInputChanged, this, &Koncrepe::TerminalHeaderBar::updateSpecialState);
 
     connect(m_closeBtn, &QToolButton::clicked, controller, &SessionController::closeSession);
 }
@@ -235,7 +235,7 @@ void TerminalHeaderBar::mouseMoveEvent(QMouseEvent *ev)
         auto mimeData = new QMimeData();
         QByteArray payload;
         payload.setNum(qApp->applicationPid());
-        mimeData->setData(QStringLiteral("konsole/terminal_display"), payload);
+        mimeData->setData(QStringLiteral("koncrepe/terminal_display"), payload);
         drag->setMimeData(mimeData);
         drag->exec();
     }
@@ -269,7 +269,7 @@ QSplitter *TerminalHeaderBar::getTopLevelSplitter()
 
 void TerminalHeaderBar::applyVisibilitySettings()
 {
-    auto *settings = KonsoleSettings::self();
+    auto *settings = KoncrepeSettings::self();
     auto toVisibility = settings->splitViewVisibility();
     auto *topLevelSplitter = getTopLevelSplitter();
     if (topLevelSplitter == nullptr) {
@@ -277,15 +277,15 @@ void TerminalHeaderBar::applyVisibilitySettings()
     }
     const bool singleTerminalView = (topLevelSplitter->findChildren<TerminalDisplay *>().count() == 1);
     switch (toVisibility) {
-    case KonsoleSettings::AlwaysShowSplitHeader:
+    case KoncrepeSettings::AlwaysShowSplitHeader:
         m_toggleExpandedMode->setDisabled(singleTerminalView);
         setVisible(true);
         break;
-    case KonsoleSettings::ShowSplitHeaderWhenNeeded: {
+    case KoncrepeSettings::ShowSplitHeaderWhenNeeded: {
         const bool visible = !(singleTerminalView);
         setVisible(visible);
     } break;
-    case KonsoleSettings::AlwaysHideSplitHeader:
+    case KoncrepeSettings::AlwaysHideSplitHeader:
         setVisible(false);
     default:
         break;
