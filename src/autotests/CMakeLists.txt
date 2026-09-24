@@ -56,6 +56,11 @@ ecm_add_test(
 )
 
 ecm_add_test(
+    ShittyEmulationTest.cpp
+    LINK_LIBRARIES koncrepeprivate Qt::Test ${KONCREPE_TEST_LIBS}
+)
+
+ecm_add_test(
     Vt102EmulationTest.cpp
     LINK_LIBRARIES koncrepeprivate Qt::Multimedia Qt::Test ${KONCREPE_TEST_LIBS}
 )

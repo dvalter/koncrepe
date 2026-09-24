@@ -252,7 +252,7 @@ public Q_SLOTS:
      * @param text A string of characters received from the terminal program.
      * @param length The length of @p text
      */
-    void receiveData(const char *text, int length);
+    virtual void receiveData(const char *text, int length);
 
     /**
      * Sends information about the focus event to the terminal.
@@ -508,6 +508,16 @@ protected:
     QStringEncoder _encoder;
 
     const KeyboardTranslator *_keyTranslator = nullptr; // the keyboard layout
+
+protected:
+    /**
+     * Called right before attached views are told that the output changed,
+     * so that a back-end which keeps its state elsewhere can bring the
+     * screens up to date first.
+     */
+    virtual void aboutToShowOutput()
+    {
+    }
 
 protected Q_SLOTS:
     /**

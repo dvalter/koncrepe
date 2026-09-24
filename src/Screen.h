@@ -420,6 +420,34 @@ public:
     void resizeImage(int new_lines, int new_columns);
 
     /**
+     * @name Terminal engine bridge
+     *
+     * When the escape sequences are interpreted by an external terminal
+     * engine, the screen is only a model of what that engine shows. These
+     * calls write the model directly, bypassing every VT semantic above.
+     */
+    ///@{
+    /** Replaces screen line @p line with @p cells. */
+    void setEngineLine(int line, QVector<Character> &&cells, LineProperty property);
+    /**
+     * Appends @p cells as the newest history line, with the same selection,
+     * dropped-line and view bookkeeping a scroll would have done.
+     */
+    void appendEngineHistoryLine(QVector<Character> &&cells, LineProperty property);
+    /** Places the cursor at the 0-based @p column and @p line. */
+    void setEngineCursor(int column, int line);
+    /** Interns a grapheme cluster, returning the character to store with RE_EXTENDED_CHAR. */
+    char32_t engineExtendedChar(const char32_t *codepoints, ushort length);
+    /**
+     * Interns an underline color, returning the value to store in a character's
+     * EF_UNDERLINE_COLOR bits (0 means the foreground color).
+     */
+    int engineUnderlineColor(const CharacterColor &color);
+    /** The word-classification extra flags (EF_ASCII_WORD, ...) of character @p c. */
+    static ExtraFlags wordFlags(char32_t c);
+    ///@}
+
+    /**
      * Returns the current screen image.
      * The result is an array of Characters of size [getLines()][getColumns()] which
      * must be freed by the caller after use.
@@ -754,6 +782,8 @@ private:
     QPointer<QWidget> _currentTerminalDisplay;
 
     void addHistLine();
+    // interns @p color into the underline color table and makes it current
+    void internULColor(const CharacterColor &color);
     // add lines from _screen to _history and remove from _screen the added lines (used to resize lines and columns)
     void fastAddHistLine();
 

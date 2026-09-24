@@ -117,6 +117,8 @@ target_sources(koncrepeprivate PRIVATE
     ScrollState.cpp
     SearchHistoryTask.cpp
     ShellCommand.cpp
+    ShittyEmulation.cpp
+    ShittyStreamScanner.cpp
     ShouldApplyProperty.cpp
     UnixProcessInfo.cpp
     ViewManager.cpp
@@ -270,6 +272,7 @@ target_link_libraries(koncrepeprivate
         Qt::Xml
         ICU::uc
         ICU::i18n
+        Shitty::Vt
 )
 
 if (HAVE_LIBSSH)

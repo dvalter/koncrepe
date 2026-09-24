@@ -63,7 +63,7 @@
 #include "SessionGroup.h"
 #include "SessionManager.h"
 #include "ShellCommand.h"
-#include "Vt102Emulation.h"
+#include "ShittyEmulation.h"
 #include "ZModemDialog.h"
 #include "containers/ContainerRegistry.h"
 #include "decoders/PlainTextDecoder.h"
@@ -124,7 +124,7 @@ Session::Session(QObject *parent)
 #endif
 
     // create emulation backend
-    _emulation = new Vt102Emulation();
+    _emulation = new ShittyEmulation();
     _emulation->reset();
 
     connect(_emulation, &Koncrepe::Emulation::sessionAttributeChanged, this, &Koncrepe::Session::setSessionAttribute);
@@ -1655,10 +1655,9 @@ void Session::setFlowControlEnabled(bool enabled)
 
 void Session::setKittyKeyboardEnabled(bool enabled)
 {
-    auto *vt102 = qobject_cast<Vt102Emulation *>(_emulation);
-    if (vt102) {
-        vt102->setKittyKeyboardEnabled(enabled);
-    }
+    // The shitty engine always offers the kitty keyboard protocol: an
+    // application only gets it by asking for it, like any other mode.
+    Q_UNUSED(enabled)
 }
 
 bool Session::flowControlEnabled() const

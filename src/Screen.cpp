@@ -1314,19 +1314,7 @@ notcombine:
     if (Character::emojiPresentation(c)) {
         currentChar.flags |= EF_EMOJI_REPRESENTATION;
     }
-    if (c <= '~' && c > ' ') {
-        currentChar.flags |= EF_ASCII_WORD;
-        if (c == '!' || c == '#' || c == '$' || c == '%' || c == '(' || c == ')' || c == '*' || c == '+' || c == '-' || c == '.' || c == '/' || c == ':'
-            || c == '<' || c == '=' || c == '>' || c == '?' || c == '[' || c == ']' || c == '^' || c == '_' || c == '{' || c == '|' || c == '}' || c == '~') {
-            currentChar.flags |= EF_CODING_WORD;
-        }
-    }
-    if (c >= 0x900
-        && (c <= 0x109f || (c >= 0x1700 && c <= 0x18af) || (c >= 0x1900 && c <= 0x1aaf) || (c >= 0x1b00 && c <= 0x1c4f) || (c >= 0xa800 && c <= 0xa82f)
-            || (c >= 0xa840 && c <= 0xa95f) || (c >= 0xa980 && c <= 0xaaff) || (c >= 0xabc0 && c <= 0xabff) || (c >= 0x10a00 && c <= 0x10a5f)
-            || (c >= 0x11000 && c <= 0x11fff))) {
-        currentChar.flags |= EF_BRAHMIC_WORD;
-    }
+    currentChar.flags |= wordFlags(c);
 
     _lastDrawnChar = c;
 
@@ -1770,9 +1758,80 @@ void Screen::setBackColor(int space, int color)
     }
 }
 
+ExtraFlags Screen::wordFlags(char32_t c)
+{
+    ExtraFlags flags = 0;
+    if (c <= '~' && c > ' ') {
+        flags |= EF_ASCII_WORD;
+        if (c == '!' || c == '#' || c == '$' || c == '%' || c == '(' || c == ')' || c == '*' || c == '+' || c == '-' || c == '.' || c == '/' || c == ':'
+            || c == '<' || c == '=' || c == '>' || c == '?' || c == '[' || c == ']' || c == '^' || c == '_' || c == '{' || c == '|' || c == '}' || c == '~') {
+            flags |= EF_CODING_WORD;
+        }
+    }
+    if (c >= 0x900
+        && (c <= 0x109f || (c >= 0x1700 && c <= 0x18af) || (c >= 0x1900 && c <= 0x1aaf) || (c >= 0x1b00 && c <= 0x1c4f) || (c >= 0xa800 && c <= 0xa82f)
+            || (c >= 0xa840 && c <= 0xa95f) || (c >= 0xa980 && c <= 0xaaff) || (c >= 0xabc0 && c <= 0xabff) || (c >= 0x10a00 && c <= 0x10a5f)
+            || (c >= 0x11000 && c <= 0x11fff))) {
+        flags |= EF_BRAHMIC_WORD;
+    }
+    return flags;
+}
+
+void Screen::setEngineLine(int line, QVector<Character> &&cells, LineProperty property)
+{
+    if (line < 0 || line >= _lines) {
+        return;
+    }
+    _screenLines[line] = std::move(cells);
+    _lineProperties[line] = property;
+}
+
+void Screen::appendEngineHistoryLine(QVector<Character> &&cells, LineProperty property)
+{
+    // addHistLine() moves screen line 0 into the history and adjusts the
+    // selection as if the whole screen had scrolled up by one, which is
+    // exactly what the engine did. Stage the line in slot 0 for it.
+    std::swap(_screenLines[0], cells);
+    std::swap(_lineProperties[0], property);
+    addHistLine();
+    std::swap(_screenLines[0], cells);
+    std::swap(_lineProperties[0], property);
+
+    _scrolledLines--;
+    _lastScrolledRegion = QRect(0, 0, _columns - 1, _lines - 1);
+    _selCuY = qMax(_selCuY - 1, -_history->getLines());
+}
+
+void Screen::setEngineCursor(int column, int line)
+{
+    _cuX = qBound(0, column, qMax(0, _columns - 1));
+    _cuY = qBound(0, line, qMax(0, _lines - 1));
+}
+
+char32_t Screen::engineExtendedChar(const char32_t *codepoints, ushort length)
+{
+    auto extChars = [this]() {
+        return usedExtendedChars();
+    };
+    return ExtendedCharTable::instance.createExtendedChar(codepoints, length, extChars);
+}
+
+int Screen::engineUnderlineColor(const CharacterColor &color)
+{
+    const int current = _currentULColor;
+    internULColor(color);
+    const int interned = _currentULColor;
+    _currentULColor = current;
+    return interned;
+}
+
 void Screen::setULColor(int space, int color)
 {
-    CharacterColor col(quint8(space), color);
+    internULColor(CharacterColor(quint8(space), color));
+}
+
+void Screen::internULColor(const CharacterColor &col)
+{
     if (col.isValid()) {
         int end = _ulColorQueueEnd;
         if (end < _ulColorQueueStart) {
@@ -2488,7 +2547,9 @@ void Screen::setScroll(const HistoryType &t, bool copyPreviousScroll)
         // As 't' can be '_history' pointer, move it to a temporary smart pointer
         // making _history = nullptr
         auto oldHistory = std::move(_history);
-        currentTerminalDisplay()->removeLines(oldHistory->getLines());
+        if (currentTerminalDisplay()) {
+            currentTerminalDisplay()->removeLines(oldHistory->getLines());
+        }
         t.scroll(_history);
     }
     _graphicsPlacements.clear();

@@ -303,6 +303,8 @@ int Emulation::lineCount() const
 
 void Emulation::showBulk()
 {
+    aboutToShowOutput();
+
     _synchronizedUpdate = false;
 
     _bulkTimer1.stop();
