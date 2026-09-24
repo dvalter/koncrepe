@@ -1,6 +1,8 @@
-# Koncrepe - KDE's Terminal Emulator
+# Koncrepe - KDE's Terminal Emulator, on the shitty engine
 
-Koncrepe is a terminal program for KDE.
+Koncrepe is a terminal program for KDE: a fork of Konsole whose terminal
+emulation is done by [shitty](https://github.com/pg83/shitty) instead of
+Konsole's own VT102 emulation.
 
 As well as being a standalone program, it is also used by other KDE programs
 such as the Kate editor and KDevelop development environment to provide easy
@@ -8,6 +10,64 @@ access to a terminal window. Koncrepe's features and usage are explained and
 illustrated in the Koncrepe handbook, which can be accessed by browsing to
 `help:/koncrepe` in Konqueror.
 
+
+## The terminal engine
+
+Everything a terminal emulator decides is shitty's: parsing the byte stream,
+the screen and cursor state, modes, the replies to queries, and the encoding
+of keyboard, mouse and focus input according to what the application
+negotiated (cursor and keypad modes, modifyOtherKeys, the kitty keyboard
+protocol, every mouse protocol).
+
+Koncrepe keeps what belongs to the application around it: rendering, fonts,
+selection, search, scrollback storage, tabs and splits, and its profiles.
+`src/ShittyEmulation.cpp` connects the two through shitty's C embedding API
+(`libshitty_vt`), built from the `3rdparty/shitty` submodule:
+
+- The screens Koncrepe draws are models of shitty's state, refreshed before
+  every repaint. Cells keep the colors the application asked for (default,
+  palette entry, RGB), so Koncrepe's color schemes draw them.
+- Lines leaving the top of the screen are copied into Koncrepe's history, so
+  every history mode of a profile (none, fixed size, unlimited, file backed)
+  works as before.
+- The profile's color scheme and cursor color are pushed into shitty, which
+  answers color queries (OSC 4/10/11/12) and light/dark reports with them.
+- Key bindings (keytabs) stay in charge: their scrolling commands and any
+  binding that differs from the stock one are Koncrepe's, the rest is left
+  for shitty to encode.
+- The profile's "kitty keyboard protocol" switch decides whether applications
+  can turn the protocol on; "links in escape sequences" (OSC 8), shell
+  integration (OSC 133: semantic hints, prompt navigation, error bars,
+  semantic Up/Down, click to move the cursor), the working directory,
+  notifications, progress and tab titles all keep working.
+
+## HOWTO Build
+
+Fetch the engine along with the sources:
+
+```
+git clone --recurse-submodules <this repository>
+# or, in an existing clone:
+git submodule update --init
+```
+
+Besides Konsole's usual KDE Frameworks and Qt dependencies, building the
+engine needs clang with `-std=c++26` support (clang 19 or newer), Python 3,
+Ragel, pkg-config, and the Vulkan and Wayland client development files
+(shitty's build describes its own renderer even when only its embedding
+library is built). On Debian:
+
+```
+apt install clang python3 ragel pkg-config libvulkan-dev libwayland-dev libxkbcommon-dev
+```
+
+Then build as usual:
+
+```
+cmake -B build -S . -DCMAKE_INSTALL_PREFIX=/where/to/install
+cmake --build build
+cmake --install build
+```
 
 ## Directory Structure
 
@@ -18,18 +78,21 @@ illustrated in the Koncrepe handbook, which can be accessed by browsing to
 | `/src`             | Source code for Koncrepe, including the embedded versions of Koncrepe which are used in Kate, KDevelop and others.                                                                   |
 | `/desktop`         | .desktop files for Koncrepe, used to launch the program from KDE's various menus and other application launchers.                                                                   |
 | `/data`            | Data files for use with Koncrepe as well as the keyboard setup and color schemes provided with Koncrepe.                                                                             |
+| `/3rdparty/shitty` | The shitty terminal engine (git submodule of the upstream repository).                                                                                                             |
+| `/cmake`           | Builds shitty's embedding library as part of the CMake build.                                                                                                                      |
 
-## Contact
+## Upstream
 
-Up-to-date information about the latest releases can be found on Koncrepe's
-website at https://konsole.kde.org. Discussions about Koncrepe's development are
-held on the koncrepe-devel mailing list, which can be accessed at
-https://mail.kde.org/mailman/listinfo/konsole-devel.
+Koncrepe is based on Konsole. Information about Konsole's releases can be
+found on its website at https://konsole.kde.org, and its development is
+discussed on the konsole-devel mailing list at
+https://mail.kde.org/mailman/listinfo/konsole-devel. The terminal engine is
+developed at https://github.com/pg83/shitty.
 
-## Quick Links
+## Konsole Quick Links
 - [KDE Release Schedule](https://community.kde.org/Schedules)
 - [Official Homepage](https://konsole.kde.org)
 - [Builds](https://invent.kde.org/utilities/konsole/-/pipelines)
 - [Forums](https://discuss.kde.org/tag/konsole)
-- [Koncrepe Bug Reports ](https://bugs.kde.org/describecomponents.cgi?product=konsole)
+- [Konsole Bug Reports](https://bugs.kde.org/describecomponents.cgi?product=konsole)
 
