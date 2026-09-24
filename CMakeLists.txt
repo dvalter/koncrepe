@@ -36,6 +36,10 @@ include(KDEClangFormat)
 include(KDEGitCommitHooks)
 include(CheckFunctionExists)
 
+# The shitty terminal engine, from the 3rdparty/shitty submodule
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(ShittyVt)
+
 find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED
     Core
     Multimedia

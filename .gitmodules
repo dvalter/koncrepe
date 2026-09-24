@@ -1,0 +1,3 @@
+[submodule "3rdparty/shitty"]
+	path = 3rdparty/shitty
+	url = https://github.com/pg83/shitty.git
