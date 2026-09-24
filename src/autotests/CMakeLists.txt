@@ -60,10 +60,6 @@ ecm_add_test(
     LINK_LIBRARIES koncrepeprivate Qt::Test ${KONCREPE_TEST_LIBS}
 )
 
-ecm_add_test(
-    Vt102EmulationTest.cpp
-    LINK_LIBRARIES koncrepeprivate Qt::Multimedia Qt::Test ${KONCREPE_TEST_LIBS}
-)
 
 ecm_add_test(
     ContainerDetectorParsingTest.cpp

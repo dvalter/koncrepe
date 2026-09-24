@@ -18,13 +18,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         pkg_check_modules(XKBCOMMON QUIET xkbcommon)
     endif()
     if(XKBCOMMON_FOUND)
-        message(STATUS "Found xkbcommon, enabling win32-input-mode support")
+        message(STATUS "Found xkbcommon, keys report their base layout identity")
         set(KONCREPE_HAVE_XKBCOMMON TRUE)
     else()
-        message(STATUS "xkbcommon not found — building without win32-input-mode support")
+        message(STATUS "xkbcommon not found — keys report only their active layout identity")
     endif()
 else()
-    message(STATUS "Not on Linux — building without win32-input-mode support")
+    message(STATUS "Not on Linux — keys report only their active layout identity")
 endif()
 
 ### Tests
@@ -123,10 +123,7 @@ target_sources(koncrepeprivate PRIVATE
     UnixProcessInfo.cpp
     ViewManager.cpp
     ViewProperties.cpp
-    Vt102Emulation.cpp
-    KittyKeyMap.cpp
     WindowSystemInfo.cpp
-    WinKeys.h
     ZModemDialog.cpp
     filterHotSpots/EscapeSequenceUrlFilter.cpp
     filterHotSpots/EscapeSequenceUrlFilterHotSpot.cpp
@@ -267,7 +264,6 @@ target_link_libraries(koncrepeprivate
         KF6::Notifications
         KF6::TextWidgets
         KF6::WindowSystem
-        Qt::Multimedia
         Qt::PrintSupport
         Qt::Xml
         ICU::uc

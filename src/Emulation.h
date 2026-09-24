@@ -200,7 +200,7 @@ public:
      * The programRequestsMouseTracking() signal is emitted when a program
      * indicates it's interested in Mouse Tracking events.
      *
-     * See MODE_Mouse100{0,1,2,3} in Vt102Emulation.
+     * These are the DECSET 1000-1003 modes.
      */
     bool programUsesMouseTracking() const;
 

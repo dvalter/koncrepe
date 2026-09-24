@@ -779,7 +779,7 @@ private:
 
     // when we handle scroll commands, we need to know which screenwindow will scroll
     // use QPointer to track life time of this object, see crashes in bug 508721
-    // via Koncrepe::Vt102Emulation::resetMode that checks for currentTerminalDisplay()
+    // via the emulation, which checks for currentTerminalDisplay()
     QPointer<QWidget> _currentTerminalDisplay;
 
     void addHistLine();
@@ -930,7 +930,7 @@ private:
     std::unique_ptr<EscapeSequenceUrlExtractor> _escapeSequenceUrlExtractor;
     void toggleUrlInput();
 
-    // Vt102Emulation defined max argument value that can be passed to a Screen function
+    // max argument value that can be passed to a Screen function
     const int MAX_SCREEN_ARGUMENT = 40960;
 
     /* Graphics */

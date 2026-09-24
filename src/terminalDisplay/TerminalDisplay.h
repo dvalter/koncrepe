@@ -398,7 +398,7 @@ public:
     /**
      * Scrolls current ScreenWindow
      *
-     * it's needed for proper handling scroll commands in the Vt102Emulation class
+     * it's needed for proper handling of the key bindings' scroll commands in the emulation
      */
     void scrollScreenWindow(enum ScreenWindow::RelativeScrollMode mode, int amount);
 

@@ -1580,7 +1580,7 @@ KeyboardTranslator::States ShittyEmulation::keyboardStates(Qt::KeyboardModifiers
 void ShittyEmulation::emulateUpDown(int up, const KeyboardTranslator::Entry &entry, QByteArray &textToSend, int toColumn)
 {
     // Moves the shell's cursor up or down through a multi-line input with
-    // Left/Right, as far as the lines' lengths say; see Vt102Emulation.
+    // Left/Right, as far as the lines' lengths say.
     if (up == 0) {
         return;
     }
@@ -1653,7 +1653,7 @@ bool ShittyEmulation::handleSemanticUpDown(QKeyEvent *event)
 void ShittyEmulation::moveCursorInInput(int column, int line)
 {
     // A click in a shell's input line moves its cursor there, by sending the
-    // Left/Right keys it would take; see Vt102Emulation.
+    // Left/Right keys it would take.
     TerminalDisplay *view = _currentScreen->currentTerminalDisplay();
     if (_keyTranslator == nullptr || (view != nullptr && view->getReadOnly())) {
         return;
