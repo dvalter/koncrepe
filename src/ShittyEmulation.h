@@ -178,6 +178,7 @@ private:
     // lines that ever left the primary screen: the absolute line of row 0
     qint64 _scrolledLines = 0;
     uint32_t _parkedOffset = 0;
+    bool _historyStale = false; // re-base the count when back on the primary screen
     uint32_t _knownHistoryRows = 0;
     int _inputDepth = 0;
 

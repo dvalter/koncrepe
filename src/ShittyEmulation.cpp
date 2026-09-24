@@ -972,10 +972,12 @@ void ShittyEmulation::resetHistoryTracking()
 {
     const uint32_t modes = shitty_vt_modes(_vt);
     if (modes & (SHITTY_VT_MODE_ALT_SCREEN | SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT)) {
-        _parkedOffset = 0;
-        _knownHistoryRows = 0;
+        // The primary screen's scrollback cannot be read now: count afresh
+        // once it can (see drainHistory()).
+        _historyStale = true;
         return;
     }
+    _historyStale = false;
     _knownHistoryRows = shitty_vt_history_rows(_vt);
     parkEngineView();
 }
@@ -994,6 +996,10 @@ void ShittyEmulation::drainHistory()
     // The alternate screen keeps no history, and during synchronized output
     // the engine holds its frames back; the rows wait for us either way.
     if (modes & (SHITTY_VT_MODE_ALT_SCREEN | SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT)) {
+        return;
+    }
+    if (_historyStale) {
+        resetHistoryTracking();
         return;
     }
 
@@ -1582,7 +1588,9 @@ void ShittyEmulation::endEngineInput()
     _inputDepth--;
     flushReplies();
     dispatchEngineEvents();
-    if (_inputDepth == 0) {
+    // Input never scrolls: put the view back where the count continues from.
+    const bool primary = !(shitty_vt_modes(_vt) & (SHITTY_VT_MODE_ALT_SCREEN | SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT));
+    if (_inputDepth == 0 && primary && !_historyStale) {
         _knownHistoryRows = shitty_vt_history_rows(_vt);
         parkEngineView();
     }

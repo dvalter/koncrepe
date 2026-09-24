@@ -33,6 +33,7 @@ private Q_SLOTS:
     void testHistoryWithSplitWrites();
     void testEraseScrollback();
     void testAlternateScreen();
+    void testHistoryAcrossAlternateScreen();
     void testReplies();
     void testKeys();
     void testKeysFollowApplicationModes();
@@ -311,6 +312,33 @@ void ShittyEmulationTest::testAlternateScreen()
     QCOMPARE(primary.last().at(0).toBool(), true);
     QCOMPARE(t.screen()->getHistLines(), 0);
     QCOMPARE(t.screenLine(0), QStringLiteral("shell"));
+}
+
+void ShittyEmulationTest::testHistoryAcrossAlternateScreen()
+{
+    // Typing and resizing in a full screen application must not disturb
+    // how the primary screen's scrollback is counted.
+    Terminal t(4, 20);
+    for (int i = 0; i < 10; ++i) {
+        t.feed("line " + QByteArray::number(i) + "\r\n");
+    }
+    const int history = t.screen()->getHistLines();
+    QCOMPARE(history, 7);
+
+    t.feed("\033[?1049h\033[Hvim");
+    t.key(Qt::Key_J, Qt::NoModifier, QStringLiteral("j"));
+    t.emulation.setImageSize(6, 20);
+    t.key(Qt::Key_K, Qt::NoModifier, QStringLiteral("k"));
+    t.emulation.setImageSize(4, 20);
+    t.feed("\033[?1049l");
+    t.key(Qt::Key_L, Qt::NoModifier, QStringLiteral("l"));
+    t.feed("next\r\n");
+
+    const QStringList lines = t.lines();
+    QCOMPARE(lines.count(QStringLiteral("line 0")), 1);
+    QCOMPARE(lines.count(QStringLiteral("line 5")), 1);
+    QVERIFY(lines.contains(QStringLiteral("next")));
+    QVERIFY(t.screen()->getHistLines() <= history + 3);
 }
 
 void ShittyEmulationTest::testReplies()
