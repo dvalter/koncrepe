@@ -1438,7 +1438,8 @@ void ShittyEmulation::clearEntireScreen()
             screen->appendEngineHistoryLine(std::move(line), property);
         }
     }
-    static const char clear[] = "\033[H\033[2J";
+    // CAN first: an application's unfinished sequence must not swallow ours
+    static const char clear[] = "\x18\033[H\033[2J";
     feedEngine(clear, int(sizeof(clear) - 1));
     resetHistoryTracking();
     _screenDirty = true;
@@ -1452,15 +1453,16 @@ void ShittyEmulation::reset(bool softReset, bool preservePrompt)
     const QByteArray currentCodec(encoder().name());
 
     drainHistory();
+    // CAN first: an application's unfinished sequence must not swallow ours
     if (softReset) {
-        static const char decstr[] = "\033[!p";
+        static const char decstr[] = "\x18\033[!p";
         feedEngine(decstr, int(sizeof(decstr) - 1));
         _setupPending = true;
     } else if (preservePrompt) {
         // Keep the line the cursor is on at the top of a cleared screen.
         const shitty_vt_cursor cursor = shitty_vt_cursor_state(_vt);
         const int line = int(cursor.row) - int(shitty_vt_scroll_offset(_vt));
-        QByteArray sequence("\033[!p\033[r");
+        QByteArray sequence("\x18\033[!p\033[r");
         if (line > 0) {
             // delete the lines above the prompt so it moves to the top
             sequence += "\033[H\033[" + QByteArray::number(line) + "M";
@@ -1469,7 +1471,7 @@ void ShittyEmulation::reset(bool softReset, bool preservePrompt)
         feedEngine(sequence.constData(), sequence.size());
         _setupPending = true;
     } else {
-        static const char ris[] = "\033c";
+        static const char ris[] = "\x18\033c";
         feedEngine(ris, int(sizeof(ris) - 1));
         _setupPending = true;
     }

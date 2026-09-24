@@ -569,6 +569,12 @@ void ShittyEmulationTest::testResetPreservingPrompt()
     QCOMPARE(t.screenLine(0), QStringLiteral("$ prompt"));
     QCOMPARE(t.screen()->getCursorY(), 0);
     QCOMPARE(t.screen()->getCursorX(), 8);
+
+    // an application's unfinished sequence does not swallow the reset
+    t.feed("\033[3");
+    t.emulation.reset(false, true);
+    t.feed("X");
+    QCOMPARE(t.screenLine(0), QStringLiteral("$ promptX"));
 }
 
 void ShittyEmulationTest::testScannerBoundaries()
