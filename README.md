@@ -1,3 +1,5 @@
+<img src="desktop/icons/sc-apps-koncrepe.svg" alt="Koncrepe logo" width="96" align="right">
+
 # Koncrepe - KDE's Terminal Emulator, on the shitty engine
 
 Koncrepe is a terminal program for KDE: a fork of Konsole whose terminal

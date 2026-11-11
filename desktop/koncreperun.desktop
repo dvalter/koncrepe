@@ -8,7 +8,7 @@ X-KDE-AuthorizeAction=shell_access
 [Desktop Action runInKoncrepe]
 TryExec=koncrepe
 Exec=koncrepe --hold -e %f
-Icon=utilities-terminal
+Icon=koncrepe
 
 Name=Run In Koncrepe
 Name[ar]=شغل في كونسول
