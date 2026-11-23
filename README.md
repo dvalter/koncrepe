@@ -6,11 +6,11 @@ Koncrepe is a terminal program for KDE: a fork of Konsole whose terminal
 emulation is done by [shitty](https://github.com/pg83/shitty) instead of
 Konsole's own VT102 emulation.
 
-As well as being a standalone program, it is also used by other KDE programs
-such as the Kate editor and KDevelop development environment to provide easy
-access to a terminal window. Koncrepe's features and usage are explained and
-illustrated in the Koncrepe handbook, which can be accessed by browsing to
-`help:/koncrepe` in Konqueror.
+As well as being a standalone program, it provides a terminal KPart
+(`koncrepepart`) that other programs can embed, as the Kwilt drop-down
+terminal does. Koncrepe's features and usage are explained and illustrated in
+the Koncrepe handbook, which can be accessed by browsing to `help:/koncrepe`
+in Konqueror.
 
 
 ## The terminal engine
@@ -83,18 +83,24 @@ cmake --install build
 | `/3rdparty/shitty` | The shitty terminal engine (git submodule of the upstream repository).                                                                                                             |
 | `/cmake`           | Builds shitty's embedding library as part of the CMake build.                                                                                                                      |
 
+## License
+
+Koncrepe's own sources keep Konsole's licenses (mostly GPL-2.0-or-later; see
+`LICENSES/` and the SPDX headers). Koncrepe links the shitty terminal engine:
+
+> Copyright (c) 2026 Shitty team
+>
+> shitty's original contributions are dual-licensed under the GNU General
+> Public License, version 3 or any later version, or the MIT License; the
+> code it imported in 2023 remains under the GPL version 3 or later. See
+> `3rdparty/shitty/LICENSE`, `LICENSE.GPL3` and `LICENSE.MIT`.
+
+Koncrepe binaries, which contain the engine, are therefore distributed under
+the GNU General Public License version 3 only.
+
 ## Upstream
 
-Koncrepe is based on Konsole. Information about Konsole's releases can be
-found on its website at https://konsole.kde.org, and its development is
-discussed on the konsole-devel mailing list at
-https://mail.kde.org/mailman/listinfo/konsole-devel. The terminal engine is
-developed at https://github.com/pg83/shitty.
-
-## Konsole Quick Links
-- [KDE Release Schedule](https://community.kde.org/Schedules)
-- [Official Homepage](https://konsole.kde.org)
-- [Builds](https://invent.kde.org/utilities/konsole/-/pipelines)
-- [Forums](https://discuss.kde.org/tag/konsole)
-- [Konsole Bug Reports](https://bugs.kde.org/describecomponents.cgi?product=konsole)
-
+Koncrepe is based on Konsole (https://konsole.kde.org,
+https://invent.kde.org/utilities/konsole). Please don't report Koncrepe bugs
+to KDE. The terminal engine is developed by Anton Samokhvalov (pg83) at
+https://github.com/pg83/shitty.

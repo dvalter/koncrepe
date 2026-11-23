@@ -173,10 +173,16 @@ int main(int argc, char *argv[])
                      i18nc("@title", "Koncrepe"),
                      QStringLiteral(KONCREPE_VERSION),
                      i18nc("@title", "Terminal emulator"),
-                     KAboutLicense::GPL_V2,
-                     i18nc("@info:credit", "© 1997–%1, The Konsole Developers", QStringLiteral("2026")), // years term not localized, pass as string, not int
+                     KAboutLicense::GPL_V3,
+                     i18nc("@info:credit",
+                           "© 1997–%1, The Konsole Developers\n"
+                           "Terminal engine: © %1, Shitty team",
+                           QStringLiteral("2026")), // years term not localized, pass as string, not int
                      QString(),
                      QStringLiteral("https://konsole.kde.org/"));
+    // The shitty engine linked into Koncrepe is GPL-3.0-or-later, so the
+    // binaries as a whole are distributed under the GPL version 3 only.
+    about.setLicense(KAboutLicense::GPL_V3, KAboutLicense::OnlyThisVersion);
     fillAboutData(about);
 
     KAboutData::setApplicationData(about);
@@ -349,7 +355,12 @@ bool shouldUseNewProcess(int argc, char *argv[])
 void fillAboutData(KAboutData &aboutData)
 {
     aboutData.setOrganizationDomain("kde.org");
-    aboutData.setOtherText(i18nc("@info", "Koncrepe is a fork of KDE's Konsole."));
+    aboutData.setOtherText(i18nc("@info", "Koncrepe is a fork of KDE's Konsole whose terminal emulation is done by the shitty terminal engine."));
+    aboutData.addComponent(i18nc("@info:credit", "shitty"),
+                           i18nc("@info:credit", "Terminal engine. © 2026, Shitty team"),
+                           QString(),
+                           QStringLiteral("https://github.com/pg83/shitty"),
+                           KAboutLicense::GPL_V3);
 
     aboutData.addAuthor(i18nc("@info:credit", "Kurt Hindenburg"),
                         i18nc("@info:credit",
@@ -360,6 +371,10 @@ void fillAboutData(KAboutData &aboutData)
                         i18nc("@info:credit", "Previous maintainer, ported to KDE4"),
                         QStringLiteral("robertknight@gmail.com"));
     aboutData.addAuthor(i18nc("@info:credit", "Lars Doelle"), i18nc("@info:credit", "Original author"), QStringLiteral("lars.doelle@on-line.de"));
+    aboutData.addCredit(i18nc("@info:credit", "Anton Samokhvalov (pg83)"),
+                        i18nc("@info:credit", "Author of the shitty terminal engine"),
+                        QString(),
+                        QStringLiteral("https://github.com/pg83"));
     aboutData.addCredit(i18nc("@info:credit", "Ahmad Samir"),
                         i18nc("@info:credit", "Major refactoring, bug fixes and major improvements"),
                         QStringLiteral("a.samirh78@gmail.com"));
