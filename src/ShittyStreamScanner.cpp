@@ -8,6 +8,8 @@
 
 #include <QList>
 
+#include <cstring>
+
 using namespace Koncrepe;
 
 namespace
@@ -100,6 +102,15 @@ ShittyStreamScanner::Event ShittyStreamScanner::scan(const char *data, int lengt
         _sequenceStart = -1; // continues from an earlier buffer
     }
     for (int i = offset; i < length; ++i) {
+        if (_state == State::Ground) {
+            // Text is most of any output, and only an ESC ends it here:
+            // let memchr's vector loop find the next one.
+            const void *escape = memchr(data + i, ESC, size_t(length - i));
+            if (escape == nullptr) {
+                break;
+            }
+            i = int(static_cast<const char *>(escape) - data);
+        }
         const auto c = static_cast<unsigned char>(data[i]);
         // An ESC starts a sequence, except the one opening a string terminator
         if (c == ESC && _state != State::Osc && _state != State::OscEscape && _state != State::String && _state != State::StringEscape) {
