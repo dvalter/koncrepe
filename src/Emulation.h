@@ -117,7 +117,7 @@ public:
      * The number of lines which are kept and the storage location depend on the
      * type of store.
      */
-    void setHistory(const HistoryType &);
+    virtual void setHistory(const HistoryType &);
     /** Returns the history store used by this emulation.  See setHistory() */
     const HistoryType &history() const;
     /** Clears the history scroll. */

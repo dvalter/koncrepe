@@ -26,6 +26,7 @@
 #include "KoncrepeSettings.h"
 #include "Screen.h"
 #include "ScreenWindow.h"
+#include "history/EngineHistory.h"
 #include "history/HistoryType.h"
 #include "keyboardtranslator/KeyboardTranslator.h"
 #include "keyboardtranslator/KeyboardTranslatorReader.h"
@@ -50,12 +51,14 @@ namespace
 // scrolls off between two drains; everything older lives in Koncrepe's
 // history, whichever kind the profile picked.
 constexpr uint16_t EngineSaveLines = 2048;
+// The longest history the engine keeps itself: its scrollback is counted in
+// 16 bits, and the parked view (see drainHistory()) takes a row of it.
+constexpr int MaxEngineHistoryLines = 0xffff - 1;
 // A byte scrolls at most one line, so feeding no more bytes than the
 // engine's scrollback has room for can never overflow it. Lines are only
 // copied out when that room runs short or the screen is about to be shown:
 // output that scrolls faster than the views repaint is copied in batches,
 // and a batch longer than the history keeps is mostly never copied at all.
-constexpr uint32_t EngineHistoryRoom = EngineSaveLines - 1; // the parked view takes one row
 // Below this much room, copy the waiting lines out rather than feed in
 // small slices.
 constexpr uint32_t MinFeedSlice = 256;
@@ -476,6 +479,9 @@ bool ShittyEmulation::engineIsUtf8() const
 void ShittyEmulation::onTitleChanged(void *user, const uint8_t *title, size_t len)
 {
     auto *self = static_cast<ShittyEmulation *>(user);
+    if (self->_engineReconfiguring) {
+        return; // the engine restoring its configured title, not the application
+    }
     self->_pendingTitle = QByteArray(reinterpret_cast<const char *>(title), int(len));
     self->_titlePending = true;
 }
@@ -668,10 +674,11 @@ void ShittyEmulation::feed(const char *bytes, int length)
 void ShittyEmulation::feedEngine(const char *bytes, int length)
 {
     while (length > 0) {
-        uint32_t room = EngineHistoryRoom - qMin(pendingHistoryRows(), EngineHistoryRoom);
+        const uint32_t capacity = engineHistoryRoom();
+        uint32_t room = capacity - qMin(pendingHistoryRows(), capacity);
         if (room < MinFeedSlice) {
             drainHistory();
-            room = EngineHistoryRoom - qMin(pendingHistoryRows(), EngineHistoryRoom);
+            room = capacity - qMin(pendingHistoryRows(), capacity);
         }
         const int slice = int(qMin(uint32_t(length), qMax(room, MinFeedSlice)));
         shitty_vt_feed(_vt, reinterpret_cast<const uint8_t *>(bytes), size_t(slice));
@@ -987,7 +994,7 @@ void ShittyEmulation::flushReplies()
 // ---------------------------------------------------------------------------
 // History and screen model
 
-void ShittyEmulation::resetHistoryTracking()
+void ShittyEmulation::resetHistoryTracking(bool rebase)
 {
     const uint32_t modes = shitty_vt_modes(_vt);
     if (modes & (SHITTY_VT_MODE_ALT_SCREEN | SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT)) {
@@ -999,6 +1006,108 @@ void ShittyEmulation::resetHistoryTracking()
     _historyStale = false;
     _knownHistoryRows = shitty_vt_history_rows(_vt);
     parkEngineView();
+    if (rebase && _engineHistory) {
+        // Whatever made the count unreliable (a reflow, an erase, a reset)
+        // may have changed the engine's scrollback too: the history starts
+        // over from what the engine holds now.
+        ++_engineHistoryGeneration;
+        const int lines = _screen[0]->getScroll().maximumLineCount();
+        _screen[0]->setScroll(EngineHistoryType(this, lines), false);
+    }
+}
+
+uint32_t ShittyEmulation::engineHistoryRoom() const
+{
+    return uint32_t(_engineSaveLines) - 1; // the parked view takes one row
+}
+
+void ShittyEmulation::setEngineSaveLines(uint16_t lines)
+{
+    if (lines == _engineSaveLines) {
+        return;
+    }
+    drainHistory();
+    _engineSaveLines = lines;
+    // The engine re-reads its whole configuration for this: its palette,
+    // Alt handling and title go back to what it was created with.
+    _engineReconfiguring = true;
+    shitty_vt_set_save_lines(_vt, lines);
+    _engineReconfiguring = false;
+    pushEngineSetup();
+    resetHistoryTracking(false);
+    _screenDirty = true;
+}
+
+void ShittyEmulation::setHistory(const HistoryType &type)
+{
+    drainHistory();
+    const int lines = type.maximumLineCount();
+    const bool fits = _engineHistoryAllowed && type.isEnabled() && lines > 0 && lines <= MaxEngineHistoryLines;
+    // Lines Koncrepe holds itself cannot go back into the engine: a session
+    // switches to an engine-held history while it has none to lose.
+    if (fits && (_engineHistory || _screen[0]->getHistLines() == 0)) {
+        setEngineSaveLines(uint16_t(qMax(lines + 1, int(EngineSaveLines))));
+        _engineHistory = true;
+        Emulation::setHistory(EngineHistoryType(this, lines));
+        return;
+    }
+    // Any other history keeps its own copy of the lines, which it takes
+    // from the engine-held one first when that was in use.
+    Emulation::setHistory(type);
+    if (_engineHistory) {
+        _engineHistory = false;
+        setEngineSaveLines(EngineSaveLines);
+    }
+}
+
+void ShittyEmulation::setEngineHistoryAllowed(bool allowed)
+{
+    _engineHistoryAllowed = allowed;
+}
+
+bool ShittyEmulation::hasEngineHistory() const
+{
+    return _engineHistory;
+}
+
+qint64 ShittyEmulation::engineHistoryEnd() const
+{
+    return _scrolledLines;
+}
+
+int ShittyEmulation::engineHistoryLines() const
+{
+    if (_historyStale || (shitty_vt_modes(_vt) & (SHITTY_VT_MODE_ALT_SCREEN | SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT))) {
+        return 0;
+    }
+    const uint32_t historyRows = shitty_vt_history_rows(_vt);
+    return int(historyRows - qMin(scrolledRows(historyRows, shitty_vt_scroll_offset(_vt)), historyRows));
+}
+
+bool ShittyEmulation::readEngineHistoryLine(qint64 line, QVector<Character> &cells, int *length, bool *wrapped)
+{
+    if (_historyStale || (shitty_vt_modes(_vt) & (SHITTY_VT_MODE_ALT_SCREEN | SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT))) {
+        return false;
+    }
+    // Lines that scrolled off since the last count sit between the history
+    // and the screen.
+    const uint32_t historyRows = shitty_vt_history_rows(_vt);
+    const uint32_t pending = qMin(scrolledRows(historyRows, shitty_vt_scroll_offset(_vt)), historyRows);
+    const qint64 index = qint64(historyRows) - pending - (_scrolledLines - line);
+    if (index < 0 || index >= qint64(historyRows - pending)) {
+        // gone from the engine's scrollback
+        cells.clear();
+        *length = 0;
+        *wrapped = false;
+        return true;
+    }
+    cells = readLine(_screen[0], uint32_t(index), length, line, wrapped);
+    return true;
+}
+
+quint64 ShittyEmulation::engineHistoryGeneration() const
+{
+    return _engineHistoryGeneration;
 }
 
 void ShittyEmulation::parkEngineView()
@@ -1032,7 +1141,7 @@ uint32_t ShittyEmulation::pendingHistoryRows() const
     // Back on the primary screen with a stale count: report it full, so
     // that it is re-based before more lines scroll off uncounted.
     if (_historyStale) {
-        return EngineHistoryRoom;
+        return engineHistoryRoom();
     }
     return scrolledRows(shitty_vt_history_rows(_vt), shitty_vt_scroll_offset(_vt));
 }
@@ -1059,7 +1168,8 @@ void ShittyEmulation::drainHistory()
         // A history that keeps the last N lines drops all but the last N of
         // these as they go in: those go in empty, without being read.
         uint32_t unread = 0;
-        if (!primary->hasScroll()) {
+        if (_engineHistory || !primary->hasScroll()) {
+            // (an engine-held history reads its lines when they are shown)
             unread = scrolled;
         } else if (const int kept = primary->getScroll().maximumLineCount(); kept >= 0 && scrolled > uint32_t(kept) + 1) {
             // (a compact history can hold one line over its maximum)
@@ -1075,19 +1185,22 @@ void ShittyEmulation::drainHistory()
                 continue;
             }
             int length = 0;
-            QVector<Character> line = readLine(primary, index, &length, absolute);
+            bool wrapped = false;
+            QVector<Character> line = readLine(primary, index, &length, absolute, &wrapped);
             property.length = qint16(qMin(length, 0x7fff));
-            property.flags.f.wrapped = shitty_vt_row_wrap_length(_vt, index) != 0;
+            property.flags.f.wrapped = wrapped;
             primary->appendEngineHistoryLine(std::move(line), property);
         }
         _scrolledLines += scrolled;
 
-        // What left the screen is the history's now, marks included: keep
-        // the mode in effect and forget the rest.
+        // What left the screen is the history's now, line flags included.
+        // Its marks are only needed while its lines are still read from the
+        // engine; keep the mode in effect and forget the rest.
         _lineSemantics.removeIf([this](const auto &it) {
             return it.key() < _scrolledLines;
         });
-        auto firstOnScreen = std::lower_bound(_semanticMarks.begin(), _semanticMarks.end(), _scrolledLines, [](const SemanticMark &mark, qint64 line) {
+        const qint64 firstKept = _engineHistory ? _scrolledLines - primary->getHistLines() : _scrolledLines;
+        auto firstOnScreen = std::lower_bound(_semanticMarks.begin(), _semanticMarks.end(), firstKept, [](const SemanticMark &mark, qint64 line) {
             return mark.line < line;
         });
         if (firstOnScreen != _semanticMarks.begin()) {
@@ -1120,7 +1233,9 @@ public:
     /** Starts the line on absolute primary screen line @p absoluteLine, or -1. */
     void start(qint64 absoluteLine)
     {
-        _line = QVector<Character>(_columns);
+        // Cells the engine reports blank stay as they start out: a blank
+        // left as it is, or never written.
+        _line = QVector<Character>(_columns, blank(REPL_None));
         _used = 0;
         _text = 0;
         _nextChange = 0;
@@ -1158,7 +1273,9 @@ public:
             static constexpr CharacterColor foreground(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR);
             static constexpr CharacterColor background(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR);
             if (cell.grapheme_len == 0) {
-                ch = Character(' ', foreground, background, DEFAULT_RENDITION, setRepl(EF_UNREAL, _replMode));
+                if (_replMode != REPL_None) {
+                    ch = blank(_replMode);
+                }
             } else {
                 const char32_t character = char32_t(cell.grapheme[0]);
                 ch = Character(character, foreground, background, DEFAULT_RENDITION, setRepl(EF_REAL | asciiWordFlags(character), _replMode));
@@ -1260,6 +1377,14 @@ public:
         }
     }
 
+    /** Whether the line's text reaches far enough right for the line to have wrapped. */
+    bool mayHaveWrapped() const
+    {
+        // The engine wraps where it runs out of room: after the last
+        // column, or before it when a double-width character did not fit.
+        return _text >= _columns - 1;
+    }
+
     /** The line, without its trailing untouched blanks; @p length receives its text length. */
     QVector<Character> finish(int *length)
     {
@@ -1269,6 +1394,15 @@ public:
     }
 
 private:
+    static Character blank(int replMode)
+    {
+        return Character(' ',
+                         CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR),
+                         CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR),
+                         DEFAULT_RENDITION,
+                         setRepl(EF_UNREAL, replMode));
+    }
+
     const ShittyEmulation &_emulation;
     Screen *const _screen;
     const int _columns;
@@ -1282,7 +1416,7 @@ private:
     int _nextChange = 0;
 };
 
-QVector<Character> ShittyEmulation::readLine(Screen *screen, uint32_t index, int *length, qint64 absoluteLine)
+QVector<Character> ShittyEmulation::readLine(Screen *screen, uint32_t index, int *length, qint64 absoluteLine, bool *wrapped)
 {
     LineBuilder builder(*this, screen);
     builder.start(absoluteLine);
@@ -1293,6 +1427,10 @@ QVector<Character> ShittyEmulation::readLine(Screen *screen, uint32_t index, int
             static_cast<LineBuilder *>(user)->add(column, *cell);
         },
         &builder);
+    if (wrapped != nullptr) {
+        // asking the engine takes it another frame: only when it can be so
+        *wrapped = builder.mayHaveWrapped() && shitty_vt_row_wrap_length(_vt, index) != 0;
+    }
     return builder.finish(length);
 }
 
@@ -1525,6 +1663,15 @@ void ShittyEmulation::clearEntireScreen()
     drainHistory();
     Screen *screen = _currentScreen;
     const bool primary = screen == _screen[0];
+    if (primary && _engineHistory) {
+        // The history is the engine's: scroll the whole screen into it.
+        const QByteArray sequence = "\x18\033[r\033[" + QByteArray::number(_lines) + ";1H" + QByteArray(_lines, '\n') + "\033[H\033[2J";
+        feedEngine(sequence.constData(), int(sequence.size()));
+        drainHistory();
+        _screenDirty = true;
+        bufferedUpdate();
+        return;
+    }
     if (primary) {
         for (int y = 0; y < _lines; ++y) {
             int length = 0;
@@ -1598,6 +1745,12 @@ void ShittyEmulation::reset(bool softReset, bool preservePrompt)
 void ShittyEmulation::clearHistory()
 {
     drainHistory();
+    if (_engineHistory) {
+        // the history is the engine's scrollback
+        static const char eraseScrollback[] = "\x18\033[3J";
+        feedEngine(eraseScrollback, int(sizeof(eraseScrollback) - 1));
+        resetHistoryTracking(false);
+    }
     Emulation::clearHistory();
 }
 
@@ -1635,6 +1788,7 @@ void ShittyEmulation::setEngineColors(const QColor *table, const QColor &cursor)
     }
     _themeCursor = cursor.isValid() ? cursor : table[DEFAULT_FORE_COLOR];
     _haveTheme = true;
+    ++_engineHistoryGeneration; // history lines read in the old colors
     _setupPending = true;
     if (_scanner.atGround()) {
         pushEngineSetup();

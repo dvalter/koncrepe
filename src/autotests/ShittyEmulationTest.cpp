@@ -14,6 +14,7 @@
 #include "../ShittyEmulation.h"
 #include "../ShittyStreamScanner.h"
 #include "../characters/CharacterColor.h"
+#include "../history/HistoryTypeFile.h"
 #include "../history/compact/CompactHistoryType.h"
 
 using namespace Koncrepe;
@@ -23,6 +24,7 @@ class ShittyEmulationTest : public QObject
     Q_OBJECT
 
 private Q_SLOTS:
+    void initTestCase_data();
     void testText();
     void testWrappedLine();
     void testColors();
@@ -32,6 +34,7 @@ private Q_SLOTS:
     void testHistoryBeyondEngineScrollback();
     void testHistoryWithSplitWrites();
     void testShortHistoryKeepsNewestLines();
+    void testHistoryKinds();
     void testHistoryRightAfterAlternateScreen();
     void testEraseScrollback();
     void testAlternateScreen();
@@ -72,6 +75,9 @@ void schemeTable(QColor *table)
 struct Terminal {
     explicit Terminal(int lines = 10, int columns = 40, int history = 1000)
     {
+        // every test runs against both kinds of history (see initTestCase_data())
+        QFETCH_GLOBAL(bool, engineHistory);
+        emulation.setEngineHistoryAllowed(engineHistory);
         emulation.setHistory(CompactHistoryType(history));
         window = emulation.createWindow();
         emulation.setImageSize(lines, columns);
@@ -147,6 +153,13 @@ struct Terminal {
     ScreenWindow *window = nullptr; // owned by the emulation
     QByteArray sent;
 };
+}
+
+void ShittyEmulationTest::initTestCase_data()
+{
+    QTest::addColumn<bool>("engineHistory");
+    QTest::newRow("history kept in the engine") << true;
+    QTest::newRow("history copied out") << false;
 }
 
 void ShittyEmulationTest::testText()
@@ -285,6 +298,43 @@ void ShittyEmulationTest::testShortHistoryKeepsNewestLines()
         QCOMPARE(lines.at(k), QString::number(9996 - histLines + k));
     }
     QCOMPARE(lines.at(histLines), QStringLiteral("9996"));
+}
+
+void ShittyEmulationTest::testHistoryKinds()
+{
+    QFETCH_GLOBAL(bool, engineHistory);
+    Terminal t(5, 20, 1000);
+    QCOMPARE(t.emulation.hasEngineHistory(), engineHistory);
+    QByteArray output;
+    for (int i = 0; i < 300; ++i) {
+        output += QByteArray::number(i) + "\r\n";
+    }
+    t.feed(output);
+    const QStringList before = t.lines();
+    QCOMPARE(before.first(), QStringLiteral("0"));
+
+    // a different size of the same kind keeps the lines
+    t.emulation.setHistory(CompactHistoryType(2000));
+    QCOMPARE(t.emulation.hasEngineHistory(), engineHistory);
+    QCOMPARE(t.lines(), before);
+
+    // an unlimited history takes them over, and keeps them from then on
+    t.emulation.setHistory(HistoryTypeFile());
+    QVERIFY(!t.emulation.hasEngineHistory());
+    QCOMPARE(t.lines(), before);
+    t.emulation.setHistory(CompactHistoryType(1000));
+    QVERIFY(!t.emulation.hasEngineHistory());
+    QCOMPARE(t.lines(), before);
+
+    // past what the engine can hold, lines are copied out
+    Terminal big(5, 20, 100000);
+    QVERIFY(!big.emulation.hasEngineHistory());
+
+    // clearing forgets them, the engine's own scrollback included
+    t.emulation.clearHistory();
+    QCOMPARE(t.screen()->getHistLines(), 0);
+    t.feed("next\r\n");
+    QCOMPARE(t.lines(), QStringList({QStringLiteral("296"), QStringLiteral("297"), QStringLiteral("298"), QStringLiteral("299"), QStringLiteral("next")}));
 }
 
 void ShittyEmulationTest::testHistoryRightAfterAlternateScreen()

@@ -13,6 +13,7 @@
 #include "../Screen.h"
 #include "../ScreenWindow.h"
 #include "../ShittyEmulation.h"
+#include "../history/HistoryTypeFile.h"
 #include "../history/HistoryTypeNone.h"
 #include "../history/compact/CompactHistoryType.h"
 
@@ -43,7 +44,7 @@ QByteArray text()
 
 void ShittyEmulationBenchmark::cat_data()
 {
-    QTest::addColumn<int>("history"); // -1 for none
+    QTest::addColumn<int>("history"); // -1 for none, -2 for unlimited
     QTest::addColumn<int>("repaintEvery"); // bytes between two repaints
 
     QTest::newRow("history 1000, repaint every 64 KiB") << 1000 << 64 * 1024;
@@ -51,6 +52,7 @@ void ShittyEmulationBenchmark::cat_data()
     QTest::newRow("history 1000, repaint every 4 KiB") << 1000 << 4 * 1024;
     QTest::newRow("no history, repaint every 64 KiB") << -1 << 64 * 1024;
     QTest::newRow("history 100000, repaint every 64 KiB") << 100000 << 64 * 1024;
+    QTest::newRow("unlimited history, repaint every 64 KiB") << -2 << 64 * 1024;
 }
 
 void ShittyEmulationBenchmark::cat()
@@ -61,7 +63,9 @@ void ShittyEmulationBenchmark::cat()
 
     QBENCHMARK {
         ShittyEmulation emulation;
-        if (history < 0) {
+        if (history == -2) {
+            emulation.setHistory(HistoryTypeFile());
+        } else if (history < 0) {
             emulation.setHistory(HistoryTypeNone());
         } else {
             emulation.setHistory(CompactHistoryType(history));
@@ -82,7 +86,11 @@ void ShittyEmulationBenchmark::cat()
             }
         }
         QMetaObject::invokeMethod(&emulation, "showBulk");
-        QVERIFY(window->screen()->getHistLines() <= qMax(history, 0) + 1);
+        if (history == -2) {
+            QCOMPARE(window->screen()->getHistLines(), 40000 - 39);
+        } else {
+            QVERIFY(window->screen()->getHistLines() <= qMax(history, 0) + 1);
+        }
     }
 }
 

@@ -16,6 +16,7 @@
 #include "Emulation.h"
 #include "ShittyStreamScanner.h"
 #include "characters/Character.h"
+#include "history/EngineHistory.h"
 #include "keyboardtranslator/KeyboardTranslator.h"
 
 #include <vector>
@@ -49,7 +50,7 @@ namespace Koncrepe
  *    queries (OSC 4/10/11/12), light/dark reports and palette-relative
  *    requests answer with the theme the user picked.
  */
-class KONCREPEPRIVATE_EXPORT ShittyEmulation : public Emulation
+class KONCREPEPRIVATE_EXPORT ShittyEmulation : public Emulation, public EngineHistorySource
 {
     Q_OBJECT
 
@@ -61,6 +62,21 @@ public:
     void reset(bool softReset = false, bool preservePrompt = false) override;
     char eraseChar() const override;
     void clearHistory() override;
+
+    /**
+     * A history of up to 65534 lines is kept in the engine, like shitty
+     * does standalone, and read only when it is shown; longer and unlimited
+     * ones keep a copy of every line that scrolls off.
+     */
+    void setHistory(const HistoryType &history) override;
+    /** Whether histories may be kept in the engine at all (for tests). */
+    void setEngineHistoryAllowed(bool allowed);
+    bool hasEngineHistory() const;
+
+    qint64 engineHistoryEnd() const override;
+    int engineHistoryLines() const override;
+    bool readEngineHistoryLine(qint64 line, QVector<Character> &cells, int *length, bool *wrapped) override;
+    quint64 engineHistoryGeneration() const override;
 
     /**
      * Sets the colors the engine resolves default and palette colors to:
@@ -129,7 +145,10 @@ private:
     uint32_t pendingHistoryRows() const;
     uint32_t scrolledRows(uint32_t historyRows, uint32_t offset) const;
     void parkEngineView();
-    void resetHistoryTracking();
+    /** Counts afresh; @p rebase also starts an engine-held history over. */
+    void resetHistoryTracking(bool rebase = true);
+    uint32_t engineHistoryRoom() const;
+    void setEngineSaveLines(uint16_t lines);
     /** Refreshes the current screen model from the engine. */
     void syncScreen();
     /** Drains the history and places the model's cursor where the engine's is. */
@@ -148,7 +167,7 @@ private:
      * is the row's absolute line on the primary screen (for shell
      * integration marks), or -1.
      */
-    QVector<Character> readLine(Screen *screen, uint32_t index, int *length, qint64 line = -1);
+    QVector<Character> readLine(Screen *screen, uint32_t index, int *length, qint64 line = -1, bool *wrapped = nullptr);
     /**
      * Reads the first @p lines rows of the engine's view into @p result and
      * their text lengths into @p lengths; @p firstLine is the absolute line
@@ -184,6 +203,11 @@ private:
     qint64 _scrolledLines = 0;
     uint32_t _parkedOffset = 0;
     bool _historyStale = false; // re-base the count when back on the primary screen
+    bool _engineHistory = false; // the history is kept in the engine
+    bool _engineHistoryAllowed = true;
+    bool _engineReconfiguring = false;
+    uint16_t _engineSaveLines = 2048;
+    quint64 _engineHistoryGeneration = 0;
     uint32_t _knownHistoryRows = 0;
     int _inputDepth = 0;
 

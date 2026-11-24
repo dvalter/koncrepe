@@ -144,6 +144,7 @@ target_sources(koncrepeprivate PRIVATE
     history/HistoryScrollFile.cpp
     history/HistoryScrollNone.cpp
     history/HistoryType.cpp
+    history/EngineHistory.cpp
     history/HistoryTypeFile.cpp
     history/HistoryTypeNone.cpp
     history/compact/CompactHistoryScroll.cpp
