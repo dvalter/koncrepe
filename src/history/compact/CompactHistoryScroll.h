@@ -70,7 +70,9 @@ private:
      * This buffer contains the data about each line
      * The size of this buffer is the number of lines we have.
      */
-    std::vector<LineData> _lineDatas;
+    // A deque, like _cells: a full history drops its oldest line for every
+    // line added, and erasing at the front of a vector moves all the rest.
+    std::deque<LineData> _lineDatas;
     unsigned int _indexBias = 0;
 
     /**

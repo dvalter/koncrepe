@@ -148,12 +148,12 @@ void CompactHistoryScroll::setLineProperty(const int lineNumber, LineProperty pr
 
 int CompactHistoryScroll::reflowLines(const int columns, std::map<int, int> *deltas)
 {
-    std::vector<LineData> newLineData;
+    std::deque<LineData> newLineData;
 
     auto reflowLineLen = [](int start, int end) {
         return end - start;
     };
-    auto setNewLine = [](std::vector<LineData> &change, unsigned int index, LineProperty flag) {
+    auto setNewLine = [](std::deque<LineData> &change, unsigned int index, LineProperty flag) {
         change.push_back({index, flag});
     };
 
