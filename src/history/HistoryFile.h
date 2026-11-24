@@ -17,7 +17,7 @@ namespace Koncrepe
 /*
    An extendable tmpfile(1) based buffer.
 */
-class HistoryFile
+class KONCREPEPRIVATE_EXPORT HistoryFile
 {
 public:
     HistoryFile();
@@ -33,6 +33,8 @@ public:
     void map();
     // un-mmaps the file
     void unmap();
+    // writes what add() kept back
+    void flush();
 
 private:
     qint64 _length;
@@ -49,6 +51,13 @@ private:
 
     // when _readWriteBalance goes below this threshold, the file will be mmap'ed automatically
     static const int MAP_THRESHOLD = -1000;
+
+    // What add() appended and has not written yet, from _unwrittenStart on:
+    // a line is several small adds, which as writes of their own took a
+    // system call or two each.
+    QByteArray _unwritten;
+    qint64 _unwrittenStart = 0;
+    static const int WRITE_BUFFER = 64 * 1024;
 };
 
 }

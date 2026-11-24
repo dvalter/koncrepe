@@ -22,6 +22,8 @@
 #include <QDir>
 #include <QUrl>
 
+#include <utility>
+
 // KF
 #include <KConfigGroup>
 #include <KSharedConfig>
@@ -104,6 +106,7 @@ HistoryFile::HistoryFile()
 
 HistoryFile::~HistoryFile()
 {
+    // (what is still kept back is lost with the file, which is unlinked)
     if (_fileMap != nullptr) {
         unmap();
     }
@@ -115,6 +118,7 @@ HistoryFile::~HistoryFile()
 void HistoryFile::map()
 {
     Q_ASSERT(_fileMap == nullptr);
+    flush();
 
     if (_tmpFile.flush()) {
         Q_ASSERT(_tmpFile.size() >= _length);
@@ -149,22 +153,39 @@ void HistoryFile::add(const char *buffer, qint64 count)
         _readWriteBalance++;
     }
 
-    qint64 rc = 0;
+    if (_unwritten.isEmpty()) {
+        _unwrittenStart = _length;
+    }
+    _unwritten.append(buffer, count);
+    _length += count;
+    if (_unwritten.size() >= WRITE_BUFFER) {
+        flush();
+    }
+}
 
-    if (!_tmpFile.seek(_length)) {
-        perror("HistoryFile::add.seek");
+void HistoryFile::flush()
+{
+    if (_unwritten.isEmpty()) {
         return;
     }
-    rc = _tmpFile.write(buffer, count);
+    const QByteArray unwritten = std::exchange(_unwritten, {});
+    if (!_tmpFile.seek(_unwrittenStart)) {
+        perror("HistoryFile::flush.seek");
+        _length = _unwrittenStart;
+        return;
+    }
+    const qint64 rc = _tmpFile.write(unwritten);
     if (rc < 0) {
-        perror("HistoryFile::add.write");
+        perror("HistoryFile::flush.write");
+        _length = _unwrittenStart;
         return;
     }
-    _length += rc;
+    _length = _unwrittenStart + rc;
 }
 
 void HistoryFile::get(char *buffer, qint64 size, qint64 loc)
 {
+    flush();
     if (loc < 0 || size < 0 || loc + size > (qint64)(_length * sizeof(LineProperty))) {
         fprintf(stderr, "getHist(...,%lld,%lld): invalid args.\n", size, loc);
         return;
@@ -200,6 +221,7 @@ void HistoryFile::get(char *buffer, qint64 size, qint64 loc)
 
 void HistoryFile::set(char *buffer, qint64 size, qint64 loc)
 {
+    flush();
     if (loc < 0 || size < 0 || loc + size > qint64(_length * sizeof(LineProperty))) {
         fprintf(stderr, "setHist(...,%lld,%lld): invalid args.\n", size, loc);
         return;
@@ -238,6 +260,11 @@ void HistoryFile::removeLast(qint64 loc)
     if (loc < 0 || loc > _length) {
         fprintf(stderr, "removeLast(%lld): invalid args.\n", loc);
         return;
+    }
+    if (loc >= _unwrittenStart) {
+        _unwritten.truncate(loc - _unwrittenStart);
+    } else {
+        _unwritten.clear();
     }
     _length = loc;
 }

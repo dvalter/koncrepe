@@ -218,6 +218,55 @@ void HistoryTest::testHistoryTypeChange()
     QCOMPARE(historyScroll->getLines(), 0);
 }
 
+void HistoryTest::testHistoryFileWrites()
+{
+    // Appends are kept back and written in blocks: reads, writes in place
+    // and removals must all see them, wherever they are.
+    HistoryFile file;
+    QByteArray expected;
+    for (int i = 0; i < 20000; ++i) {
+        const QByteArray chunk = QByteArray::number(i) + ';';
+        file.add(chunk.constData(), chunk.size());
+        expected += chunk;
+        if (i % 4999 == 0) {
+            // read back straight away, while it may still be kept back
+            QByteArray read(expected.size(), '\0');
+            file.get(read.data(), read.size(), 0);
+            QCOMPARE(read, expected);
+        }
+    }
+    QCOMPARE(file.len(), qint64(expected.size()));
+
+    // remove within what is kept back, then past it
+    file.removeLast(expected.size() - 6);
+    expected.chop(6);
+    const QByteArray more("tail");
+    file.add(more.constData(), more.size());
+    expected += more;
+    QByteArray read(expected.size(), '\0');
+    file.get(read.data(), read.size(), 0);
+    QCOMPARE(read, expected);
+
+    file.removeLast(100);
+    expected.truncate(100);
+    file.add(more.constData(), more.size());
+    expected += more;
+    QCOMPARE(file.len(), qint64(expected.size()));
+    read = QByteArray(expected.size(), '\0');
+    file.get(read.data(), read.size(), 0);
+    QCOMPARE(read, expected);
+
+    // a write in place lands after what was kept back is written
+    file.add(more.constData(), more.size());
+    expected += more;
+    char replacement[] = "TAIL";
+    file.set(replacement, 4, expected.size() - 4);
+    expected.replace(expected.size() - 4, 4, "TAIL");
+    read = QByteArray(expected.size(), '\0');
+    file.get(read.data(), read.size(), 0);
+    QCOMPARE(read, expected);
+}
+
 QTEST_MAIN(HistoryTest)
 
 #include "moc_HistoryTest.cpp"

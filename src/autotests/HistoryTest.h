@@ -31,6 +31,7 @@ private Q_SLOTS:
     void testHistoryScroll();
     void testHistoryReflow();
     void testHistoryTypeChange();
+    void testHistoryFileWrites();
 
 private:
     static constexpr const char testString[] = "abcdefghijklmnopqrstuvwxyz1234567890";
