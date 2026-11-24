@@ -6,6 +6,8 @@
 
 #include "ShittyStreamScanner.h"
 
+#include <QList>
+
 using namespace Koncrepe;
 
 namespace
@@ -143,6 +145,13 @@ ShittyStreamScanner::Event ShittyStreamScanner::scan(const char *data, int lengt
                     type = EventType::SoftReset;
                 } else if (c == 'u' && !_buffer.isEmpty() && (_buffer[0] == '>' || _buffer[0] == '<' || _buffer[0] == '=' || _buffer[0] == '?')) {
                     type = EventType::KittyKeyboard;
+                } else if ((c == 'h' || c == 'l') && _buffer.startsWith('?')) {
+                    for (const QByteArray &mode : _buffer.mid(1).split(';')) {
+                        if (mode == "47" || mode == "1047" || mode == "1049") {
+                            type = EventType::ScreenSwitch;
+                            break;
+                        }
+                    }
                 }
                 _buffer.clear();
                 if (type != EventType::None) {

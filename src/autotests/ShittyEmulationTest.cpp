@@ -31,6 +31,8 @@ private Q_SLOTS:
     void testHistory();
     void testHistoryBeyondEngineScrollback();
     void testHistoryWithSplitWrites();
+    void testShortHistoryKeepsNewestLines();
+    void testHistoryRightAfterAlternateScreen();
     void testEraseScrollback();
     void testAlternateScreen();
     void testHistoryAcrossAlternateScreen();
@@ -261,6 +263,49 @@ void ShittyEmulationTest::testHistoryBeyondEngineScrollback()
     const QStringList lines = t.lines();
     for (int i = 0; i < 10000; ++i) {
         QCOMPARE(lines.at(i), QString::number(i));
+    }
+}
+
+void ShittyEmulationTest::testShortHistoryKeepsNewestLines()
+{
+    // Many more lines between two repaints than the history keeps: only the
+    // newest are copied out, and they must be the right ones, in order.
+    Terminal t(5, 20, 100);
+    QByteArray output;
+    for (int i = 0; i < 10000; ++i) {
+        output += QByteArray::number(i) + "\r\n";
+    }
+    t.feed(output);
+
+    const QStringList lines = t.lines();
+    const int histLines = t.screen()->getHistLines();
+    QVERIFY(histLines >= 100 && histLines <= 101);
+    // the screen shows 9996-9999 and the cursor's empty line
+    for (int k = 0; k < histLines; ++k) {
+        QCOMPARE(lines.at(k), QString::number(9996 - histLines + k));
+    }
+    QCOMPARE(lines.at(histLines), QStringLiteral("9996"));
+}
+
+void ShittyEmulationTest::testHistoryRightAfterAlternateScreen()
+{
+    // Resized while a full screen application runs, which leaves the count
+    // of the primary screen's history to be re-based once back on it; then
+    // leaving the alternate screen and scrolling far in the same read: the
+    // lines that scroll off afterwards all reach the history.
+    Terminal t(5, 20, 20000);
+    t.feed("before\r\n\033[?1049hfull screen");
+    t.emulation.setImageSize(6, 20);
+    QByteArray output = "\033[?1049l";
+    for (int i = 0; i < 5000; ++i) {
+        output += QByteArray::number(i) + "\r\n";
+    }
+    t.feed(output);
+
+    const QStringList lines = t.lines();
+    QCOMPARE(lines.at(0), QStringLiteral("before"));
+    for (int i = 0; i < 5000; ++i) {
+        QCOMPARE(lines.at(1 + i), QString::number(i));
     }
 }
 
@@ -608,6 +653,18 @@ void ShittyEmulationTest::testScannerBoundaries()
     const QByteArray sixel("\033Pq#0;2;0;0;0#0~~-~~\033\\x");
     QCOMPARE(dcs.scan(sixel.constData(), sixel.size(), 0).type, ShittyStreamScanner::EventType::None);
     QVERIFY(dcs.atGround());
+
+    // switching screens, alone or among other modes; other modes are not
+    ShittyStreamScanner modes;
+    const QByteArray switches("\033[?25lx\033[?1;1049hy\033[?1047lz\033[47h");
+    event = modes.scan(switches.constData(), switches.size(), 0);
+    QCOMPARE(event.type, ShittyStreamScanner::EventType::ScreenSwitch);
+    QCOMPARE(event.start, switches.indexOf("\033[?1;"));
+    QCOMPARE(event.end, switches.indexOf("y"));
+    event = modes.scan(switches.constData(), switches.size(), event.end);
+    QCOMPARE(event.type, ShittyStreamScanner::EventType::ScreenSwitch);
+    QCOMPARE(event.end, switches.indexOf("z"));
+    QCOMPARE(modes.scan(switches.constData(), switches.size(), event.end).type, ShittyStreamScanner::EventType::None);
 }
 
 void ShittyEmulationTest::testKittyKeyboardDisabled()

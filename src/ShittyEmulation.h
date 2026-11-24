@@ -76,9 +76,6 @@ public:
      */
     void setKittyKeyboardEnabled(bool enabled);
 
-    /** One engine cell, copied out of the engine's callback. */
-    struct EngineCell;
-
 public Q_SLOTS:
     void setImageSize(int lines, int columns) override;
     void sendString(const QByteArray &string) override;
@@ -128,6 +125,9 @@ private:
      * scrolled off, even once the engine's own history is full.
      */
     void drainHistory();
+    /** Lines scrolled off the primary screen and not yet copied out. */
+    uint32_t pendingHistoryRows() const;
+    uint32_t scrolledRows(uint32_t historyRows, uint32_t offset) const;
     void parkEngineView();
     void resetHistoryTracking();
     /** Refreshes the current screen model from the engine. */
@@ -140,16 +140,21 @@ private:
     void beginEngineInput();
     void endEngineInput();
 
-    /** Reads row @p index (oldest history row first) of the engine's current screen. */
-    QVector<EngineCell> readRow(uint32_t index);
-    /** Reads the first @p lines rows of the engine's view. */
-    QVector<QVector<EngineCell>> readView(int lines);
+    class LineBuilder;
+    friend class LineBuilder;
     /**
-     * Converts an engine row to a screen line; @p length receives its text
-     * length. @p line is the row's absolute line on the primary screen (for
-     * shell integration marks), or -1.
+     * Reads row @p index (oldest history row first) of the engine's current
+     * screen as a screen line; @p length receives its text length. @p line
+     * is the row's absolute line on the primary screen (for shell
+     * integration marks), or -1.
      */
-    QVector<Character> convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length, qint64 line = -1) const;
+    QVector<Character> readLine(Screen *screen, uint32_t index, int *length, qint64 line = -1);
+    /**
+     * Reads the first @p lines rows of the engine's view into @p result and
+     * their text lengths into @p lengths; @p firstLine is the absolute line
+     * of the first (see readLine()), or -1.
+     */
+    void readView(Screen *screen, int lines, qint64 firstLine, QVector<QVector<Character>> &result, QVector<int> &lengths);
 
     /**
      * Brings the engine to Koncrepe's defaults: Alt sends ESC like it always
@@ -186,6 +191,9 @@ private:
     bool _modesKnown = false;
     int _cursorStyle = -1;
     bool _screenDirty = true;
+    // reused by every refresh of the screen model
+    QVector<QVector<Character>> _viewLines;
+    QVector<int> _viewLengths;
 
     // engine setup and theme
     QColor _theme[2 + 16];

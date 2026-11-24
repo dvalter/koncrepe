@@ -26,6 +26,7 @@
 #include "KoncrepeSettings.h"
 #include "Screen.h"
 #include "ScreenWindow.h"
+#include "history/HistoryType.h"
 #include "keyboardtranslator/KeyboardTranslator.h"
 #include "keyboardtranslator/KeyboardTranslatorReader.h"
 #include "terminalDisplay/TerminalColor.h"
@@ -37,24 +38,11 @@
 
 #include <shitty_vt.h>
 
+#include <array>
 #include <cstring>
 #include <utility>
 
 using namespace Koncrepe;
-
-struct ShittyEmulation::EngineCell {
-    QVarLengthArray<char32_t, 2> grapheme;
-    uint32_t foreground = 0;
-    uint32_t background = 0;
-    uint32_t underlineColor = 0;
-    uint16_t attributes = 0;
-    uint8_t underlineStyle = 0;
-    uint8_t width = 1;
-    uint16_t foregroundSource = SHITTY_VT_COLOR_DEFAULT_FOREGROUND;
-    uint16_t backgroundSource = SHITTY_VT_COLOR_DEFAULT_BACKGROUND;
-    uint16_t underlineSource = SHITTY_VT_COLOR_DEFAULT_FOREGROUND;
-    bool present = false;
-};
 
 namespace
 {
@@ -62,9 +50,15 @@ namespace
 // scrolls off between two drains; everything older lives in Koncrepe's
 // history, whichever kind the profile picked.
 constexpr uint16_t EngineSaveLines = 2048;
-// The most bytes fed between two drains. A byte scrolls at most one line,
-// so a slice can never overflow the engine's scrollback.
-constexpr int FeedSlice = 1024;
+// A byte scrolls at most one line, so feeding no more bytes than the
+// engine's scrollback has room for can never overflow it. Lines are only
+// copied out when that room runs short or the screen is about to be shown:
+// output that scrolls faster than the views repaint is copied in batches,
+// and a batch longer than the history keeps is mostly never copied at all.
+constexpr uint32_t EngineHistoryRoom = EngineSaveLines - 1; // the parked view takes one row
+// Below this much room, copy the waiting lines out rather than feed in
+// small slices.
+constexpr uint32_t MinFeedSlice = 256;
 
 QByteArray colorSpec(const QColor &color)
 {
@@ -391,6 +385,19 @@ const KeyboardTranslator *stockTranslator()
     return translator;
 }
 
+// Screen::wordFlags() of an ASCII character, from a table.
+ExtraFlags asciiWordFlags(char32_t c)
+{
+    static const auto table = [] {
+        std::array<ExtraFlags, 0x80> flags{};
+        for (char32_t i = 0; i < 0x80; ++i) {
+            flags[i] = Screen::wordFlags(i);
+        }
+        return flags;
+    }();
+    return table[c];
+}
+
 // A cell color as Koncrepe stores it: the request the application made,
 // so the color scheme draws it. @p palette is what the engine resolves the
 // 256 palette entries to, when Koncrepe's theme is in it.
@@ -420,13 +427,6 @@ inline CharacterColor convertColor(uint16_t source, uint32_t resolved, const uin
         return rgb();
     }
 }
-
-// Everything a row callback needs; the grapheme pointer the engine hands
-// out is only valid for the duration of the callback, so it is copied.
-struct RowCollector {
-    QVector<ShittyEmulation::EngineCell> *cells;
-    int columns;
-};
 }
 
 ShittyEmulation::ShittyEmulation()
@@ -606,6 +606,11 @@ void ShittyEmulation::feed(const char *bytes, int length)
             // gets no answer to its query, which is how "unsupported" looks.
             engineEnd = event.start;
         }
+        const bool screenSwitch = event.type == ShittyStreamScanner::EventType::ScreenSwitch && event.start >= start;
+        if (screenSwitch) {
+            // Fed apart, below: the history is counted on one screen at a time.
+            engineEnd = event.start;
+        }
         if (event.type == ShittyStreamScanner::EventType::Osc && event.number == 8 && event.start >= start) {
             // Hyperlinks are Koncrepe's (see handleHyperlink()). The engine
             // would keep them in cell extras, which its embedding API reports
@@ -619,6 +624,16 @@ void ShittyEmulation::feed(const char *bytes, int length)
         switch (event.type) {
         case ShittyStreamScanner::EventType::None:
         case ShittyStreamScanner::EventType::KittyKeyboard:
+            break;
+        case ShittyStreamScanner::EventType::ScreenSwitch:
+            // Copy out what scrolled off the primary screen before leaving
+            // it, and re-base the count (see resetHistoryTracking()) as soon
+            // as it is back, before anything else scrolls off uncounted.
+            drainHistory();
+            if (screenSwitch) {
+                feedEngine(bytes + event.start, event.end - event.start);
+            }
+            drainHistory();
             break;
         case ShittyStreamScanner::EventType::Osc:
             handleOsc(event);
@@ -653,11 +668,15 @@ void ShittyEmulation::feed(const char *bytes, int length)
 void ShittyEmulation::feedEngine(const char *bytes, int length)
 {
     while (length > 0) {
-        const int slice = qMin(length, FeedSlice);
+        uint32_t room = EngineHistoryRoom - qMin(pendingHistoryRows(), EngineHistoryRoom);
+        if (room < MinFeedSlice) {
+            drainHistory();
+            room = EngineHistoryRoom - qMin(pendingHistoryRows(), EngineHistoryRoom);
+        }
+        const int slice = int(qMin(uint32_t(length), qMax(room, MinFeedSlice)));
         shitty_vt_feed(_vt, reinterpret_cast<const uint8_t *>(bytes), size_t(slice));
         bytes += slice;
         length -= slice;
-        drainHistory();
     }
     flushReplies();
     dispatchEngineEvents();
@@ -990,6 +1009,34 @@ void ShittyEmulation::parkEngineView()
     _parkedOffset = shitty_vt_scroll_to(_vt, 1);
 }
 
+uint32_t ShittyEmulation::scrolledRows(uint32_t historyRows, uint32_t offset) const
+{
+    uint32_t scrolled = 0;
+    if (_parkedOffset > 0 && offset >= _parkedOffset) {
+        scrolled = offset - _parkedOffset;
+    } else if (historyRows > _knownHistoryRows) {
+        // The view was never parked (the engine had no history yet) or was
+        // moved (resize, reset): the history is not full, so count rows.
+        scrolled = historyRows - _knownHistoryRows;
+    }
+    return qMin(scrolled, historyRows);
+}
+
+uint32_t ShittyEmulation::pendingHistoryRows() const
+{
+    // Nothing reaches the primary screen's history while these hold (see
+    // drainHistory()).
+    if (shitty_vt_modes(_vt) & (SHITTY_VT_MODE_ALT_SCREEN | SHITTY_VT_MODE_SYNCHRONIZED_OUTPUT)) {
+        return 0;
+    }
+    // Back on the primary screen with a stale count: report it full, so
+    // that it is re-based before more lines scroll off uncounted.
+    if (_historyStale) {
+        return EngineHistoryRoom;
+    }
+    return scrolledRows(shitty_vt_history_rows(_vt), shitty_vt_scroll_offset(_vt));
+}
+
 void ShittyEmulation::drainHistory()
 {
     const uint32_t modes = shitty_vt_modes(_vt);
@@ -1005,27 +1052,30 @@ void ShittyEmulation::drainHistory()
 
     const uint32_t historyRows = shitty_vt_history_rows(_vt);
     const uint32_t offset = shitty_vt_scroll_offset(_vt);
-
-    uint32_t scrolled = 0;
-    if (_parkedOffset > 0 && offset >= _parkedOffset) {
-        scrolled = offset - _parkedOffset;
-    } else if (historyRows > _knownHistoryRows) {
-        // The view was never parked (the engine had no history yet) or was
-        // moved (resize, reset): the history is not full, so count rows.
-        scrolled = historyRows - _knownHistoryRows;
-    }
-    scrolled = qMin(scrolled, historyRows);
+    const uint32_t scrolled = scrolledRows(historyRows, offset);
 
     if (scrolled > 0) {
         Screen *primary = _screen[0];
+        // A history that keeps the last N lines drops all but the last N of
+        // these as they go in: those go in empty, without being read.
+        uint32_t unread = 0;
+        if (!primary->hasScroll()) {
+            unread = scrolled;
+        } else if (const int kept = primary->getScroll().maximumLineCount(); kept >= 0 && scrolled > uint32_t(kept) + 1) {
+            // (a compact history can hold one line over its maximum)
+            unread = scrolled - uint32_t(kept) - 1;
+        }
         for (uint32_t k = 0; k < scrolled; ++k) {
             // the rows leave in order, each being the screen's top row then
             const uint32_t index = historyRows - scrolled + k;
             const qint64 absolute = _scrolledLines + k;
-            const QVector<EngineCell> cells = readRow(index);
-            int length = 0;
-            QVector<Character> line = convertRow(primary, cells, &length, absolute);
             LineProperty property = lineSemantics(absolute);
+            if (k < unread) {
+                primary->appendEngineHistoryLine(QVector<Character>(), property);
+                continue;
+            }
+            int length = 0;
+            QVector<Character> line = readLine(primary, index, &length, absolute);
             property.length = qint16(qMin(length, 0x7fff));
             property.flags.f.wrapped = shitty_vt_row_wrap_length(_vt, index) != 0;
             primary->appendEngineHistoryLine(std::move(line), property);
@@ -1053,127 +1103,101 @@ void ShittyEmulation::drainHistory()
     }
 }
 
-namespace
+// Builds one screen line from the engine's cells, converted as the engine
+// hands them out, left to right; the grapheme it points at is only valid
+// during the callback, and nothing is copied twice.
+class ShittyEmulation::LineBuilder
 {
-void copyCell(ShittyEmulation::EngineCell &out, const shitty_vt_cell *cell)
-{
-    out.grapheme.clear();
-    for (size_t i = 0; i < cell->grapheme_len; ++i) {
-        out.grapheme.append(char32_t(cell->grapheme[i]));
+public:
+    LineBuilder(const ShittyEmulation &emulation, Screen *screen)
+        : _emulation(emulation)
+        , _screen(screen)
+        , _columns(emulation._columns)
+        , _palette(emulation._haveTheme ? emulation._enginePalette : nullptr)
+    {
     }
-    out.foreground = cell->foreground;
-    out.background = cell->background;
-    out.underlineColor = cell->underline_color;
-    out.attributes = cell->attributes;
-    out.underlineStyle = cell->underline_style;
-    out.width = cell->width;
-    out.foregroundSource = cell->foreground_source;
-    out.backgroundSource = cell->background_source;
-    out.underlineSource = cell->underline_source;
-    out.present = true;
-}
 
-struct GridCollector {
-    QVector<QVector<ShittyEmulation::EngineCell>> *rows;
-    int columns;
-};
-}
+    /** Starts the line on absolute primary screen line @p absoluteLine, or -1. */
+    void start(qint64 absoluteLine)
+    {
+        _line = QVector<Character>(_columns);
+        _used = 0;
+        _text = 0;
+        _nextChange = 0;
+        _replChanges.clear();
+        _replMode = REPL_None;
 
-QVector<ShittyEmulation::EngineCell> ShittyEmulation::readRow(uint32_t index)
-{
-    QVector<EngineCell> cells(_columns);
-    RowCollector collector{&cells, _columns};
-    shitty_vt_row_cells(
-        _vt,
-        index,
-        [](void *user, uint16_t, uint16_t column, const shitty_vt_cell *cell) {
-            auto *collector = static_cast<RowCollector *>(user);
-            if (column < collector->columns) {
-                copyCell((*collector->cells)[column], cell);
+        // Shell integration: the mode each column was printed in.
+        const auto &marks = _emulation._semanticMarks;
+        if (absoluteLine >= 0 && (!marks.empty() || _emulation._semanticModeBefore != REPL_None)) {
+            auto it = std::lower_bound(marks.begin(), marks.end(), absoluteLine, [](const SemanticMark &mark, qint64 l) {
+                return mark.line < l;
+            });
+            _replMode = it == marks.begin() ? _emulation._semanticModeBefore : std::prev(it)->mode;
+            for (; it != marks.end() && it->line == absoluteLine; ++it) {
+                _replChanges.append(*it);
             }
-        },
-        &collector);
-    return cells;
-}
-
-QVector<QVector<ShittyEmulation::EngineCell>> ShittyEmulation::readView(int lines)
-{
-    // One frame for the whole grid, where reading row by row takes one each.
-    QVector<QVector<EngineCell>> rows(lines, QVector<EngineCell>(_columns));
-    GridCollector collector{&rows, _columns};
-    shitty_vt_each_cell(
-        _vt,
-        [](void *user, uint16_t row, uint16_t column, const shitty_vt_cell *cell) {
-            auto *collector = static_cast<GridCollector *>(user);
-            if (row < collector->rows->size() && column < collector->columns) {
-                copyCell((*collector->rows)[row][column], cell);
-            }
-        },
-        &collector);
-    return rows;
-}
-
-QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<EngineCell> &cells, int *length, qint64 absoluteLine) const
-{
-    const int columns = cells.size();
-    QVector<Character> line(columns);
-    const uint32_t *palette = _haveTheme ? _enginePalette : nullptr;
-
-    // Shell integration: the mode each column was printed in.
-    int replMode = REPL_None;
-    QVarLengthArray<SemanticMark, 4> replChanges;
-    if (absoluteLine >= 0 && (!_semanticMarks.empty() || _semanticModeBefore != REPL_None)) {
-        auto it = std::lower_bound(_semanticMarks.begin(), _semanticMarks.end(), absoluteLine, [](const SemanticMark &mark, qint64 l) {
-            return mark.line < l;
-        });
-        replMode = it == _semanticMarks.begin() ? _semanticModeBefore : std::prev(it)->mode;
-        for (; it != _semanticMarks.end() && it->line == absoluteLine; ++it) {
-            replChanges.append(*it);
         }
     }
-    int nextChange = 0;
-    int used = 0; // length of the line once trailing untouched blanks are dropped
-    int text = 0; // length of the text on it
 
-    for (int column = 0; column < columns; ++column) {
-        while (nextChange < replChanges.size() && replChanges[nextChange].column <= column) {
-            replMode = replChanges[nextChange++].mode;
+    void add(int column, const shitty_vt_cell &cell)
+    {
+        if (column >= _columns) {
+            return;
         }
-        const EngineCell &cell = cells[column];
-        if (!cell.present) {
-            // the right half of a wide character, filled in by its left half
-            continue;
+        while (_nextChange < _replChanges.size() && _replChanges[_nextChange].column <= column) {
+            _replMode = _replChanges[_nextChange++].mode;
         }
-        Character &ch = line[column];
+        Character &ch = _line[column];
 
-        CharacterColor foreground = convertColor(cell.foregroundSource, cell.foreground, palette);
-        CharacterColor background = convertColor(cell.backgroundSource, cell.background, palette);
+        // Most cells are blanks or plain ASCII in the default colors: take
+        // them straight, with what the general path below would make of them.
+        if (cell.attributes == 0 && cell.underline_style == 0 && cell.width == 1 && cell.grapheme_len <= 1
+            && SHITTY_VT_COLOR_KIND(cell.foreground_source) == SHITTY_VT_COLOR_DEFAULT_FOREGROUND
+            && SHITTY_VT_COLOR_KIND(cell.background_source) == SHITTY_VT_COLOR_DEFAULT_BACKGROUND && (cell.grapheme_len == 0 || cell.grapheme[0] < 0x80)) {
+            static constexpr CharacterColor foreground(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR);
+            static constexpr CharacterColor background(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR);
+            if (cell.grapheme_len == 0) {
+                ch = Character(' ', foreground, background, DEFAULT_RENDITION, setRepl(EF_UNREAL, _replMode));
+            } else {
+                const char32_t character = char32_t(cell.grapheme[0]);
+                ch = Character(character, foreground, background, DEFAULT_RENDITION, setRepl(EF_REAL | asciiWordFlags(character), _replMode));
+                _text = column + 1;
+                _used = column + 1;
+            }
+            return;
+        }
+
+        CharacterColor foreground = convertColor(cell.foreground_source, cell.foreground, _palette);
+        CharacterColor background = convertColor(cell.background_source, cell.background, _palette);
         const bool bold = cell.attributes & SHITTY_VT_ATTR_BOLD;
         const bool faint = cell.attributes & SHITTY_VT_ATTR_FAINT;
         RenditionFlags rendition = DEFAULT_RENDITION;
-        if (bold) {
-            rendition |= RE_BOLD;
+        if (cell.attributes != 0) {
+            if (bold) {
+                rendition |= RE_BOLD;
+            }
+            if (faint) {
+                rendition |= RE_FAINT;
+            }
+            if (cell.attributes & SHITTY_VT_ATTR_ITALIC) {
+                rendition |= RE_ITALIC;
+            }
+            if (cell.attributes & SHITTY_VT_ATTR_BLINK) {
+                rendition |= RE_BLINK;
+            }
+            if (cell.attributes & SHITTY_VT_ATTR_CONCEAL) {
+                rendition |= RE_CONCEAL;
+            }
+            if (cell.attributes & SHITTY_VT_ATTR_STRIKE) {
+                rendition |= RE_STRIKEOUT;
+            }
+            if (cell.attributes & SHITTY_VT_ATTR_OVERLINE) {
+                rendition |= RE_OVERLINE;
+            }
         }
-        if (faint) {
-            rendition |= RE_FAINT;
-        }
-        if (cell.attributes & SHITTY_VT_ATTR_ITALIC) {
-            rendition |= RE_ITALIC;
-        }
-        if (cell.attributes & SHITTY_VT_ATTR_BLINK) {
-            rendition |= RE_BLINK;
-        }
-        if (cell.attributes & SHITTY_VT_ATTR_CONCEAL) {
-            rendition |= RE_CONCEAL;
-        }
-        if (cell.attributes & SHITTY_VT_ATTR_STRIKE) {
-            rendition |= RE_STRIKEOUT;
-        }
-        if (cell.attributes & SHITTY_VT_ATTR_OVERLINE) {
-            rendition |= RE_OVERLINE;
-        }
-        if (cell.underlineStyle >= 1 && cell.underlineStyle <= 5) {
-            rendition |= RenditionFlags(cell.underlineStyle) * RE_UNDERLINE_BIT;
+        if (cell.underline_style >= 1 && cell.underline_style <= 5) {
+            rendition |= RenditionFlags(cell.underline_style) * RE_UNDERLINE_BIT;
         }
         // Mirror Screen::updateEffectiveRendition(): inverse swaps the
         // colors in the cell; bold brightens and faint dims the foreground.
@@ -1189,55 +1213,130 @@ QVector<Character> ShittyEmulation::convertRow(Screen *screen, const QVector<Eng
 
         ExtraFlags flags = EF_REAL;
         char32_t character = ' ';
-        const int graphemeLength = cell.grapheme.size();
+        const size_t graphemeLength = cell.grapheme_len;
         if (graphemeLength == 0) {
             // never written, or erased: Koncrepe's erased cells are not "real"
             flags = EF_UNREAL;
         } else if (graphemeLength == 1) {
-            character = cell.grapheme[0];
+            character = char32_t(cell.grapheme[0]);
             flags |= Screen::wordFlags(character);
             if (Character::emojiPresentation(character)) {
                 flags |= EF_EMOJI_REPRESENTATION;
             }
         } else {
-            character = screen->engineExtendedChar(cell.grapheme.constData(), ushort(qMin(graphemeLength, 0xffff)));
+            const auto *grapheme = reinterpret_cast<const char32_t *>(cell.grapheme);
+            character = _screen->engineExtendedChar(grapheme, ushort(qMin<size_t>(graphemeLength, 0xffff)));
             rendition |= RE_EXTENDED_CHAR;
-            for (char32_t cp : cell.grapheme) {
-                if (cp == 0xfe0f || Character::emojiPresentation(cp)) {
+            for (size_t i = 0; i < graphemeLength; ++i) {
+                if (grapheme[i] == 0xfe0f || Character::emojiPresentation(grapheme[i])) {
                     flags |= EF_EMOJI_REPRESENTATION;
                     break;
                 }
             }
         }
 
-        if (SHITTY_VT_COLOR_KIND(cell.underlineSource) != SHITTY_VT_COLOR_DEFAULT_FOREGROUND && (rendition & RE_UNDERLINE_MASK) != 0) {
-            const int index = screen->engineUnderlineColor(convertColor(cell.underlineSource, cell.underlineColor, palette));
+        if (SHITTY_VT_COLOR_KIND(cell.underline_source) != SHITTY_VT_COLOR_DEFAULT_FOREGROUND && (rendition & RE_UNDERLINE_MASK) != 0) {
+            const int index = _screen->engineUnderlineColor(convertColor(cell.underline_source, cell.underline_color, _palette));
             flags = SetULColor(flags, index);
         }
 
-        flags = setRepl(flags, replMode);
+        flags = setRepl(flags, _replMode);
         ch = Character(character, foreground, background, rendition, flags);
         if (graphemeLength > 0) {
-            text = column + cell.width;
+            _text = column + cell.width;
         }
 
-        if (cell.width == 2 && column + 1 < columns) {
-            Character &right = line[column + 1];
+        if (cell.width == 2 && column + 1 < _columns) {
+            Character &right = _line[column + 1];
             right = ch;
             right.setRightHalfOfDoubleWide();
-            right.flags = setRepl(EF_UNREAL, replMode);
+            right.flags = setRepl(EF_UNREAL, _replMode);
         }
 
         const bool blank = graphemeLength == 0 && background == CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR)
             && (rendition & (RE_REVERSE | RE_UNDERLINE_MASK | RE_OVERLINE | RE_STRIKEOUT)) == 0;
         if (!blank) {
-            used = column + cell.width;
+            _used = column + cell.width;
         }
     }
 
-    line.resize(qMin(used, columns));
-    *length = text;
-    return line;
+    /** The line, without its trailing untouched blanks; @p length receives its text length. */
+    QVector<Character> finish(int *length)
+    {
+        _line.resize(qMin(_used, _columns));
+        *length = _text;
+        return std::move(_line);
+    }
+
+private:
+    const ShittyEmulation &_emulation;
+    Screen *const _screen;
+    const int _columns;
+    const uint32_t *const _palette;
+
+    QVector<Character> _line;
+    int _used = 0; // length of the line once trailing untouched blanks are dropped
+    int _text = 0; // length of the text on it
+    int _replMode = REPL_None;
+    QVarLengthArray<SemanticMark, 4> _replChanges;
+    int _nextChange = 0;
+};
+
+QVector<Character> ShittyEmulation::readLine(Screen *screen, uint32_t index, int *length, qint64 absoluteLine)
+{
+    LineBuilder builder(*this, screen);
+    builder.start(absoluteLine);
+    shitty_vt_row_cells(
+        _vt,
+        index,
+        [](void *user, uint16_t, uint16_t column, const shitty_vt_cell *cell) {
+            static_cast<LineBuilder *>(user)->add(column, *cell);
+        },
+        &builder);
+    return builder.finish(length);
+}
+
+void ShittyEmulation::readView(Screen *screen, int lines, qint64 firstLine, QVector<QVector<Character>> &result, QVector<int> &lengths)
+{
+    // One frame for the whole grid, where reading row by row takes one each.
+    // The engine walks it row-major, so one line is built at a time.
+    struct Reader {
+        LineBuilder builder;
+        QVector<QVector<Character>> &result;
+        QVector<int> &lengths;
+        qint64 firstLine;
+        int lines;
+        int row = -1;
+
+        void moveTo(int next)
+        {
+            while (row < next) {
+                if (row >= 0) {
+                    result[row] = builder.finish(&lengths[row]);
+                }
+                ++row;
+                if (row < lines) {
+                    builder.start(firstLine < 0 ? -1 : firstLine + row);
+                }
+            }
+        }
+    } reader{LineBuilder(*this, screen), result, lengths, firstLine, lines};
+
+    result.resize(lines);
+    lengths.fill(0, lines);
+    reader.moveTo(0);
+    shitty_vt_each_cell(
+        _vt,
+        [](void *user, uint16_t row, uint16_t column, const shitty_vt_cell *cell) {
+            auto *reader = static_cast<Reader *>(user);
+            if (row >= reader->lines) {
+                return;
+            }
+            reader->moveTo(row);
+            reader->builder.add(column, *cell);
+        },
+        &reader);
+    reader.moveTo(lines);
 }
 
 void ShittyEmulation::syncModes()
@@ -1302,18 +1401,16 @@ void ShittyEmulation::syncScreen()
     if (!alternate && _parkedOffset != 0) {
         shitty_vt_scroll_to(_vt, 0);
     }
-    const QVector<QVector<EngineCell>> grid = readView(lines);
+    readView(screen, lines, alternate ? -1 : _scrolledLines, _viewLines, _viewLengths);
     const uint32_t historyRows = alternate ? 0 : shitty_vt_history_rows(_vt);
     const uint32_t offset = 0;
 
     for (int y = 0; y < lines; ++y) {
         const uint32_t index = historyRows + uint32_t(y);
         const qint64 absolute = alternate ? -1 : _scrolledLines + y;
-        const QVector<EngineCell> &cells = grid[y];
-        int length = 0;
-        QVector<Character> line = convertRow(screen, cells, &length, absolute);
+        QVector<Character> line = std::move(_viewLines[y]);
         LineProperty property = alternate ? LineProperty() : lineSemantics(absolute);
-        property.length = qint16(qMin(length, 0x7fff));
+        property.length = qint16(qMin(_viewLengths[y], 0x7fff));
         property.flags.f.wrapped = shitty_vt_row_wrap_length(_vt, index) != 0;
         screen->setEngineLine(y, std::move(line), property);
     }
@@ -1430,9 +1527,8 @@ void ShittyEmulation::clearEntireScreen()
     const bool primary = screen == _screen[0];
     if (primary) {
         for (int y = 0; y < _lines; ++y) {
-            const QVector<EngineCell> cells = readRow(shitty_vt_history_rows(_vt) + uint32_t(y));
             int length = 0;
-            QVector<Character> line = convertRow(screen, cells, &length);
+            QVector<Character> line = readLine(screen, shitty_vt_history_rows(_vt) + uint32_t(y), &length);
             LineProperty property;
             property.length = qint16(qMin(length, 0x7fff));
             screen->appendEngineHistoryLine(std::move(line), property);

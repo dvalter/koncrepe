@@ -41,6 +41,8 @@ public:
         SoftReset,
         /** A kitty keyboard protocol request: CSI > u, CSI < u, CSI = u, CSI ? u. */
         KittyKeyboard,
+        // DECSET/DECRST of the alternate screen (47, 1047, 1049)
+        ScreenSwitch,
     };
 
     struct Event {

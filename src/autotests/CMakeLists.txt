@@ -60,6 +60,10 @@ ecm_add_test(
     LINK_LIBRARIES koncrepeprivate Qt::Test ${KONCREPE_TEST_LIBS}
 )
 
+# A benchmark: not run with the tests, run it by hand.
+add_executable(ShittyEmulationBenchmark ShittyEmulationBenchmark.cpp)
+target_link_libraries(ShittyEmulationBenchmark koncrepeprivate Qt::Test ${KONCREPE_TEST_LIBS})
+
 
 ecm_add_test(
     ContainerDetectorParsingTest.cpp
